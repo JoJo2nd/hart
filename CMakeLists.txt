@@ -54,6 +54,12 @@ set( BGFX_LIBS_RELEASE
 set( SDL2_INCLUDE_DIRS
   "${CMAKE_CURRENT_SOURCE_DIR}/external/SDL2/include"
 )
+set( SDL2_LIB_DIRS
+  "${CMAKE_CURRENT_SOURCE_DIR}/external/SDL2/lib/x64"
+)
+set( SDL2_LIBS
+  SDL2
+)
 
 set( FLATBUFFERS_INCLUDE_DIRS
     "${CMAKE_CURRENT_SOURCE_DIR}/external/flatbuffers/include"
@@ -84,3 +90,4 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
 add_subdirectory ("external/getopt_port")
 add_subdirectory ("external/minfs")
 add_subdirectory ("hart")
+add_subdirectory ("game")

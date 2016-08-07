@@ -17,6 +17,8 @@
 #define HART_64BIT              (0) // 1 for a 64bit build
 #define HART_32BIT              (0) // 1 for a 32bit build
 #define HART_API                    // calling convention for callbacks
+#define HART_DEFAULT_WND_WIDTH  (1280)
+#define HART_DEFAULT_WND_HEIGHT (720)
 
 
 #if defined (_WIN32) || defined (_WIN64)

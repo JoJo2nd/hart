@@ -7,6 +7,7 @@
 // then systems that care (e.g. input & controllers) can handle events as needed.
 #pragma once
 
+#include "hart/config.h"
 #include "hart/core/engine.h"
 
 #if (HART_PLATFORM == HART_PLATFORM_WINDOWS)
@@ -29,8 +30,8 @@
 //#include <tinystl/allocator.h>
 //#include <tinystl/string.h>
 
-namespace entry
-{
+namespace hart {
+/*
     static uint8_t translateKeyModifiers(uint16_t _sdl)
     {
         uint8_t modifiers = 0;
@@ -220,7 +221,7 @@ namespace entry
         return wmi.info.vivante.window;
 #   endif // BX_PLATFORM_
     }
-
+    /*
     struct Msg
     {
         Msg()
@@ -268,6 +269,7 @@ namespace entry
         uev.code = _code;
         SDL_PushEvent(&event);
     }
+    */
 
     static WindowHandle getWindowHandle(const SDL_UserEvent& _uev)
     {
@@ -279,8 +281,8 @@ namespace entry
     struct Context
     {
         Context()
-            : m_width(ENTRY_DEFAULT_WIDTH)
-            , m_height(ENTRY_DEFAULT_HEIGHT)
+            : m_width(HART_DEFAULT_WND_WIDTH)
+            , m_height(HART_DEFAULT_WND_HEIGHT)
             , m_aspectRatio(16.0f/9.0f)
             , m_mx(0)
             , m_my(0)
@@ -288,6 +290,7 @@ namespace entry
             , m_mouseLock(false)
             , m_fullscreen(false)
         {
+            /*
             memset(s_translateKey, 0, sizeof(s_translateKey) );
             initTranslateKey(SDL_SCANCODE_ESCAPE,       Key::Esc);
             initTranslateKey(SDL_SCANCODE_RETURN,       Key::Return);
@@ -389,6 +392,7 @@ namespace entry
             initTranslateGamepadAxis(SDL_CONTROLLER_AXIS_RIGHTX,       GamepadAxis::RightX);
             initTranslateGamepadAxis(SDL_CONTROLLER_AXIS_RIGHTY,       GamepadAxis::RightY);
             initTranslateGamepadAxis(SDL_CONTROLLER_AXIS_TRIGGERRIGHT, GamepadAxis::RightZ);
+            */
         }
 
         int run(int _argc, char** _argv) {
@@ -408,7 +412,7 @@ namespace entry
             m_flags = ENTRY_WINDOW_FLAG_ASPECT_RATIO
                 | ENTRY_WINDOW_FLAG_FRAME;
 
-            s_userEventStart = SDL_RegisterEvents(7);
+            //s_userEventStart = SDL_RegisterEvents(7);
 
             bgfx::sdlSetWindow(m_window);
             bgfx::renderFrame();
@@ -416,8 +420,10 @@ namespace entry
             //m_thread.init(MainThreadEntry::threadFunc, &m_mte);
 
             // Force window resolution...
-            WindowHandle defaultWindow = { 0 };
-            setWindowSize(defaultWindow, m_width, m_height, true);
+            //WindowHandle defaultWindow = { 0 };
+            //setWindowSize(defaultWindow, m_width, m_height, true);
+            SDL_SetWindowSize(m_window, m_width, m_height);
+
             /*
             bx::CrtFileReader reader;
             if (bx::open(&reader, "gamecontrollerdb.txt") )
@@ -841,7 +847,7 @@ namespace entry
 
             return 0;
         }
-
+/*
         WindowHandle findHandle(uint32_t _windowId)
         {
             SDL_Window* window = SDL_GetWindowFromID(_windowId);
@@ -894,7 +900,7 @@ namespace entry
             GamepadHandle invalid = { UINT16_MAX };
             return invalid;
         }
-
+*/
         //MainThreadEntry m_mte;
         //bx::Thread m_thread;
 
@@ -928,7 +934,7 @@ namespace entry
     };
 
     static Context s_ctx;
-
+/*
     const Event* poll()
     {
         return s_ctx.m_eventQueue.poll();
@@ -1028,7 +1034,12 @@ namespace entry
         SDL_PushEvent(&event);
         return result;
     }
-
+*/
+namespace engine {
+    int32_t run(int argc, char* argv[]) {
+        return s_ctx.run(argc, argv);
+    }
+}
 } // namespace entry
 
 /*
