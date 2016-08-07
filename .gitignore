@@ -1,0 +1,4 @@
+data/bin/*
+*.pyc
+*.exe
+packaged.sha1.local
