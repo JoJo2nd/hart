@@ -23,6 +23,7 @@
 #endif // defined(None)
 
 #include <stdio.h>
+#include <vector>
 //#include <bx/thread.h>
 //#include <bx/handlealloc.h>
 //#include <bx/readerwriter.h>
@@ -31,6 +32,7 @@
 //#include <tinystl/string.h>
 
 namespace hart {
+namespace engine {
 /*
     static uint8_t translateKeyModifiers(uint16_t _sdl)
     {
@@ -269,7 +271,6 @@ namespace hart {
         uev.code = _code;
         SDL_PushEvent(&event);
     }
-    */
 
     static WindowHandle getWindowHandle(const SDL_UserEvent& _uev)
     {
@@ -277,9 +278,13 @@ namespace hart {
         cast.p = _uev.data1;
         return cast.h;
     }
+    */
 
     struct Context
     {
+        static Event SDL2SystemEvent[SDL_LASTEVENT];
+        static uint32_t systemEvent2SDL[Event::Max];
+
         Context()
             : m_width(HART_DEFAULT_WND_WIDTH)
             , m_height(HART_DEFAULT_WND_HEIGHT)
@@ -290,6 +295,88 @@ namespace hart {
             , m_mouseLock(false)
             , m_fullscreen(false)
         {
+            SDL2SystemEvent[SDL_QUIT] = Event::Quit;
+            SDL2SystemEvent[SDL_APP_TERMINATING] = Event::AppTerminating;
+            SDL2SystemEvent[SDL_APP_LOWMEMORY] = Event::AppLowmemory;
+            SDL2SystemEvent[SDL_APP_WILLENTERBACKGROUND] = Event::AppWillenterbackground;
+            SDL2SystemEvent[SDL_APP_DIDENTERBACKGROUND] = Event::AppDidenterbackground;
+            SDL2SystemEvent[SDL_APP_WILLENTERFOREGROUND] = Event::AppWillenterforeground;
+            SDL2SystemEvent[SDL_APP_DIDENTERFOREGROUND] = Event::AppDidenterforeground;
+            SDL2SystemEvent[SDL_WINDOWEVENT] = Event::WindowEvent;
+            SDL2SystemEvent[SDL_SYSWMEVENT] = Event::SyswmEvent;
+            SDL2SystemEvent[SDL_KEYDOWN] = Event::KeyDown;
+            SDL2SystemEvent[SDL_KEYUP] = Event::KeyUp;
+            SDL2SystemEvent[SDL_TEXTEDITING] = Event::TextEditing;
+            SDL2SystemEvent[SDL_TEXTINPUT] = Event::TextInput;
+            SDL2SystemEvent[SDL_MOUSEMOTION] = Event::MouseMotion;
+            SDL2SystemEvent[SDL_MOUSEBUTTONDOWN] = Event::MouseButtondown;
+            SDL2SystemEvent[SDL_MOUSEBUTTONUP] = Event::MouseButtonup;
+            SDL2SystemEvent[SDL_MOUSEWHEEL] = Event::MouseWheel;
+            SDL2SystemEvent[SDL_JOYAXISMOTION] = Event::JoyAxisMotion;
+            SDL2SystemEvent[SDL_JOYBALLMOTION] = Event::JoyBallMotion;
+            SDL2SystemEvent[SDL_JOYHATMOTION] = Event::JoyHatMotion;
+            SDL2SystemEvent[SDL_JOYBUTTONDOWN] = Event::JoyButtonDown;
+            SDL2SystemEvent[SDL_JOYBUTTONUP] = Event::JoyButtonUp;
+            SDL2SystemEvent[SDL_JOYDEVICEADDED] = Event::JoyDeviceAdded;
+            SDL2SystemEvent[SDL_JOYDEVICEREMOVED] = Event::JoyDeviceRemoved;
+            SDL2SystemEvent[SDL_CONTROLLERAXISMOTION] = Event::ControllerAxisMotion;
+            SDL2SystemEvent[SDL_CONTROLLERBUTTONDOWN] = Event::ControllerButtonDown;
+            SDL2SystemEvent[SDL_CONTROLLERBUTTONUP] = Event::ControllerButtonUp;
+            SDL2SystemEvent[SDL_CONTROLLERDEVICEADDED] = Event::ControllerDeviceAdded;
+            SDL2SystemEvent[SDL_CONTROLLERDEVICEREMOVED] = Event::ControllerDeviceRemoved;
+            SDL2SystemEvent[SDL_CONTROLLERDEVICEREMAPPED] = Event::ControllerDeviceRemapped;
+            SDL2SystemEvent[SDL_FINGERDOWN] = Event::FingerDown;
+            SDL2SystemEvent[SDL_FINGERUP] = Event::FingerUp;
+            SDL2SystemEvent[SDL_FINGERMOTION] = Event::FingerMotion;
+            SDL2SystemEvent[SDL_DOLLARGESTURE] = Event::DollarGesture;
+            SDL2SystemEvent[SDL_DOLLARRECORD] = Event::DollarRecord;
+            SDL2SystemEvent[SDL_MULTIGESTURE] = Event::MultiGesture;
+            SDL2SystemEvent[SDL_CLIPBOARDUPDATE] = Event::ClipboardUpdate;
+            SDL2SystemEvent[SDL_DROPFILE] = Event::Dropfile;
+            SDL2SystemEvent[SDL_RENDER_TARGETS_RESET] = Event::RenderTargetsReset;
+            SDL2SystemEvent[SDL_USEREVENT] = Event::UserEvent;
+
+            systemEvent2SDL[(uint32_t)Event::Quit] = SDL_QUIT;
+            systemEvent2SDL[(uint32_t)Event::AppTerminating] = SDL_APP_TERMINATING;
+            systemEvent2SDL[(uint32_t)Event::AppLowmemory] = SDL_APP_LOWMEMORY;
+            systemEvent2SDL[(uint32_t)Event::AppWillenterbackground] = SDL_APP_WILLENTERBACKGROUND;
+            systemEvent2SDL[(uint32_t)Event::AppDidenterbackground] = SDL_APP_DIDENTERBACKGROUND;
+            systemEvent2SDL[(uint32_t)Event::AppWillenterforeground] = SDL_APP_WILLENTERFOREGROUND;
+            systemEvent2SDL[(uint32_t)Event::AppDidenterforeground] = SDL_APP_DIDENTERFOREGROUND;
+            systemEvent2SDL[(uint32_t)Event::WindowEvent] = SDL_WINDOWEVENT;
+            systemEvent2SDL[(uint32_t)Event::SyswmEvent] = SDL_SYSWMEVENT;
+            systemEvent2SDL[(uint32_t)Event::KeyDown] = SDL_KEYDOWN;
+            systemEvent2SDL[(uint32_t)Event::KeyUp] = SDL_KEYUP;
+            systemEvent2SDL[(uint32_t)Event::TextEditing] = SDL_TEXTEDITING;
+            systemEvent2SDL[(uint32_t)Event::TextInput] = SDL_TEXTINPUT;
+            systemEvent2SDL[(uint32_t)Event::MouseMotion] = SDL_MOUSEMOTION;
+            systemEvent2SDL[(uint32_t)Event::MouseButtondown] = SDL_MOUSEBUTTONDOWN;
+            systemEvent2SDL[(uint32_t)Event::MouseButtonup] = SDL_MOUSEBUTTONUP;
+            systemEvent2SDL[(uint32_t)Event::MouseWheel] = SDL_MOUSEWHEEL;
+            systemEvent2SDL[(uint32_t)Event::JoyAxisMotion] = SDL_JOYAXISMOTION;
+            systemEvent2SDL[(uint32_t)Event::JoyBallMotion] = SDL_JOYBALLMOTION;
+            systemEvent2SDL[(uint32_t)Event::JoyHatMotion] = SDL_JOYHATMOTION;
+            systemEvent2SDL[(uint32_t)Event::JoyButtonDown] = SDL_JOYBUTTONDOWN;
+            systemEvent2SDL[(uint32_t)Event::JoyButtonUp] = SDL_JOYBUTTONUP;
+            systemEvent2SDL[(uint32_t)Event::JoyDeviceAdded] = SDL_JOYDEVICEADDED;
+            systemEvent2SDL[(uint32_t)Event::JoyDeviceRemoved] = SDL_JOYDEVICEREMOVED;
+            systemEvent2SDL[(uint32_t)Event::ControllerAxisMotion] = SDL_CONTROLLERAXISMOTION;
+            systemEvent2SDL[(uint32_t)Event::ControllerButtonDown] = SDL_CONTROLLERBUTTONDOWN;
+            systemEvent2SDL[(uint32_t)Event::ControllerButtonUp] = SDL_CONTROLLERBUTTONUP;
+            systemEvent2SDL[(uint32_t)Event::ControllerDeviceAdded] = SDL_CONTROLLERDEVICEADDED;
+            systemEvent2SDL[(uint32_t)Event::ControllerDeviceRemoved] = SDL_CONTROLLERDEVICEREMOVED;
+            systemEvent2SDL[(uint32_t)Event::ControllerDeviceRemapped] = SDL_CONTROLLERDEVICEREMAPPED;
+            systemEvent2SDL[(uint32_t)Event::FingerDown] = SDL_FINGERDOWN;
+            systemEvent2SDL[(uint32_t)Event::FingerUp] = SDL_FINGERUP;
+            systemEvent2SDL[(uint32_t)Event::FingerMotion] = SDL_FINGERMOTION;
+            systemEvent2SDL[(uint32_t)Event::DollarGesture] = SDL_DOLLARGESTURE;
+            systemEvent2SDL[(uint32_t)Event::DollarRecord] = SDL_DOLLARRECORD;
+            systemEvent2SDL[(uint32_t)Event::MultiGesture] = SDL_MULTIGESTURE;
+            systemEvent2SDL[(uint32_t)Event::ClipboardUpdate] = SDL_CLIPBOARDUPDATE;
+            systemEvent2SDL[(uint32_t)Event::Dropfile] = SDL_DROPFILE;
+            systemEvent2SDL[(uint32_t)Event::RenderTargetsReset] = SDL_RENDER_TARGETS_RESET;
+            systemEvent2SDL[(uint32_t)Event::UserEvent] = SDL_USEREVENT;
+
             /*
             memset(s_translateKey, 0, sizeof(s_translateKey) );
             initTranslateKey(SDL_SCANCODE_ESCAPE,       Key::Esc);
@@ -395,6 +482,16 @@ namespace hart {
             */
         }
 
+        EventHandle addEventHandler(Event sysEventID, EventHandler handler) {
+            EventHandle hdl = {sysEventID, (uint32_t)eventHandlers[(uint32_t)sysEventID].size()};
+            eventHandlers[(uint32_t)sysEventID].push_back(handler);
+            return hdl;
+        }
+
+        void removeEventHandler(EventHandle handle) {
+            eventHandlers[(uint32_t)handle.event].erase(eventHandlers[(uint32_t)handle.event].cbegin()+handle.loc);
+        }
+
         int run(int _argc, char** _argv) {
             SDL_Init(0
                 | SDL_INIT_GAMECONTROLLER
@@ -455,6 +552,11 @@ namespace hart {
                     case SDL_QUIT:
                         //m_eventQueue.postExitEvent();
                         exit = true;
+                        break;
+                    default:
+                        for (const auto& i : eventHandlers[(uint32_t)SDL2SystemEvent[event.type]]) {
+                            i(SDL2SystemEvent[event.type], &event);
+                        }
                         break;
 /*
                     case SDL_MOUSEMOTION:
@@ -931,6 +1033,8 @@ namespace hart {
         int32_t m_mz;
         bool m_mouseLock;
         bool m_fullscreen;
+
+        std::vector<EventHandler> eventHandlers[Event::Max];
     };
 
     static Context s_ctx;
@@ -1035,10 +1139,22 @@ namespace hart {
         return result;
     }
 */
-namespace engine {
-    int32_t run(int argc, char* argv[]) {
-        return s_ctx.run(argc, argv);
-    }
+
+Event Context::SDL2SystemEvent[SDL_LASTEVENT];
+uint32_t Context::systemEvent2SDL[Event::Max];
+
+int32_t run(int argc, char* argv[]) {
+    return s_ctx.run(argc, argv);
+}
+
+hart::engine::EventHandle addEventHandler(Event sysEventID,EventHandler handler) {
+    return s_ctx.addEventHandler(sysEventID, handler);
+}
+
+void removeEventHandler(EventHandle handle) {
+    s_ctx.removeEventHandler(handle);
+}
+
 }
 } // namespace entry
 
