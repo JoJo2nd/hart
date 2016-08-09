@@ -1,4 +1,7 @@
 data/bin/*
 *.pyc
 *.exe
+*.dll
+*.lib
 packaged.sha1.local
+*_generated.h
