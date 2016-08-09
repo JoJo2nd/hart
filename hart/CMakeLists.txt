@@ -10,6 +10,7 @@ set( HART_INCLUDE_DIRS
     "${CMAKE_CURRENT_SOURCE_DIR}/include"
 )
 
+
 #platform headers
 if (PLATFORM_WINDOWS)
     set(HART_INCLUDE_DIRS
@@ -23,9 +24,21 @@ if (PLATFORM_WINDOWS)
         "${CMAKE_CURRENT_SOURCE_DIR}/src/win32/*.c"
         "${CMAKE_CURRENT_SOURCE_DIR}/src/win32/*.cpp"
     )
-
+#    file(GLOB HART_FBS_PLATFORM_FILES
+#        "${CMAKE_SOURCE_DIR}/data/assets/hart/fbs/*.fbs"
+#    )
+#
+#    FLATBUFFER_GENERATE_BINDINGS(${HART_FBS_PLATFORM_FILES}, "${CMAKE_CURRENT_SOURCE_DIR}/include/win32/hart/fbs", FBS_INCLUDES)
+#    set(FBS_PLATFORM_INCLUDES ${FBS_INCLUDES})
     add_definitions(/WX) # Warnings as errors
 endif()
+
+file(GLOB HART_FBS_CMN_FILES
+    "${CMAKE_SOURCE_DIR}/data/assets/hart/fbs/*.fbs"
+)
+
+FLATBUFFER_GENERATE_BINDINGS("${HART_FBS_CMN_FILES}" "${CMAKE_CURRENT_SOURCE_DIR}/include/hart/fbs" FBS_INCLUDES)
+set(FBS_CMN_INCLUDES ${FBS_INCLUDES})
 
 file(GLOB_RECURSE HART_CMN_HDR_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/include/*.h"
@@ -38,10 +51,14 @@ file(GLOB_RECURSE HART_CMN_SRC_FILES
 set(HART_HDR_FILES
     ${HART_CMN_HDR_FILES}
     ${HART_PLATFORM_HDR_FILES}
+    ${FBS_CMN_INCLUDES}
+    ${FBS_PLATFORM_INCLUDES}
 )
 set(HART_SRC_FILES
     "${HART_CMN_SRC_FILES}"
     "${HART_PLATFORM_SRC_FILES}"
+    "${HART_FBS_CMN_FILES}"
+    "${HART_FBS_PLATFORM_FILES}"
 )
 
 #source_group(base FILES ${HART_BASE_FILES})

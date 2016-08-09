@@ -19,6 +19,7 @@
 #define HART_API                    // calling convention for callbacks
 #define HART_DEFAULT_WND_WIDTH  (1280)
 #define HART_DEFAULT_WND_HEIGHT (720)
+#define HART_MAX_PATH           (1024)
 
 
 #if defined (_WIN32) || defined (_WIN64)
