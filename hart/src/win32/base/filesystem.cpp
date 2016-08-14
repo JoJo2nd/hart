@@ -95,12 +95,12 @@ bool initialise_filesystem() {
     return true;
 }
 
-FileError fileOpComplete(FileOpHandle in_op) {
+Error fileOpComplete(FileOpHandle in_op) {
     if (&g_syncOp == in_op) {
-        return FileError::Ok;
+        return Error::Ok;
     }
     if (&g_syncOpEOF == in_op) {
-        return FileError::EndOfFile;
+        return Error::EndOfFile;
     }
 
     auto* op = static_cast<FileOpRW*>(in_op);
@@ -108,35 +108,35 @@ FileError fileOpComplete(FileOpHandle in_op) {
     if (GetOverlappedResult(op->fileHdl, &op->operation, &xferred, FALSE) == FALSE) {
         auto LastErr = GetLastError();
         if (LastErr == ERROR_IO_INCOMPLETE) {
-            return FileError::Pending;
+            return Error::Pending;
         } if (LastErr == ERROR_HANDLE_EOF) {
-            return FileError::EndOfFile;
+            return Error::EndOfFile;
         } else {
-            return FileError::Failed;
+            return Error::Failed;
         }
     }
     //completed
-    return FileError::Ok;
+    return Error::Ok;
 }
 
-FileError fileOpWait(FileOpHandle in_op) {
+Error fileOpWait(FileOpHandle in_op) {
     if (in_op == nullptr) {
-        return FileError::Failed;
+        return Error::Failed;
     }
     if (&g_syncOp == in_op) {
-        return FileError::Ok;
+        return Error::Ok;
     }
     if (&g_syncOpEOF == in_op) {
-        return FileError::EndOfFile;
+        return Error::EndOfFile;
     }
 
     auto* op = static_cast<FileOpRW*>(in_op);
     DWORD xferred;
     if (GetOverlappedResult(op->fileHdl, &op->operation, &xferred, TRUE) == FALSE) {
-        return FileError::Failed;
+        return Error::Failed;
     }
     //completed
-    return FileError::Ok;
+    return Error::Ok;
 }
 
 void fileOpClose(FileOpHandle in_op) {
@@ -147,7 +147,7 @@ void fileOpClose(FileOpHandle in_op) {
     delete in_op;
 }
 
-FileOpHandle openFile(const char* filename, int mode, FileHandle* outhandle) {
+FileOpHandle openFile(const char* filename, Mode mode, FileHandle* outhandle) {
     DWORD access = 0;
     DWORD share = 0;// < always ZERO, dont let things happen to file in use!
     LPSECURITY_ATTRIBUTES secatt = NULL;// could be a prob if passed across threads>?
@@ -155,12 +155,12 @@ FileOpHandle openFile(const char* filename, int mode, FileHandle* outhandle) {
     DWORD flags = FILE_ATTRIBUTE_NORMAL | FILE_FLAG_OVERLAPPED;
     HANDLE fhandle;
 
-    if (mode == FILEMODE_READ)
+    if (mode == Mode::Read)
     {
         access = GENERIC_READ;
         creation = OPEN_EXISTING;
     }
-    else if (mode == FILEMODE_WRITE)
+    else if (mode == Mode::Write)
     {
         access = GENERIC_WRITE;
         creation = CREATE_ALWAYS;
@@ -276,7 +276,7 @@ static time_t FILETIMETotime_t(FILETIME const& ft) {
     return ull.QuadPart / 10000000ULL - 11644473600ULL;
 }
 
-FileOpHandle fstatAsync(FileHandle filename, hFileStat* out) {
+FileOpHandle fstatAsync(FileHandle filename, FileStat* out) {
     BY_HANDLE_FILE_INFORMATION fileinfo;
     GetFileInformationByHandle(filename->fileHandle, &fileinfo);
     out->filesize = ((uint64_t)fileinfo.nFileSizeHigh << 32)| fileinfo.nFileSizeLow;

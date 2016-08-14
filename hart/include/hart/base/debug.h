@@ -26,7 +26,7 @@ assertMsgFunc
 
 #if HART_DO_ASSERTS
 
-#define hdbprintf(x, ...)       /*outputdebugstring*/
+#define hdbprintf(fmt, ...)         ::printf(fmt, ##__VA_ARGS__ ) /*outputdebugstring*/
 #define hdbcondprintf(x, y, ...) if (x) { hdbprintf(y, ##__VA_ARGS__ ); }
 
 #define hdbassert( x, y,...)	{ static bool ignore = false; \
@@ -52,7 +52,7 @@ assertMsgFunc
 #else
 //#else
 
-#define hdbprintf(x, ...)
+#define hdbprintf(fmt, ...)
 #define hdbcondprintf(x, y, ...)
 #define hdbassert( x, y,...)
 #define hdbfatal( y, ... )

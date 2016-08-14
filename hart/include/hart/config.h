@@ -58,7 +58,7 @@
 
 #if HART_DEBUG_INFO
 #   undef HART_DO_ASSERTS
-#   define HART_DO_ASSERTS (0)
+#   define HART_DO_ASSERTS (1)
 #endif
 
 #if (HART_PLATFORM == HART_PLATFORM_WINDOWS)
@@ -71,6 +71,28 @@
 #	endif
 #else
 #   error "Platform not supported"
+#endif
+
+/*
+    FVN-1a
+    hash = offset_basis
+    for each octet_of_data to be hashed
+            hash = hash xor octet_of_data
+            hash = hash * FNV_prime
+    return hash
+
+    32 bit FNV_prime = 224 + 28 + 0x93 = 16777619
+    64 bit FNV_prime = 240 + 28 + 0xb3 = 1099511628211
+
+    32 bit offset_basis = 2166136261
+    64 bit offset_basis = 14695981039346656037
+*/
+#if HART_64BIT
+#   define HART_FVN_OFFSET_BASIS (14695981039346656037)
+#   define HART_FVN_PRIME (1099511628211)
+#elif HART_32BIT
+#   define HART_FVN_OFFSET_BASIS (2166136261)
+#   define HART_FVN_PRIME (16777619)
 #endif
 
 #include <stdint.h>

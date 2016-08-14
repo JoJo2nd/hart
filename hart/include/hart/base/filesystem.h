@@ -9,15 +9,13 @@
 namespace hart {
 namespace filesystem {
 
-    enum FileMode
+    enum class Mode
     {
-        FILEMODE_READ,
-        FILEMODE_WRITE,
-
-        FILEMODE_MAX
+        Read,
+        Write,
     };
 
-    enum class FileError {
+    enum class Error {
         Ok = 0,
         Pending,
         Failed,
@@ -48,7 +46,7 @@ namespace filesystem {
         uint8_t        directory_;
     };
 
-    struct hFileStat {
+    struct FileStat {
         uint64_t filesize;
         time_t   modifiedDate;
     };
@@ -60,11 +58,11 @@ namespace filesystem {
 
     bool initialise_filesystem();
 
-    FileError fileOpComplete(FileOpHandle);
-    FileError fileOpWait(FileOpHandle);
+    Error fileOpComplete(FileOpHandle);
+    Error fileOpWait(FileOpHandle);
     void fileOpClose(FileOpHandle);
 
-    FileOpHandle openFile(const char* filename, int mode, FileHandle* outhandle);
+    FileOpHandle openFile(const char* filename, Mode mode, FileHandle* outhandle);
     void closeFile(FileHandle);
     FileOpHandle openDir(const char* path, FileHandle* outhandle);
     FileOpHandle readDir(FileHandle dir, DirEntry* out);
@@ -72,7 +70,7 @@ namespace filesystem {
 
     FileOpHandle freadAsync(FileHandle file, void* buffer, size_t size, uint64_t offset);
     FileOpHandle fwriteAsync(FileHandle file, const void* buffer, size_t size, uint64_t offset);
-    FileOpHandle fstatAsync(FileHandle file, hFileStat* out);
+    FileOpHandle fstatAsync(FileHandle file, FileStat* out);
 
     void mountPoint(const char* path, const char* mount);
     void unmountPoint(const char* mount);

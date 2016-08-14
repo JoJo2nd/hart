@@ -14,19 +14,15 @@ namespace resourcemanager {
     struct Handle {
         bool loaded();
 
-    private: 
-        resid_t id;
-        uint32_t ptr;
+        void const* data;
     };
 
     bool initialise();
     void update();
     void shutdown();
-    //void    injectResource(void* ptr);
-    //void    removeResource(hStringID res_id);
     Handle loadResource(resid_t res_id);
     void unloadResource(Handle res_hdl);
-    void* getResourceDataPtr(Handle res_hdl, uint32_t res_type_id);
+    void* getResourceDataPtr(Handle res_hdl);
 
 }
 }

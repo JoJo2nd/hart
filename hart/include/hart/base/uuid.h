@@ -7,6 +7,7 @@
 #include "hart/config.h"
 #include "hart/base/crt.h"
 #include "hart/base/debug.h"
+#include "hart/base/std.h"
 #include <math.h>
 
 namespace hart {
@@ -18,7 +19,8 @@ struct uuid_t {
         uint32_t words[4];
         uint64_t dwords[2];
     };
-    bool operator == (const uuid_t& rhs) const;
+    bool operator == (uuid_t const& rhs) const;
+    bool operator < (uuid_t const& rhs) const;
 };
 
 inline bool compareUUID(const uuid_t& lhs, const uuid_t& rhs) {
@@ -89,11 +91,31 @@ inline uuid_t getInvalid() {
     return zero;    
 }
 
-bool uuid_t::operator == (const uuid_t& rhs) const {
+inline bool uuid_t::operator == (const uuid_t& rhs) const {
     return compareUUID(*this, rhs);
+}
+
+inline bool uuid_t::operator < (const uuid_t& rhs) const {
+    return dwords[1] < rhs.dwords[1] || dwords[0] < rhs.dwords[0];
 }
 
 }
 }
 
 namespace huuid = hart::uuid;
+
+namespace std {
+    template<>
+    struct hash < huuid::uuid_t >
+    {
+        size_t operator () (huuid::uuid_t const& rhs) const {
+            // Use FVN-1a as a uuid_t is not *that* large a data type
+            size_t hash = HART_FVN_OFFSET_BASIS;
+            for (const auto& i : rhs.bytes) {
+                hash = (hash ^ i) * HART_FVN_PRIME;
+            }
+            return hash;
+        }
+    };
+}
+
