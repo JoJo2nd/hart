@@ -2,12 +2,15 @@
 namespace hart.fb;
 
 struct uuid {
-    highDword : ulong;
-    lowDword : ulong;
+    highword3 : uint;
+    highword2 : uint;
+    highword1 : uint;
+    lowword : uint;
 }
 
 table ResourceInfo {
     friendlyName:string; // friendly name (for debug, could be stripped in release but isn't ATM)
+    filesize:uint; // Saves us having to ftell the file
     filepath:string; // filepath to open and load
     prerequisites:[uint]; // indices of assets that must be loaded before this asset
 }
@@ -16,3 +19,5 @@ table ResourceList {
     assetUUIDs:[uuid];
     assetInfos:[ResourceInfo];
 }
+
+root_type ResourceList;

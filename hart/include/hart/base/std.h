@@ -9,6 +9,7 @@
 #include <vector>
 #include <unordered_map>
 #include <unordered_set>
+#include <functional>
 
 namespace hart {
 namespace stdlib {
@@ -23,6 +24,8 @@ template<typename t_ty>
 using unordered_set = std::unordered_set<t_ty>;
 template<typename t_ty>
 using unique_ptr = std::unique_ptr<t_ty>;
+template<typename t_ty>
+using function = std::function<t_ty>;
 
 }
 }
