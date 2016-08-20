@@ -12,6 +12,10 @@ namespace hart {
 namespace resourcemanager {
     typedef huuid::uuid_t resid_t;
 
+    struct ResourceLoadData {
+        bool persistFileData = false;
+    }
+
     struct Handle {
 
         bool loaded();

@@ -10,6 +10,12 @@
 #include <vector>
 
 namespace hart {
+namespace resourcemanager {
+    struct ResourceLoadData
+}
+}
+
+namespace hart {
 namespace objectfactory {
     typedef void* serialisedobj_t;
 
@@ -19,7 +25,8 @@ namespace objectfactory {
     };
 
     struct SerialiseParams {
-        void* user;
+        hart::resourcemanager::ResourceLoadData* resdata = nullptr;
+        void* user = nullptr;
     };
 
     template< typename t_ty, typename t_ty2 = t_ty::MarshallType >
@@ -31,7 +38,7 @@ namespace objectfactory {
             return new allocsize_t<t_ty>();
         }
         static void freeType(void* ptr) {
-            delete ((allocsize_t<t_ty>*)d);
+            delete ((allocsize_t<t_ty>*)ptr);
         }
         static void constructType(void* ptr) {
             new ((t_ty*)ptr) t_ty();
@@ -41,12 +48,12 @@ namespace objectfactory {
         }
         static bool deserialiseType(void const* src, void* dst, SerialiseParams const& params) {
             t_ty* type_ptr = reinterpret_cast<t_ty*>(dst);
-            serialiserType* src_t = static_cast<serialiserType*>(src);
+            serialiserType const* src_t = reinterpret_cast<serialiserType const*>(src);
             return type_ptr->deserialiseObject(src_t, params);
         }
         static bool serialiseType(void const* src, void** dst_ptr, SerialiseParams const& params) {
-            t_ty* type_ptr = reinterpret_cast<t_ty*>(type_ptr_raw);
-            serialiserType** dst_ptr_t = static_cast<serialiserType**>(dst_ptr);
+            t_ty const* type_ptr = reinterpret_cast<t_ty const*>(src);
+            serialiserType** dst_ptr_t = reinterpret_cast<serialiserType**>(dst_ptr);
             return type_ptr->serialiseObject(dst_ptr_t, params);
         }
         static bool linkType(void* type_ptr_raw) {
@@ -59,14 +66,43 @@ namespace objectfactory {
     //////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////
     typedef void* (*ObjectMallocProc)();
-    typedef void* (*ObjectConstructProc)(void* in_place);
-    typedef void (*ObjectDestructProc)(void* obj_ptr);
     typedef void (*ObjectFreeProc)(void* obj_ptr);
+    typedef void (*ObjectConstructProc)(void* in_place);
+    typedef void (*ObjectDestructProc)(void* obj_ptr);
     typedef bool (*ObjectDeserialiseProc)(void const* src, void* dst, SerialiseParams const& p);
-    typedef bool (*ObjectSerialiseProc)(void** dst, void const* src, SerialiseParams const& p);
+    typedef bool (*ObjectSerialiseProc)(void const* src, void** dst, SerialiseParams const& p);
     typedef bool (*ObjectLinkProc)(void*);
 
     struct ObjectDefinition {
+        ObjectDefinition() = default;
+        ObjectDefinition(
+            uint32_t in_typecc,
+            const char* in_objectName,
+            size_t in_typeSize,
+            ObjectMallocProc in_objMalloc,
+            ObjectFreeProc in_objFree,
+            ObjectConstructProc in_construct,
+            ObjectDestructProc in_destruct,
+            ObjectDeserialiseProc in_deserialise,
+            ObjectSerialiseProc in_serialise,
+            ObjectLinkProc in_link,
+            void* in_user
+            ) 
+            : typecc(in_typecc)
+            , objectName(in_objectName)
+            , typeSize(in_typeSize)
+            , objMalloc(in_objMalloc)
+            , objFree(in_objFree)
+            , construct(in_construct)
+            , destruct(in_destruct)
+            , deserialise(in_deserialise)
+            , serialise(in_serialise)
+            , link(in_link)
+            , user(in_user)
+        {
+
+        }
+
         uint32_t                typecc = 0;
         hstd::string            objectName;
         size_t                  typeSize = 0;
@@ -80,9 +116,10 @@ namespace objectfactory {
         void*                   user = nullptr;
     };
 
-#define HART_OBJECT_TYPE(name, typecc, serialiser_type) \
+#define HART_OBJECT_TYPE(typecc, serialiser_type) \
     private:\
     static hobjfact::ObjectDefinition typeDef; \
+    static uint32_t getTypeCC() { return typecc; } \
     public: \
     typedef serialiser_type MarshallType; \
     static hobjfact::ObjectDefinition const& getObjectDefinition() { return typeDef; } \
@@ -92,20 +129,22 @@ namespace objectfactory {
     private: 
 
 
-#define HART_OBJECT_TYPE_DECL(name, type) \
-    static hobjfact::ObjectDefinition type::typeDef = { \
+#define HART_OBJECT_TYPE_DECL(type) \
+    hobjfact::ObjectDefinition \
+        type \
+         ::typeDef( \
         type::getTypeCC(), \
-        type::getTypeNameStatic(), \
+        #type, \
         sizeof(type),\
-        hobjfact::typehelper_t::mallocType, \
-        hobjfact::typehelper_t::freeType, \
-        hobjfact::typehelper_t::constructType, \
-        hobjfact::typehelper_t::destructType, \
-        hobjfact::typehelper_t::deserialiseType, \
-        hobjfact::typehelper_t::serialiseType, \
-        hobjfact::typehelper_t::linkType, \
-        nullptr, \
-    };
+        hobjfact::typehelper_t< type >::mallocType, \
+        hobjfact::typehelper_t< type >::freeType, \
+        hobjfact::typehelper_t< type >::constructType, \
+        hobjfact::typehelper_t< type >::destructType, \
+        hobjfact::typehelper_t< type >::deserialiseType, \
+        hobjfact::typehelper_t< type >::serialiseType, \
+        hobjfact::typehelper_t< type >::linkType, \
+        nullptr \
+    );
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -113,7 +152,7 @@ namespace objectfactory {
 //////////////////////////////////////////////////////////////////////////
     
 const ObjectDefinition*        getObjectDefinition(uint32_t typecc);
-void*                          deserialiseObject(void const* data, size_t len, uint32_t* out_typecc);
+void*                          deserialiseObject(void const* data, size_t len, SerialiseParams const& params, uint32_t* out_typecc);
 bool                           objectFactoryRegistar(ObjectDefinition const& obj_def, void* user);
 
 }

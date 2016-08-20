@@ -20,4 +20,5 @@ table ResourceList {
     assetInfos:[ResourceInfo];
 }
 
+file_identifier "rsdb";
 root_type ResourceList;

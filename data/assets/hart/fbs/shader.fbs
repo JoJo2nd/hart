@@ -1,0 +1,21 @@
+
+namespace hart.render.resource;
+
+enum Profile : short {
+    Direct3D9,
+    Direct3D11,
+    OpenGLES,
+}
+
+table ShaderResource {
+    profile:Profile;
+    mem:[ubyte]; // 
+}
+
+table ShaderCollection {
+    supportedProfiles:[Profile];
+    shaderArray:[ShaderResource];
+}
+
+file_identifier "sdrc";
+root_type ShaderCollection;

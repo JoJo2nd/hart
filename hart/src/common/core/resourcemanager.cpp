@@ -131,10 +131,13 @@ void update() {
             return;
         }
 
+        ResourceLoadData load_data;
+        hobjfact::SerialiseParams ser_params;
+        ser_params.resdata = &load_data;
         LoadRequest& lr = ctx.loadQueue.front();
         Resource& res = ctx.resources[lr.uuid];
         ctx.resState = ResourceLoadState::LoadResource;
-        //TODO: actually load data
+        hobjfact::deserialiseObject(res.loadtimeData, res.info->filesize(), ser_params, &res.typecc);
         hatomic::increment(res.refCount);
         res.loadtimeData.reset();
         ctx.resState = ResourceLoadState::LoadNext;

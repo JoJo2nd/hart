@@ -1,4 +1,5 @@
 bin/*
+data/builder/hart/*
 *.pyc
 *.exe
 *.dll
@@ -7,3 +8,8 @@ packaged.sha1.local
 *_generated.h
 *.sublime-project
 *.sublime-workspace
+
+
+
+# this ignore is temp
+data/assets/*

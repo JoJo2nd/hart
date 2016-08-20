@@ -12,6 +12,9 @@
 #include "hart/core/resourcemanager.h"
 #include "hart/base/filesystem.h"
 
+// object factory classes
+#include "hart/render/shader.h"
+
 #if (HART_PLATFORM == HART_PLATFORM_WINDOWS)
 #   define SDL_MAIN_HANDLED
 #endif // BX_PLATFORM_WINDOWS
@@ -208,7 +211,7 @@ namespace engine {
             }
             */
             // Init engine
-
+            hobjfact::objectFactoryRegistar(hrnd::Shader::getObjectDefinition(), nullptr);
 
             bool exit = false;
             SDL_Event event;
