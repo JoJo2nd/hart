@@ -12,6 +12,7 @@
 #include "hart/core/resourcemanager.h"
 #include "hart/base/filesystem.h"
 #include "hart/base/util.h"
+#include "hart/base/time.h"
 #include "imgui.h"
 #include "vectormath_aos.h"
 #include "mat_aos.h"
@@ -315,6 +316,7 @@ namespace engine {
             m_flags = ENTRY_WINDOW_FLAG_ASPECT_RATIO
                 | ENTRY_WINDOW_FLAG_FRAME;
 
+            htime::initialise();
             hfs::initialise_filesystem();
             hresmgr::initialise();
 
@@ -330,15 +332,18 @@ namespace engine {
             SDL_SetWindowSize(m_window, m_width, m_height);
 
             // Application init
+            static uint32_t buttom_remap[] = {
+                1, 0, 2, 3, 4
+            };
             engineEvents[(uint32_t)EgEvent::MouseMove] = addEventHandler(Event::MouseMotion, [&](Event evt_id, EventData const* evt) {
                 mouseX = evt->motion.x;
                 mouseY = evt->motion.y;
             });
             engineEvents[(uint32_t)EgEvent::MouseBtnDown] = addEventHandler(Event::MouseButtondown, [&](Event evt_id, EventData const* evt) {
-                mouseButtons[evt->button.button] = evt->button.state == SDL_PRESSED;
+                mouseButtons[buttom_remap[evt->button.button]] = true;
             });
             engineEvents[(uint32_t)EgEvent::MouseBtnUp] = addEventHandler(Event::MouseButtonup, [&](Event evt_id, EventData const* evt) {
-                mouseButtons[evt->button.button] = evt->button.state == SDL_PRESSED;
+                mouseButtons[buttom_remap[evt->button.button]] = false;
             });
             engineEvents[(uint32_t)EgEvent::MouseWheel] = addEventHandler(Event::MouseWheel, [&](Event evt_id, EventData const* evt) {
                 wheelDelta = evt->wheel.y;
@@ -414,13 +419,33 @@ namespace engine {
 
             imgui.program = bgfx::createProgram(
                 vs->getShaderProfileObject(render::resource::Profile_Direct3D11),
-                fs->getShaderProfileObject(render::resource::Profile_Direct3D11));
+                fs->getShaderProfileObject(render::resource::Profile_Direct3D11)
+            );
+
+            bgfx::setViewClear(0
+                ,BGFX_CLEAR_COLOR|BGFX_CLEAR_DEPTH
+                ,0x303030ff
+                ,1.0f
+                ,0
+            );
+            bgfx::setViewRect(0
+                ,0
+                ,0
+                ,m_width
+                ,m_height
+            );
 
             }
+
+            htime::update();
+
+            bool test_wnd_open = false;
             bool exit = false;
             SDL_Event event;
             while (!exit)
             {
+                htime::update();
+
                 while (SDL_PollEvent(&event) )
                 {
                     switch (event.type)
@@ -437,17 +462,21 @@ namespace engine {
                     }
                 }
                 ImGuiIO& io = ImGui::GetIO();
-                io.DeltaTime = 1.0f/60.0f;
+                io.DeltaTime = htime::deltaSec();
                 io.MousePos = ImVec2(float(mouseX), float(mouseY));
                 for (size_t i = 0, n = HART_ARRAYSIZE(mouseButtons); i < n; ++i) {
                     io.MouseDown[i] = mouseButtons[i];
                 }
+                io.MouseWheel = float(wheelDelta);
 
                 ImGui::NewFrame();
-                //DO Tick here?
+
+                ImGui::ShowTestWindow(&test_wnd_open);
 
                 ImGui::Render();
                 bgfx::frame();
+
+                wheelDelta = 0;
             }
 
             // Engine shutdown
