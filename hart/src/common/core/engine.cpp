@@ -11,6 +11,11 @@
 #include "hart/core/engine.h"
 #include "hart/core/resourcemanager.h"
 #include "hart/base/filesystem.h"
+#include "hart/base/util.h"
+#include "imgui.h"
+#include "vectormath_aos.h"
+#include "mat_aos.h"
+#include "vec_aos.h"
 
 // object factory classes
 #include "hart/render/shader.h"
@@ -22,6 +27,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_syswm.h>
 
+#include <bgfx/bgfx.h>
 #include <bgfx/bgfxplatform.h>
 #if defined(None) // X11 defines this...
 #   undef None
@@ -60,16 +66,7 @@ namespace engine {
         static Event SDL2SystemEvent[SDL_LASTEVENT];
         static uint32_t systemEvent2SDL[Event::Max];
 
-        Context()
-            : m_width(HART_DEFAULT_WND_WIDTH)
-            , m_height(HART_DEFAULT_WND_HEIGHT)
-            , m_aspectRatio(16.0f/9.0f)
-            , m_mx(0)
-            , m_my(0)
-            , m_mz(0)
-            , m_mouseLock(false)
-            , m_fullscreen(false)
-        {
+        Context() {
             SDL2SystemEvent[SDL_QUIT] = Event::Quit;
             SDL2SystemEvent[SDL_APP_TERMINATING] = Event::AppTerminating;
             SDL2SystemEvent[SDL_APP_LOWMEMORY] = Event::AppLowmemory;
@@ -163,6 +160,144 @@ namespace engine {
             eventHandlers[(uint32_t)handle.event].erase(eventHandlers[(uint32_t)handle.event].cbegin()+handle.loc);
         }
 
+        static void imguiRenderStatic(ImDrawData* draw_data) {
+            ImGuiIO& io = ImGui::GetIO();
+            ((Context*)io.UserData)->imguiRender(draw_data);
+        }
+
+        void imguiRender(ImDrawData* draw_data) {
+            const ImGuiIO& io = ImGui::GetIO();
+            const float width  = io.DisplaySize.x;
+            const float height = io.DisplaySize.y;
+
+            {
+                Vectormath::Aos::Matrix4 ortho;
+                ortho = Vectormath::Aos::Matrix4::orthographic(0.0f, width, height, 0.0f, -1.0f, 1.0f);
+                bgfx::setViewTransform(0, NULL, (float*)&ortho);
+            }
+
+    #if USE_ENTRY
+            for (uint32_t ii = 1; ii < BX_COUNTOF(m_window); ++ii)
+            {
+                Window& window = m_window[ii];
+                if (bgfx::isValid(window.m_fbh) )
+                {
+                    const uint8_t viewId = 0;
+                    bgfx::setViewClear(viewId
+                        , BGFX_CLEAR_COLOR|BGFX_CLEAR_DEPTH
+                        , 0x303030ff
+                        , 1.0f
+                        , 0
+                        );
+                    bgfx::setViewFrameBuffer(viewId, window.m_fbh);
+                    bgfx::setViewRect(viewId
+                        , 0
+                        , 0
+                        , window.m_state.m_width
+                        , window.m_state.m_height
+                        );
+                    float ortho[16];
+                    bx::mtxOrtho(ortho
+                        , 0.0f
+                        , float(window.m_state.m_width)
+                        , float(window.m_state.m_height)
+                        , 0.0f
+                        , -1.0f
+                        , 1.0f
+                        );
+                    bgfx::setViewTransform(viewId
+                        , NULL
+                        , ortho
+                        );
+                }
+            }
+    #endif // USE_ENTRY
+
+            // Render command lists
+            for (int32_t ii = 0, num = draw_data->CmdListsCount; ii < num; ++ii)
+            {
+                bgfx::TransientVertexBuffer tvb;
+                bgfx::TransientIndexBuffer tib;
+
+                const ImDrawList* drawList = draw_data->CmdLists[ii];
+                uint32_t numVertices = (uint32_t)drawList->VtxBuffer.size();
+                uint32_t numIndices  = (uint32_t)drawList->IdxBuffer.size();
+
+                if (!bgfx::checkAvailTransientVertexBuffer(numVertices, imgui.decl)
+                ||  !bgfx::checkAvailTransientIndexBuffer(numIndices) )
+                {
+                    // not enough space in transient buffer just quit drawing the rest...
+                    break;
+                }
+
+                bgfx::allocTransientVertexBuffer(&tvb, numVertices, imgui.decl);
+                bgfx::allocTransientIndexBuffer(&tib, numIndices);
+
+                ImDrawVert* verts = (ImDrawVert*)tvb.data;
+                memcpy(verts, drawList->VtxBuffer.begin(), numVertices * sizeof(ImDrawVert) );
+
+                ImDrawIdx* indices = (ImDrawIdx*)tib.data;
+                memcpy(indices, drawList->IdxBuffer.begin(), numIndices * sizeof(ImDrawIdx) );
+
+                uint32_t offset = 0;
+                for (const ImDrawCmd* cmd = drawList->CmdBuffer.begin(), *cmdEnd = drawList->CmdBuffer.end(); cmd != cmdEnd; ++cmd)
+                {
+                    if (cmd->UserCallback)
+                    {
+                        cmd->UserCallback(drawList, cmd);
+                    }
+                    else if (0 != cmd->ElemCount)
+                    {
+                        uint64_t state = 0
+                            | BGFX_STATE_RGB_WRITE
+                            | BGFX_STATE_ALPHA_WRITE
+                            | BGFX_STATE_MSAA
+                            ;
+
+                        bgfx::TextureHandle th = imgui.texture;
+                        bgfx::ProgramHandle program = imgui.program;
+
+                        if (NULL != cmd->TextureId)
+                        {
+                            hdbfatal("STUB: ImGui render texture callback");
+                            /*
+                            union { ImTextureID ptr; struct { bgfx::TextureHandle handle; uint8_t flags; uint8_t mip; } s; } texture = { cmd->TextureId };
+                            state |= 0 != (IMGUI_FLAGS_ALPHA_BLEND & texture.s.flags)
+                                ? BGFX_STATE_BLEND_FUNC(BGFX_STATE_BLEND_SRC_ALPHA, BGFX_STATE_BLEND_INV_SRC_ALPHA)
+                                : BGFX_STATE_NONE
+                                ;
+                            th = texture.s.handle;
+                            if (0 != texture.s.mip)
+                            {
+                                extern bgfx::ProgramHandle imguiGetImageProgram(uint8_t _mip);
+                                program = imguiGetImageProgram(texture.s.mip);
+                            }
+                            */
+                        }
+                        else
+                        {
+                            state |= BGFX_STATE_BLEND_FUNC(BGFX_STATE_BLEND_SRC_ALPHA, BGFX_STATE_BLEND_INV_SRC_ALPHA);
+                        }
+
+                        const uint16_t xx = uint16_t(hutil::tmax(cmd->ClipRect.x, 0.0f) );
+                        const uint16_t yy = uint16_t(hutil::tmax(cmd->ClipRect.y, 0.0f) );
+                        bgfx::setScissor(xx, yy
+                                , uint16_t(hutil::tmin(cmd->ClipRect.z, 65535.0f)-xx)
+                                , uint16_t(hutil::tmin(cmd->ClipRect.w, 65535.0f)-yy)
+                                );
+
+                        bgfx::setState(state);
+                        bgfx::setTexture(0, imgui.textureUniform, th);
+                        bgfx::setVertexBuffer(&tvb, 0, numVertices);
+                        bgfx::setIndexBuffer(&tib, offset, cmd->ElemCount);
+                        bgfx::submit(0, program);
+                    }
+
+                    offset += cmd->ElemCount;
+                }
+            }
+        }
+
         int run(int _argc, char** _argv) {
             SDL_Init(0
                 | SDL_INIT_GAMECONTROLLER
@@ -183,10 +318,9 @@ namespace engine {
             hfs::initialise_filesystem();
             hresmgr::initialise();
 
-            //s_userEventStart = SDL_RegisterEvents(7);
-
             bgfx::sdlSetWindow(m_window);
-            bgfx::renderFrame();
+            bgfx::renderFrame(); // calling this before bgfx::init prevents the render thread being created
+            bgfx::init(bgfx::RendererType::Direct3D11);
 
             //m_thread.init(MainThreadEntry::threadFunc, &m_mte);
 
@@ -195,6 +329,20 @@ namespace engine {
             //setWindowSize(defaultWindow, m_width, m_height, true);
             SDL_SetWindowSize(m_window, m_width, m_height);
 
+            // Application init
+            engineEvents[(uint32_t)EgEvent::MouseMove] = addEventHandler(Event::MouseMotion, [&](Event evt_id, EventData const* evt) {
+                mouseX = evt->motion.x;
+                mouseY = evt->motion.y;
+            });
+            engineEvents[(uint32_t)EgEvent::MouseBtnDown] = addEventHandler(Event::MouseButtondown, [&](Event evt_id, EventData const* evt) {
+                mouseButtons[evt->button.button] = evt->button.state == SDL_PRESSED;
+            });
+            engineEvents[(uint32_t)EgEvent::MouseBtnUp] = addEventHandler(Event::MouseButtonup, [&](Event evt_id, EventData const* evt) {
+                mouseButtons[evt->button.button] = evt->button.state == SDL_PRESSED;
+            });
+            engineEvents[(uint32_t)EgEvent::MouseWheel] = addEventHandler(Event::MouseWheel, [&](Event evt_id, EventData const* evt) {
+                wheelDelta = evt->wheel.y;
+            });
             /*
             bx::CrtFileReader reader;
             if (bx::open(&reader, "gamecontrollerdb.txt") )
@@ -210,15 +358,69 @@ namespace engine {
                 BX_FREE(allocator, data);
             }
             */
-            // Init engine
+            // Init objects
             hobjfact::objectFactoryRegistar(hrnd::Shader::getObjectDefinition(), nullptr);
+            hobjfact::objectFactoryRegistar(hresmgr::Collection::getObjectDefinition(), nullptr);
 
+            // init engine
+            //huuid::uuid_t sys_collection_resid = huuid::fromString("06360489280d40598faabfb0ed97e6fa", hcrt::strlen("06360489280d40598faabfb0ed97e6fa"));
+            huuid::uuid_t sys_collection_resid = huuid::fromDwords(0x06360489280d4059,0x8faabfb0ed97e6fa);
+            hresmgr::Handle sys_collection_hdl = hresmgr::loadResource(sys_collection_resid);
+
+            while (!sys_collection_hdl.loaded()) hresmgr::update();
+
+            {
+            // ImGui init. Done after system collection load as this loads the imgui shaders
+            ImGuiIO& io = ImGui::GetIO();
+            io.DisplaySize.x = float(m_width);
+            io.DisplaySize.y = float(m_height);
+            io.IniFilename = "imgui.ini";
+            io.RenderDrawListsFn = imguiRenderStatic;  // Setup a render function, or set to NULL and call GetDrawData() after Render() to access the render data.
+            io.UserData = this;
+
+            imgui.decl
+                .begin()
+                .add(bgfx::Attrib::Position,  2, bgfx::AttribType::Float)
+                .add(bgfx::Attrib::TexCoord0, 2, bgfx::AttribType::Float)
+                .add(bgfx::Attrib::Color0,    4, bgfx::AttribType::Uint8, true)
+                .end();
+
+            imgui.textureUniform = bgfx::createUniform("s_tex", bgfx::UniformType::Int1);
+
+            uint8_t* data;
+            int32_t width;
+            int32_t height;
+            io.Fonts->GetTexDataAsRGBA32(&data, &width, &height);
+            imgui.texture = bgfx::createTexture2D( (uint16_t)width
+                , (uint16_t)height
+                , 1
+                , bgfx::TextureFormat::BGRA8
+                , 0
+                , bgfx::copy(data, width*height*4)
+                );
+
+            static huuid::uuid_t vs_imgui_resid = huuid::fromDwords(0x25f9b47acb354dfd,0x83cf6931c1e339b4);
+            static huuid::uuid_t fs_imgui_resid = huuid::fromDwords(0x58be50a6196b43c6,0xa7868c6b7a9ef9f4);                
+
+            imgui.vsResHdl = hresmgr::loadResource(vs_imgui_resid);
+            imgui.fsResHdl = hresmgr::loadResource(fs_imgui_resid);
+            // get the loaded pointers
+            imgui.vsResHdl.loaded();
+            imgui.fsResHdl.loaded();
+            //
+            render::Shader* vs = (render::Shader*)imgui.vsResHdl.getData(render::Shader::getTypeCC());
+            render::Shader* fs = (render::Shader*)imgui.fsResHdl.getData(render::Shader::getTypeCC());
+            hdbassert(vs && fs, "ImGui shader aren't loaded. They should be loaded during startup");
+
+            imgui.program = bgfx::createProgram(
+                vs->getShaderProfileObject(render::resource::Profile_Direct3D11),
+                fs->getShaderProfileObject(render::resource::Profile_Direct3D11));
+
+            }
             bool exit = false;
             SDL_Event event;
             while (!exit)
             {
-                bgfx::renderFrame();
-
                 while (SDL_PollEvent(&event) )
                 {
                     switch (event.type)
@@ -232,6 +434,86 @@ namespace engine {
                             i(SDL2SystemEvent[event.type], &event);
                         }
                         break;
+                    }
+                }
+                ImGuiIO& io = ImGui::GetIO();
+                io.DeltaTime = 1.0f/60.0f;
+                io.MousePos = ImVec2(float(mouseX), float(mouseY));
+                for (size_t i = 0, n = HART_ARRAYSIZE(mouseButtons); i < n; ++i) {
+                    io.MouseDown[i] = mouseButtons[i];
+                }
+
+                ImGui::NewFrame();
+                //DO Tick here?
+
+                ImGui::Render();
+                bgfx::frame();
+            }
+
+            // Engine shutdown
+
+            SDL_DestroyWindow(m_window);
+            SDL_Quit();
+
+            return 0;
+        }
+
+        struct {
+            bgfx::VertexDecl    decl;
+            bgfx::ProgramHandle program;
+            bgfx::TextureHandle texture;
+            bgfx::UniformHandle textureUniform;
+            hresmgr::Handle     vsResHdl;
+            hresmgr::Handle     fsResHdl;
+        } imgui;
+
+        //Only support one window currently
+        SDL_Window* m_window = nullptr;
+        uint32_t m_flags = 0;
+
+        uint32_t m_width = HART_DEFAULT_WND_WIDTH;
+        uint32_t m_height = HART_DEFAULT_WND_HEIGHT;
+        float m_aspectRatio = float(HART_DEFAULT_WND_WIDTH)/float(HART_DEFAULT_WND_HEIGHT);
+
+        int32_t mouseX = 0;
+        int32_t mouseY = 0;
+        int32_t wheelDelta = 0;
+        bool    mouseButtons[5];
+        bool m_mouseLock = false;
+        bool m_fullscreen = false;
+
+        enum class EgEvent {
+            MouseMove,
+            MouseWheel,
+            MouseBtnUp,
+            MouseBtnDown,
+            Max,
+        };
+        EventHandle engineEvents[EgEvent::Max];
+
+        std::vector<EventHandler> eventHandlers[Event::Max];
+    };
+
+    static Context s_ctx;
+
+Event Context::SDL2SystemEvent[SDL_LASTEVENT];
+uint32_t Context::systemEvent2SDL[Event::Max];
+
+int32_t run(int argc, char* argv[]) {
+    return s_ctx.run(argc, argv);
+}
+
+hart::engine::EventHandle addEventHandler(Event sysEventID,EventHandler handler) {
+    return s_ctx.addEventHandler(sysEventID, handler);
+}
+
+void removeEventHandler(EventHandle handle) {
+    s_ctx.removeEventHandler(handle);
+}
+
+}
+} // namespace entry
+
 /*
                     case SDL_MOUSEMOTION:
                         {
@@ -608,56 +890,4 @@ namespace engine {
                         }
                         break;
 */
-                    }
-                }
-
-                //DO Tick here?
-            }
-
-            while (bgfx::RenderFrame::NoContext != bgfx::renderFrame() ) {};
-
-            // Engine shutdown
-
-            SDL_DestroyWindow(m_window);
-            SDL_Quit();
-
-            return 0;
-        }
-
-        //Only support one window currently
-        SDL_Window* m_window;
-        uint32_t m_flags;
-
-        uint32_t m_width;
-        uint32_t m_height;
-        float m_aspectRatio;
-
-        int32_t m_mx;
-        int32_t m_my;
-        int32_t m_mz;
-        bool m_mouseLock;
-        bool m_fullscreen;
-
-        std::vector<EventHandler> eventHandlers[Event::Max];
-    };
-
-    static Context s_ctx;
-
-Event Context::SDL2SystemEvent[SDL_LASTEVENT];
-uint32_t Context::systemEvent2SDL[Event::Max];
-
-int32_t run(int argc, char* argv[]) {
-    return s_ctx.run(argc, argv);
-}
-
-hart::engine::EventHandle addEventHandler(Event sysEventID,EventHandler handler) {
-    return s_ctx.addEventHandler(sysEventID, handler);
-}
-
-void removeEventHandler(EventHandle handle) {
-    s_ctx.removeEventHandler(handle);
-}
-
-}
-} // namespace entry
 

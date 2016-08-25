@@ -8,6 +8,7 @@
 #include "hart/base/crt.h"
 #include "hart/base/debug.h"
 #include "hart/base/std.h"
+#include "hart/base/util.h"
 #include <math.h>
 
 namespace hart {
@@ -89,6 +90,13 @@ inline bool isNull(const uuid_t& a) {
 inline uuid_t getInvalid() {
     uuid_t zero = {0};
     return zero;    
+}
+
+inline uuid_t fromDwords(uint64_t h, uint64_t l) {
+    uuid_t r;
+    r.dwords[1] = hutil::endianSwap(l);
+    r.dwords[0] = hutil::endianSwap(h);
+    return r;
 }
 
 inline bool uuid_t::operator == (const uuid_t& rhs) const {

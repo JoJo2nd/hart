@@ -7,14 +7,18 @@
 #include "hart/config.h"
 #include "hart/base/uuid.h"
 #include "hart/base/debug.h"
+#include "hart/base/util.h"
+#include "hart/fbs/resourcecollection_generated.h"
+#include "hart/core/objectfactory.h"
 
 namespace hart {
 namespace resourcemanager {
     typedef huuid::uuid_t resid_t;
+    struct Resource;
 
     struct ResourceLoadData {
         bool persistFileData = false;
-    }
+    };
 
     struct Handle {
 
@@ -29,16 +33,22 @@ namespace resourcemanager {
         friend void unloadResource(Handle res_hdl);
 
         resid_t     id;
-        uint32_t    typecc;
-        void const* data;
+        uint32_t    typecc = 0;
+        Resource const* info = nullptr;
+        void const* data = nullptr;
     };
 
     bool initialise();
     void update();
     void shutdown();
+    bool checkResourceLoaded(resid_t res_id);
     Handle loadResource(resid_t res_id);
     void unloadResource(Handle res_hdl);
     //void* getResourceDataPtr(Handle res_hdl);
+
+    class Collection {
+        HART_OBJECT_TYPE(HART_MAKE_FOURCC('r','s','c','t'), fb::ResourceCollection)
+    };
 
 }
 }

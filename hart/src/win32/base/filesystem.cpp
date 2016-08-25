@@ -49,7 +49,7 @@ std::vector< Mount > g_mounts;
 hMutex g_mountMtx;
 
 static bool isAbsPath(const char* in_path) {
-    return (in_path[0] != '0' && in_path[1] == ':' && in_path[2] == '\\');
+    return (in_path[0] != '\0' && in_path[1] == ':' && in_path[2] == '\\');
 }
 
 static void getExpanedPath(const char* in_path, char* out_path, size_t max_len) {
@@ -70,7 +70,7 @@ static void getExpanedPath(const char* in_path, char* out_path, size_t max_len) 
                 break;
             }
         }
-    } while (!isAbsPath(out_path));
+    } while (!isAbsPath(out_path) && hcrt::strcmp(in_path, out_path) != 0);
 }
 
 static size_t getExpanedPathUC2(const char* in_path, wchar_t* out_path, size_t max_len) {

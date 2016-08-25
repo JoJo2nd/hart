@@ -7,8 +7,11 @@
 #include "hart/base/std.h"
 #include "hart/base/filesystem.h"
 #include "hart/base/atomic.h"
+#include "hart/core/objectfactory.h"
 #include "hart/fbs/resourcedb_generated.h"
 #include "hart/base/mutex.h"
+
+HART_OBJECT_TYPE_DECL(hart::resourcemanager::Collection);
 
 namespace hart {
 namespace resourcemanager {
@@ -73,10 +76,10 @@ bool initialise() {
     auto const* asset_infos = ctx.resourceListings->assetInfos();
     for (uint32_t i = 0, n = asset_uuids->size(); i < n; ++i) {
         resid_t id;
-        id.words[0] = (*asset_uuids)[i]->highword3();
-        id.words[1] = (*asset_uuids)[i]->highword2();
-        id.words[2] = (*asset_uuids)[i]->highword1();
-        id.words[3] = (*asset_uuids)[i]->lowword();
+        id.words[3] = (*asset_uuids)[i]->highword3();
+        id.words[2] = (*asset_uuids)[i]->highword2();
+        id.words[1] = (*asset_uuids)[i]->highword1();
+        id.words[0] = (*asset_uuids)[i]->lowword();
         Resource& res = ctx.resources[id];
         res.uuid = id;
         res.info = (*asset_infos)[i];
@@ -137,9 +140,11 @@ void update() {
         LoadRequest& lr = ctx.loadQueue.front();
         Resource& res = ctx.resources[lr.uuid];
         ctx.resState = ResourceLoadState::LoadResource;
-        hobjfact::deserialiseObject(res.loadtimeData, res.info->filesize(), ser_params, &res.typecc);
+        res.runtimeData = hobjfact::deserialiseObject(res.loadtimeData.get(), res.info->filesize(), &ser_params, &res.typecc);
         hatomic::increment(res.refCount);
-        res.loadtimeData.reset();
+        if (!load_data.persistFileData) {
+            res.loadtimeData.reset();
+        }
         ctx.resState = ResourceLoadState::LoadNext;
     }
 
@@ -169,10 +174,10 @@ static void loadResourceInternal(resid_t res_id) {
     for (uint32_t i = 0, n = prerequisites->size(); i < n; ++i) {
         uint32_t ridx = (*prerequisites)[i];
         resid_t id;
-        id.words[0] = (*asset_uuids)[ridx]->highword3();
-        id.words[1] = (*asset_uuids)[ridx]->highword2();
-        id.words[2] = (*asset_uuids)[ridx]->highword1();
-        id.words[3] = (*asset_uuids)[ridx]->lowword();
+        id.words[3] = (*asset_uuids)[ridx]->highword3();
+        id.words[2] = (*asset_uuids)[ridx]->highword2();
+        id.words[1] = (*asset_uuids)[ridx]->highword1();
+        id.words[0] = (*asset_uuids)[ridx]->lowword();
         loadResourceInternal(id); 
     }
 
@@ -188,7 +193,7 @@ Handle loadResource(resid_t res_id) {
 
     Handle r;
     r.id = res_id;
-    r.data = (void const*)&ctx.resources[res_id];
+    r.info = &ctx.resources[res_id];
     return r;
 }
 
@@ -205,10 +210,10 @@ static void unloadResourceInternal(resid_t res_id) {
     for (uint32_t i = 0, n = prerequisites->size(); i < n; ++i) {
         uint32_t ridx = (*prerequisites)[i];
         resid_t id;
-        id.words[0] = (*asset_uuids)[ridx]->highword3();
-        id.words[1] = (*asset_uuids)[ridx]->highword2();
-        id.words[2] = (*asset_uuids)[ridx]->highword1();
-        id.words[3] = (*asset_uuids)[ridx]->lowword();
+        id.words[3] = (*asset_uuids)[ridx]->highword3();
+        id.words[2] = (*asset_uuids)[ridx]->highword2();
+        id.words[1] = (*asset_uuids)[ridx]->highword1();
+        id.words[0] = (*asset_uuids)[ridx]->lowword();
         unloadResourceInternal(id); 
     }
 }
@@ -218,6 +223,13 @@ void unloadResource(Handle res_hdl) {
     ++ctx.transactions;
 
     unloadResourceInternal(res_hdl.id);
+}
+
+bool checkResourceLoaded(resid_t res_id) {
+    hScopedMutex sentry(&ctx.access);
+
+    Resource& res = ctx.resources[res_id];
+    return !!res.runtimeData;
 }
 
 static void* getResourceDataPtr(resid_t res_id, uint32_t* o_typecc) {
@@ -238,6 +250,24 @@ bool Handle::loaded() {
 
     data = getResourceDataPtr(id, &typecc);
     return !!data;
+}
+
+bool Collection::deserialiseObject(MarshallType const* in_data, hobjfact::SerialiseParams const&) {
+    auto const* assets = in_data->assetUUIDs();
+    for (uint32_t i = 0, n = assets->size(); i < n; ++i) {
+        resid_t id;
+        id.words[3] = (*assets)[i]->highword3();
+        id.words[2] = (*assets)[i]->highword2();
+        id.words[1] = (*assets)[i]->highword1();
+        id.words[0] = (*assets)[i]->lowword();
+
+        hdbassert(checkResourceLoaded(id), "Collection contained resource reference but it wasn't loaded.");
+    }
+    return true;
+}
+
+bool Collection::serialiseObject(MarshallType**, hobjfact::SerialiseParams const&) const {
+    return false;
 }
 
 }

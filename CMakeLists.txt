@@ -75,7 +75,7 @@ set( MINFS_INCLUDE_DIRS
 
 # Or "${CMAKE_CURRENT_SOURCE_DIR}/external/sce_vectormath/include/vectormath/scalar" for debugging
 set( VECTORMATH_INCLUDE_DIRS
-    "${CMAKE_CURRENT_SOURCE_DIR}/external/sce_vectormath/include/vectormath/SSE"
+    "${CMAKE_CURRENT_SOURCE_DIR}/external/sce_vectormath/include/vectormath/SSE/cpp"
 )
 
 set( RAPIDJSON_INCLUDE_DIRS

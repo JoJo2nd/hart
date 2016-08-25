@@ -30,7 +30,8 @@ bool objectFactoryRegistar(ObjectDefinition const& definition, void* user) {
     return true;
 }
 
-void* deserialiseObject(void const* data, size_t len, SerialiseParams const& params, uint32_t* out_typecc) {
+void* deserialiseObject(void const* data, size_t len, SerialiseParams* params, uint32_t* out_typecc) {
+    hdbassert(params, "params must not be null");
     // Get typecc from data (see BufferHasIdentifier)
     uint32_t data_typecc = *((uint32_t*)((char const*)(data) + sizeof(flatbuffers::uoffset_t)));
     // read data
@@ -40,12 +41,12 @@ void* deserialiseObject(void const* data, size_t len, SerialiseParams const& par
         return nullptr;
     }
 
-    params.user = definition.user;
+    params->user = definition.user;
     // alloc & construct
     void* vobj = definition.objMalloc();
     definition.construct(vobj);
     // deseralise
-    definition.deserialise(data, vobj, params);
+    definition.deserialise(data, vobj, *params);
     // update type info
     *out_typecc = data_typecc;
     // return new object

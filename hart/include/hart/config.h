@@ -73,6 +73,8 @@
 #   error "Platform not supported"
 #endif
 
+//TODO: detect endian
+
 /*
     FVN-1a
     hash = offset_basis

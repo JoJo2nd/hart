@@ -32,6 +32,7 @@ assertMsgFunc
 #define hdbassert( x, y,...)	{ static bool ignore = false; \
                                 if (!(x)) {\
                                 uint32_t ret = 1;/*assertMsgFunc(ignore, __FILE__"(%u) Assert Failed: ("#x ")\n" #y, __LINE__, ##__VA_ARGS__);*/\
+                                hdbprintf(__FILE__"(%u) Assert Failed: ("#x ")\n" #y, __LINE__, ##__VA_ARGS__);\
                                 if (ret == 0) exit(-1);\
                                 if (ret == 1) hdbbreak;\
                                 if (ret == 2) ignore = true; }}

@@ -1,12 +1,7 @@
 
-namespace hart.fb;
+include "uuid.fbs";
 
-struct uuid {
-    highword3 : uint;
-    highword2 : uint;
-    highword1 : uint;
-    lowword : uint;
-}
+namespace hart.fb;
 
 table ResourceInfo {
     friendlyName:string; // friendly name (for debug, could be stripped in release but isn't ATM)
