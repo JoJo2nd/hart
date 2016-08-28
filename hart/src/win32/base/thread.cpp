@@ -3,6 +3,7 @@
     Please see the file LICENSE.txt in the repository root directory.
 *********************************************************************/
 #include "hart/base/thread.h"
+#include "hart/base/debug.h"
 #include "hart/base/threadlocalstorage.h"
 
 namespace hart {
@@ -61,6 +62,7 @@ namespace hart {
     unsigned long WINAPI Thread::staticFunc(LPVOID pParam) {
         Thread* local_this = (Thread*)pParam;
         SetThreadName( local_this->threadName_ );
+        hprofile_namethread(local_this->threadName_ );
         SetThreadPriority( local_this->ThreadHand_, local_this->priority_ );
         local_this->returnCode_ = (*local_this->threadFunc)( local_this->pThreadParam_ );
         htls::threadExit();

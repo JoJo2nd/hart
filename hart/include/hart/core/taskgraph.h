@@ -11,11 +11,11 @@
 #include "hart/base/std.h"
 #include "hart/base/atomic.h"
 #include "hart/base/util.h"
-
 namespace hart {
 namespace tasks {
-namespace scheduler {
-    bool initialise(uint32_t worker_count, uint32_t job_queue_size);
+
+namespace scheduler {    
+    bool initialise(int32_t worker_count, uint32_t job_queue_size);
     void destroy();
 }
 
@@ -47,7 +47,7 @@ namespace scheduler {
     };
 
     struct Task {
-        Task(Graph* in_owner, const char* name, const std::function<void(Info*)>& proc) 
+        Task(Graph* in_owner, const char* name, TaskProc const& proc) 
             : owner(in_owner)
             , taskName(name)
             , work(proc) {
@@ -91,7 +91,7 @@ namespace scheduler {
             hatomic::atomicSet(running, 0);
             hatomic::atomicSet(jobsWaiting, 0);
         }
-        TaskHandle addTask(const char* task_name, const std::function<void(Info*)>& proc);
+        TaskHandle addTask(const char* task_name, TaskProc const& proc);
         TaskHandle findTaskByName(const char* task_name);
         void addTaskInput(TaskHandle handle, void* in_taskinput);
         void clearTaskInputs(TaskHandle handle);
@@ -119,4 +119,4 @@ namespace scheduler {
 }
 }
 
-namespace htasks# = hart::tasks;
+namespace htasks = hart::tasks;

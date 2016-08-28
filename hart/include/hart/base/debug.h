@@ -5,19 +5,14 @@
 #pragma once
 
 #include "hart/config.h"
+#include "hart/base/crt.h"
 #if (HART_PLATFORM == HART_PLATFORM_LINUX)
 #   include <signal.h>
 #   include <stdlib.h>
 #endif
-
-namespace hart {
-namespace debug {
-/*
-outputdebugstring
-assertMsgFunc
-*/
-}
-}
+#if HART_ENABLE_PROFILE
+#   include "Remotery.h"
+#endif
 
 
 #if (HART_PLATFORM == HART_PLATFORM_LINUX)
@@ -26,7 +21,7 @@ assertMsgFunc
 
 #if HART_DO_ASSERTS
 
-#define hdbprintf(fmt, ...)         ::printf(fmt, ##__VA_ARGS__ ) /*outputdebugstring*/
+#define hdbprintf(fmt, ...)         debug::outputdebugstring(fmt, ##__VA_ARGS__ )
 #define hdbcondprintf(x, y, ...) if (x) { hdbprintf(y, ##__VA_ARGS__ ); }
 
 #define hdbassert( x, y,...)	{ static bool ignore = false; \
@@ -51,7 +46,6 @@ assertMsgFunc
 #endif
 
 #else
-//#else
 
 #define hdbprintf(fmt, ...)
 #define hdbcondprintf(x, y, ...)
@@ -60,3 +54,49 @@ assertMsgFunc
 #define hdbbreak 
 
 #endif
+
+#if HART_ENABLE_PROFILE
+
+#   define hprofile_startup() Remotery *rmt; rmt_CreateGlobalInstance(&rmt)
+#   define hprofile_shutdown() rmt_DestroyGlobalInstance(rmt)
+#   define hprofile_namethread(tname) rmt_SetCurrentThreadName(tname)
+#   define hprofile_log(str) rmt_LogText(str)
+#   define hprofile_start(str) rmt_BeginCPUSample(str, 0)
+#   define hprofile_scope(str) rmt_ScopedCPUSample(str, 0)
+#   define hprofile_start_str(str) rmt_BeginCPUSampleDynamic(str, 0)
+#   define hprofile_end() rmt_EndCPUSample()
+
+#else
+
+#   define hprofile_startup()
+#   define hprofile_shutdown()
+#   define hprofile_namethread(tname)                                
+#   define hprofile_log(str) 
+#   define hprofile_start(str) 
+#   define hprofile_scope(str) 
+#   define hprofile_start_str(str) 
+#   define hprofile_end() 
+
+#endif
+
+namespace debug {
+
+inline void outputdebugstring(char const* fmt_str, ...) {
+#if HART_ENABLE_PROFILE
+    char tmp_buffer[1024];
+    va_list args;
+    va_start(args,fmt_str);
+    hcrt::vsprintf(tmp_buffer, 1024, fmt_str, args);
+    va_end(args);
+    hprofile_log(tmp_buffer);
+#else
+    va_list args;
+    va_start(args,fmt_str);
+    ::vprintf(fmt_str, args);
+    va_end(args);
+#endif
+}
+/*
+assertMsgFunc
+*/
+}

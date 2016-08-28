@@ -95,6 +95,14 @@ bool initialise_filesystem() {
     return true;
 }
 
+void fileOpClose(FileOpHandle in_op) {
+    if (&g_syncOp == in_op || &g_syncOpEOF == in_op || !in_op) {
+        return;
+    }
+
+    delete in_op;
+}
+
 Error fileOpComplete(FileOpHandle in_op) {
     if (&g_syncOp == in_op) {
         return Error::Ok;
@@ -110,12 +118,15 @@ Error fileOpComplete(FileOpHandle in_op) {
         if (LastErr == ERROR_IO_INCOMPLETE) {
             return Error::Pending;
         } if (LastErr == ERROR_HANDLE_EOF) {
+            fileOpClose(in_op);
             return Error::EndOfFile;
         } else {
+            fileOpClose(in_op);
             return Error::Failed;
         }
     }
     //completed
+    fileOpClose(in_op);
     return Error::Ok;
 }
 
@@ -133,18 +144,12 @@ Error fileOpWait(FileOpHandle in_op) {
     auto* op = static_cast<FileOpRW*>(in_op);
     DWORD xferred;
     if (GetOverlappedResult(op->fileHdl, &op->operation, &xferred, TRUE) == FALSE) {
+        fileOpClose(in_op);
         return Error::Failed;
     }
     //completed
+    fileOpClose(in_op);
     return Error::Ok;
-}
-
-void fileOpClose(FileOpHandle in_op) {
-    if (&g_syncOp == in_op || &g_syncOpEOF == in_op || !in_op) {
-        return;
-    }
-
-    delete in_op;
 }
 
 FileOpHandle openFile(const char* filename, Mode mode, FileHandle* outhandle) {

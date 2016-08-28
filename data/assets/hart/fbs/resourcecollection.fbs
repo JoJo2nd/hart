@@ -1,0 +1,11 @@
+
+include "uuid.fbs";
+
+namespace hart.fb;
+
+table ResourceCollection {
+    assetUUIDs:[uuid];
+}
+
+file_identifier "rsct";
+root_type ResourceCollection;

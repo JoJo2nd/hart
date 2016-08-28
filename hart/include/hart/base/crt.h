@@ -76,14 +76,28 @@ namespace crt {
         va_start(marker,format);
 
 #if (HART_PLATFORM == HART_PLATFORM_LINUX)
-        int32_t r = ::vsprintf(dest,format,marker);
+        int32_t r = ::vsnprintf(dest, destlen, format, marker);
 #elif (HART_PLATFORM == HART_PLATFORM_WINDOWS)
-        int32_t r = ::vsprintf_s(dest,destlen,format,marker);
+        //int32_t r = ::vsprintf_s(dest,destlen,format,marker);
+        int32_t r = ::vsnprintf(dest, destlen, format, marker);
 #else
 #       error ("Unknown platform")
 #endif
-
         va_end(marker);
+
+        return r;
+    }
+
+    inline int32_t vsprintf(char* dest,size_t destlen,const char* format, va_list arg_list) {
+
+        #if (HART_PLATFORM == HART_PLATFORM_LINUX)
+        int32_t r = ::vsnprintf(dest,destlen,format,arg_list);
+        #elif (HART_PLATFORM == HART_PLATFORM_WINDOWS)
+        //int32_t r = ::vsprintf_s(dest,destlen,format,marker);
+        int32_t r = ::vsnprintf(dest,destlen,format,arg_list);
+        #else
+        #       error ("Unknown platform")
+        #endif
 
         return r;
     }
@@ -94,6 +108,18 @@ namespace crt {
 
     inline float atof(const char* str) {
         return float(::atof(str));
+    }
+
+    inline uint32_t strtoul(const char* str, char** endptr, int base) {
+        return ::strtoul(str, endptr, base);
+    }
+
+    inline int32_t strtol(const char* str, char** endptr, int base) {
+        return ::strtol(str, endptr, base);
+    }
+
+    inline double strtod(const char* str, char** endptr) {
+        return ::strtod(str, endptr);
     }
 
     inline int isspace(char c) {

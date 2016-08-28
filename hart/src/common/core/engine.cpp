@@ -10,6 +10,9 @@
 #include "hart/config.h"
 #include "hart/core/engine.h"
 #include "hart/core/resourcemanager.h"
+#include "hart/core/taskgraph.h"    
+#include "hart/core/configoptions.h"
+#include "hart/base/uuid.h"
 #include "hart/base/filesystem.h"
 #include "hart/base/util.h"
 #include "hart/base/time.h"
@@ -300,11 +303,40 @@ namespace engine {
         }
 
         int run(int _argc, char** _argv) {
+            hprofile_startup();
+            hprofile_namethread("Main Thread");
+
+            hfs::initialise_filesystem();
+            hfs::FileHandle fileHdl;
+            hfs::FileOpHandle fop = hfs::openFile("/system.ini", hfs::Mode::Read, &fileHdl);
+            if (hfs::fileOpWait(fop) != hfs::Error::Ok) {
+                return -1;
+            }
+            hfs::FileStat stats;
+            fop = hfs::fstatAsync(fileHdl, &stats);
+            if (hfs::fileOpWait(fop) != hfs::Error::Ok) {
+                return -1;
+            }
+            char* data = new char[stats.filesize];
+            fop = hfs::freadAsync(fileHdl, data, stats.filesize, 0);
+            if (hfs::fileOpWait(fop) != hfs::Error::Ok) {
+                return -1;
+            }
+            hfs::closeFile(fileHdl);
+            if (!hconfigopt::loadConfigOptions(data, stats.filesize)) {
+                return -2;
+            }
+            delete data;
+            data = nullptr;
+
+            m_width = hconfigopt::getUint("renderer", "width", 854);
+            m_height = hconfigopt::getUint("renderer", "height", 480);
+
             SDL_Init(0
                 | SDL_INIT_GAMECONTROLLER
                 );
 
-            m_window = SDL_CreateWindow("hart"
+            m_window = SDL_CreateWindow(hconfigopt::getStr("window", "title", "---")
                             , SDL_WINDOWPOS_UNDEFINED
                             , SDL_WINDOWPOS_UNDEFINED
                             , m_width
@@ -317,8 +349,10 @@ namespace engine {
                 | ENTRY_WINDOW_FLAG_FRAME;
 
             htime::initialise();
-            hfs::initialise_filesystem();
             hresmgr::initialise();
+            hart::tasks::scheduler::initialise(
+                hconfigopt::getInt("taskgraph", "workercount", 4), 
+                hconfigopt::getUint("taskgraph", "jobqueuesize", 256));
 
             bgfx::sdlSetWindow(m_window);
             bgfx::renderFrame(); // calling this before bgfx::init prevents the render thread being created
@@ -444,6 +478,7 @@ namespace engine {
             SDL_Event event;
             while (!exit)
             {
+                hprofile_scope(Frame);
                 htime::update();
 
                 while (SDL_PollEvent(&event) )
@@ -474,7 +509,10 @@ namespace engine {
                 ImGui::ShowTestWindow(&test_wnd_open);
 
                 ImGui::Render();
+
+                hprofile_start(RenderFrame);
                 bgfx::frame();
+                hprofile_end();
 
                 wheelDelta = 0;
             }
@@ -483,7 +521,7 @@ namespace engine {
 
             SDL_DestroyWindow(m_window);
             SDL_Quit();
-
+            hprofile_shutdown();
             return 0;
         }
 

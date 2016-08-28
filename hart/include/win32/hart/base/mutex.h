@@ -5,10 +5,10 @@
 #pragma once
 
 #include "hart/config.h"
-#include <winsock2.h>
-#include <windows.h>
+#include "hart/windows.inc"
 
 namespace hart {
+
 class Mutex {
 public:
     Mutex() {
@@ -49,6 +49,7 @@ public:
 private:
     Mutex* mtx;
 };
+
 }
 
 typedef hart::Mutex hMutex;

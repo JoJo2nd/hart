@@ -4,12 +4,8 @@ data/builder/hart/*
 *.exe
 *.dll
 *.lib
+*.png
 packaged.sha1.local
 *_generated.h
 *.sublime-project
 *.sublime-workspace
-
-
-
-# this ignore is temp
-data/assets/*

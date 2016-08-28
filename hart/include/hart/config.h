@@ -13,6 +13,7 @@
 #define HART_DEBUG              (0) // 1 for a debug build
 #define HERT_RELEASE            (0) // 1 for a release build
 #define HART_DEBUG_INFO         (0) // enable debug features and aids
+#define HART_ENABLE_PROFILE     (1) // enable Remotery profiling and logging
 #define HART_DO_ASSERTS         (0) // enable asserts
 #define HART_64BIT              (0) // 1 for a 64bit build
 #define HART_32BIT              (0) // 1 for a 32bit build
@@ -59,6 +60,10 @@
 #if HART_DEBUG_INFO
 #   undef HART_DO_ASSERTS
 #   define HART_DO_ASSERTS (1)
+#endif
+
+#if HART_DEBUG_INFO
+#   define HART_DEBUG_TASK_ORDER (0)
 #endif
 
 #if (HART_PLATFORM == HART_PLATFORM_WINDOWS)

@@ -6,6 +6,7 @@
 
 #include "hart/config.h"
 #include "hart/base/debug.h"
+#include "hart/windows.inc"   
 
 namespace hart {
 class Semaphore

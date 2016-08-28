@@ -4,9 +4,8 @@
 *********************************************************************/
 #include "hart/base/threadlocalstorage.h"
 #include "hart/base/mutex.h"
-#include <winsock2.h>
-#include <windows.h>
-#include <vector>
+#include "hart/base/std.h"
+#include "hart/windows.inc"
 
 namespace hart {
 namespace tls {    
@@ -21,7 +20,7 @@ struct TLSDestructor{
     KeyDestructor  tlsDestructor_;
 };
 hMutex tlsMutex;
-std::vector< TLSDestructor > tlsDestructorArray;
+hstd::vector< TLSDestructor > tlsDestructorArray;
 
 size_t  createKey(KeyDestructor destructor) {
     tlsMutex.lock();

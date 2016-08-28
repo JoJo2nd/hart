@@ -1,0 +1,12 @@
+{
+  "friendlyname": "imgui/shaders/vs_imgui_colour", 
+  "inputs": [
+    "vs_imgui_colour.sc"
+  ], 
+  "type": "shader", 
+  "uuid": "{411fb9ca-13c5-4b51-b010-0fbfe5a2768b}", 
+  "processoptions": {
+    "platformext": "-p vs_5_0 --debug", 
+    "type": "vertex"
+  }
+}

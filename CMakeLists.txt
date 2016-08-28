@@ -82,6 +82,15 @@ set( RAPIDJSON_INCLUDE_DIRS
   "${CMAKE_CURRENT_SOURCE_DIR}/external/rapidjson/include"
 )
 
+set( REMOTERY_INCLUDE_DIR 
+  "${CMAKE_CURRENT_SOURCE_DIR}/external/Remotery/lib"
+)
+
+set( REMOTERY_SRC_FILES
+  "${CMAKE_CURRENT_SOURCE_DIR}/external/Remotery/lib/Remotery.h"
+  "${CMAKE_CURRENT_SOURCE_DIR}/external/Remotery/lib/Remotery.c"
+)
+
 add_definitions(-D_CRT_SECURE_NO_WARNINGS -D_ITERATOR_DEBUG_LEVEL=0)
 # BGFX uses the static runtime so link to that
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")

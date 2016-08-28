@@ -1,0 +1,9 @@
+
+namespace hart.fb;
+
+struct uuid {
+    highword3 : uint;
+    highword2 : uint;
+    highword1 : uint;
+    lowword : uint;
+}

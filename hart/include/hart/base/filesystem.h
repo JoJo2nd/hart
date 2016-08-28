@@ -60,7 +60,6 @@ namespace filesystem {
 
     Error fileOpComplete(FileOpHandle);
     Error fileOpWait(FileOpHandle);
-    void fileOpClose(FileOpHandle);
 
     FileOpHandle openFile(const char* filename, Mode mode, FileHandle* outhandle);
     void closeFile(FileHandle);

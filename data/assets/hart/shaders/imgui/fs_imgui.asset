@@ -1,0 +1,12 @@
+{
+  "friendlyname": "imgui/shaders/fs_imgui", 
+  "inputs": [
+    "fs_imgui.sc"
+  ], 
+  "type": "shader", 
+  "uuid": "{58be50a6-196b-43c6-a786-8c6b7a9ef9f4}", 
+  "processoptions": {
+    "platformext": "-p ps_5_0 --debug", 
+    "type": "fragment"
+  }
+}
