@@ -170,6 +170,7 @@ hatomic::aint32_t taskToComplete;
             //Grab an task and run it
             Task* task = nullptr;
             if (lfds_queue_dequeue(workerQueue, (void**)&task)) {
+                hprofile_start_str(task->taskName.c_str());
                 auto task_index = hatomic::increment(task->started);
                 hdbassert(task_index <= hatomic::atomicGet(task->toSend), "task_index is invalid. To high compared to number of tasks expected to run.");
                 Info info;
@@ -192,6 +193,7 @@ hatomic::aint32_t taskToComplete;
                 }
                 if (wakeScheduler)
                     schedulerSemphore.Post();
+                hprofile_end();
             }
         }
         return 0;

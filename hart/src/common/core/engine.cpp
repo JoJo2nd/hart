@@ -302,7 +302,7 @@ namespace engine {
             }
         }
 
-        int run(int _argc, char** _argv) {
+        int run(int _argc, char** _argv, GameInterface* game) {
             hprofile_startup();
             hprofile_namethread("Main Thread");
 
@@ -402,7 +402,6 @@ namespace engine {
             hobjfact::objectFactoryRegistar(hresmgr::Collection::getObjectDefinition(), nullptr);
 
             // init engine
-            //huuid::uuid_t sys_collection_resid = huuid::fromString("06360489280d40598faabfb0ed97e6fa", hcrt::strlen("06360489280d40598faabfb0ed97e6fa"));
             huuid::uuid_t sys_collection_resid = huuid::fromDwords(0x06360489280d4059,0x8faabfb0ed97e6fa);
             hresmgr::Handle sys_collection_hdl = hresmgr::loadResource(sys_collection_resid);
 
@@ -471,7 +470,16 @@ namespace engine {
 
             }
 
+            // Info the game that main engine assets are loaded.
+            game->postSystemAssetLoad();
+
             htime::update();
+
+            taskGraph.addTask("hresmgr::update", [&](htasks::Info*) {
+                hresmgr::update();
+            });
+
+            game->taskGraphSetup(&taskGraph);
 
             bool test_wnd_open = false;
             bool exit = false;
@@ -505,14 +513,21 @@ namespace engine {
                 io.MouseWheel = float(wheelDelta);
 
                 ImGui::NewFrame();
-
+                
+                hprofile_start(game_tick);
+                game->tick(htime::deltaSec(), &taskGraph);
+                //TODO: renderDebugMenus call & game->renderDebugMenus
                 ImGui::ShowTestWindow(&test_wnd_open);
+                hprofile_end();
 
-                ImGui::Render();
+                taskGraph.kick();
 
                 hprofile_start(RenderFrame);
+                ImGui::Render();
                 bgfx::frame();
                 hprofile_end();
+
+                taskGraph.wait();
 
                 wheelDelta = 0;
             }
@@ -542,6 +557,8 @@ namespace engine {
         uint32_t m_height = HART_DEFAULT_WND_HEIGHT;
         float m_aspectRatio = float(HART_DEFAULT_WND_WIDTH)/float(HART_DEFAULT_WND_HEIGHT);
 
+        htasks::Graph taskGraph;
+
         int32_t mouseX = 0;
         int32_t mouseY = 0;
         int32_t wheelDelta = 0;
@@ -566,8 +583,8 @@ namespace engine {
 Event Context::SDL2SystemEvent[SDL_LASTEVENT];
 uint32_t Context::systemEvent2SDL[Event::Max];
 
-int32_t run(int argc, char* argv[]) {
-    return s_ctx.run(argc, argv);
+int32_t run(int argc, char* argv[], GameInterface* game) {
+    return s_ctx.run(argc, argv, game);
 }
 
 hart::engine::EventHandle addEventHandler(Event sysEventID,EventHandler handler) {

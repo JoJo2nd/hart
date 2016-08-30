@@ -6,8 +6,9 @@
 #pragma once
 
 #include "hart/config.h"
+#include "hart/base/std.h"
+#include "hart/core/taskgraph.h"
 #include <SDL2/SDL_events.h>
-#include <functional>
 
 #define ENTRY_WINDOW_FLAG_NONE         UINT32_C(0x00000000)
 #define ENTRY_WINDOW_FLAG_ASPECT_RATIO UINT32_C(0x00000001)
@@ -63,13 +64,20 @@ enum class Event : uint32_t {
 
 // SDL_Events covers us for the time being. TODO: abstract it
 typedef SDL_Event EventData;
-typedef std::function<void(Event, EventData const*)> EventHandler;
+typedef hstd::function<void(Event, EventData const*)> EventHandler;
 struct EventHandle {
     Event event;
     uint32_t loc;
 };
 
-int32_t run(int argc,char* argv[]);
+class GameInterface {
+public:
+    virtual void postSystemAssetLoad() = 0;
+    virtual void taskGraphSetup(htasks::Graph* frameGraph) = 0;
+    virtual void tick(float delta, htasks::Graph* frameGraph) = 0;
+};
+
+int32_t run(int argc,char* argv[], GameInterface* game);
 
 EventHandle addEventHandler(Event sysEventID, EventHandler handler);
 void removeEventHandler(EventHandle handle);

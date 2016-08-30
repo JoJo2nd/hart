@@ -6,8 +6,9 @@ set( INCLUDE_DIRS
     ${SDL2_INCLUDE_DIRS}
     ${FLATBUFFERS_INCLUDE_DIRS}
     ${VECTORMATH_INCLUDE_DIRS}
-    ${RAPIDJSON_INCLUDE_DIRS}
+    ${REMOTERY_INCLUDE_DIR}
     "${CMAKE_CURRENT_SOURCE_DIR}/../hart/include"
+    "${CMAKE_CURRENT_SOURCE_DIR}/../include/imgui"
 )
 
 #platform headers
