@@ -1,0 +1,58 @@
+
+namespace hart.render.resource;
+
+enum DepthTest : byte {
+    Less,
+    LEqual,
+    Equal,
+    GEqual,
+    Greater,
+    NEqual,
+    Never,
+    Always,
+}
+
+enum BlendOp : byte {
+    Zero,         
+    One,          
+    SrcColor,    
+    InvSrcColor,
+    SrcAlpha,    
+    InvSrcAlpha,
+    DstAlpha,    
+    InvDstAlpha,
+    DstColor,    
+    InvDstColor,
+    SrcAlphaSat,
+    Factor,       
+    InvFactor,  
+}
+
+enum BlendEq : byte {
+    Add,   
+    Sub,   
+    Revsub,
+    Min,   
+    Max,   
+}
+
+enum CullMode : byte {
+    None,
+    CW,
+    CCW,
+}
+
+table RenderState {
+    rgbWrite:bool = true;
+    alphaWrite:bool = true;
+    depthWrite:bool = false;
+    depthTest:DepthTest = Less;
+    independentAlpha:bool = false;
+    blendSrc:BlendOp = One;
+    blendDst:BlendOp = Zero;
+    blendFn:BlendEq = Add;
+    alphaBlendSrc:BlendOp = One;
+    alphaBlendDst:BlendOp = Zero;
+    alphaBlendFn:BlendEq = Add;
+    cull:CullMode = CW;
+}

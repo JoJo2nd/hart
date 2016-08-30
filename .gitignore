@@ -9,3 +9,4 @@ packaged.sha1.local
 *_generated.h
 *.sublime-project
 *.sublime-workspace
+*.oauth2
