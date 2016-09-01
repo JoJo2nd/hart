@@ -1,12 +1,17 @@
 {
   "friendlyname": "imgui/shaders/vs_imgui", 
   "inputs": [
-    "vs_imgui.sc"
+    "vs_imgui.sc", 
+    "varying.def.sc", 
+    "..\\common\\common.sh", 
+    "..\\..\\..\\..\\..\\external\\bgfx\\src\\bgfx_shader.sh", 
+    "..\\common\\shaderlib.sh"
   ], 
   "type": "shader", 
   "uuid": "{25f9b47a-cb35-4dfd-83cf-6931c1e339b4}", 
   "processoptions": {
     "platformext": "-p vs_5_0 --debug", 
-    "type": "vertex"
+    "type": "vertex", 
+    "input": "%(asset_root)/vs_imgui.sc"
   }
 }

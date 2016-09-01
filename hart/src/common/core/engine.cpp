@@ -23,6 +23,7 @@
 
 // object factory classes
 #include "hart/render/shader.h"
+#include "hart/render/material.h"
 
 #if (HART_PLATFORM == HART_PLATFORM_WINDOWS)
 #   define SDL_MAIN_HANDLED
@@ -399,6 +400,8 @@ namespace engine {
             */
             // Init objects
             hobjfact::objectFactoryRegistar(hrnd::Shader::getObjectDefinition(), nullptr);
+            hobjfact::objectFactoryRegistar(hrnd::Material::getObjectDefinition(), nullptr);
+            hobjfact::objectFactoryRegistar(hrnd::MaterialSetup::getObjectDefinition(), nullptr);
             hobjfact::objectFactoryRegistar(hresmgr::Collection::getObjectDefinition(), nullptr);
 
             // init engine

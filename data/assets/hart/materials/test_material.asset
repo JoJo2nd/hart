@@ -1,13 +1,18 @@
 {
-  "friendlyname": "system/test/material", 
   "inputs": [
     "test_material.json", 
+    "..\\fbs\\material.fbs", 
     "..\\fbs\\renderstate.fbs", 
-    "..\\fbs\\uuid.fb"
+    "..\\fbs\\uuid.fbs"
   ], 
-  "type": "material", 
   "uuid": "{fce514b8-be3a-4a22-9abd-430a93e40273}", 
+  "prerequisites": [
+    "{25f9b47a-cb35-4dfd-83cf-6931c1e339b4}", 
+    "{58be50a6-196b-43c6-a786-8c6b7a9ef9f4}"
+  ], 
   "processoptions": {
     "input": "test_material.json"
-  }
+  }, 
+  "friendlyname": "system/test/material", 
+  "type": "material"
 }
