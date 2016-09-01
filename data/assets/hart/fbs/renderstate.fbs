@@ -56,3 +56,6 @@ table RenderState {
     alphaBlendFn:BlendEq = Add;
     cull:CullMode = CW;
 }
+
+file_identifier "rste";
+root_type RenderState;

@@ -4,7 +4,7 @@ include "uuid.fbs";
 namespace hart.fb;
 
 table ResourceCollection {
-    assetUUIDs:[uuid];
+    assetUUIDs:[resource.uuid];
 }
 
 file_identifier "rsct";

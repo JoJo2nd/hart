@@ -1,0 +1,13 @@
+{
+  "friendlyname": "system/test/material", 
+  "inputs": [
+    "test_material.json", 
+    "..\\fbs\\renderstate.fbs", 
+    "..\\fbs\\uuid.fb"
+  ], 
+  "type": "material", 
+  "uuid": "{fce514b8-be3a-4a22-9abd-430a93e40273}", 
+  "processoptions": {
+    "input": "test_material.json"
+  }
+}

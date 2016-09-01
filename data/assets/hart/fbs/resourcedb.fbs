@@ -11,7 +11,7 @@ table ResourceInfo {
 }
 
 table ResourceList {
-    assetUUIDs:[uuid];
+    assetUUIDs:[resource.uuid];
     assetInfos:[ResourceInfo];
 }
 

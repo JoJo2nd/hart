@@ -1,0 +1,26 @@
+{
+    "techniques" : [
+    {
+        "name":"standard",
+        "passes": [
+        {
+            "state": {
+                "depthWrite":true
+            },
+            "vertex": {
+                "highword1": 4249695691, 
+                "lowword": 2058680613, 
+                "highword3": 3023692737, 
+                "highword2": 829017987
+            },
+            "pixel": {
+                "highword1": 3326307097, 
+                "lowword": 2790309464, 
+                "highword3": 4109999738, 
+                "highword2": 1804371623
+            }
+        }
+        ]
+    }
+    ]
+}

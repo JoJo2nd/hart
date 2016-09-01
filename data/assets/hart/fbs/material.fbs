@@ -1,0 +1,23 @@
+
+include "renderstate.fbs";
+include "uuid.fbs";
+
+namespace hart.render.resource;
+
+table Pass {
+    state:RenderState;
+    vertex:resource.uuid;
+    pixel:resource.uuid;
+}
+
+table Technique {
+    name:string;
+    passes:[Pass];
+}
+
+table Material {
+    techniques:[Technique];
+}
+
+file_identifier "rmat";
+root_type Material;
