@@ -15,9 +15,11 @@
 #define HART_DEBUG_INFO         (0) // enable debug features and aids
 #define HART_ENABLE_PROFILE     (1) // enable Remotery profiling and logging
 #define HART_DO_ASSERTS         (0) // enable asserts
+#define HART_ENABLE_STDIO       (0) // enable output to stdio
 #define HART_64BIT              (0) // 1 for a 64bit build
 #define HART_32BIT              (0) // 1 for a 32bit build
 #define HART_API                    // calling convention for callbacks
+#define HART_VERIFY_FREELIST    (1)
 #define HART_DEFAULT_WND_WIDTH  (1280)
 #define HART_DEFAULT_WND_HEIGHT (720)
 #define HART_MAX_PATH           (1024)
@@ -60,10 +62,17 @@
 #if HART_DEBUG_INFO
 #   undef HART_DO_ASSERTS
 #   define HART_DO_ASSERTS (1)
+#   undef HART_ENABLE_STDIO
+#   define HART_ENABLE_STDIO (1)
 #endif
 
 #if HART_DEBUG_INFO
 #   define HART_DEBUG_TASK_ORDER (0)
+#endif
+
+#if !HART_DEBUG_INFO
+#   undef HART_VERIFY_FREELIST
+#   define HART_VERIFY_FREELIST (0)
 #endif
 
 #if (HART_PLATFORM == HART_PLATFORM_WINDOWS)
@@ -101,5 +110,7 @@
 #   define HART_FVN_OFFSET_BASIS (2166136261)
 #   define HART_FVN_PRIME (16777619)
 #endif
+
+#define BGFX_HANDLE_SET_INVALID(x) (x.idx = bgfx::invalidHandle)
 
 #include <stdint.h>

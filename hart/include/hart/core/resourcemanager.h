@@ -44,7 +44,13 @@ namespace resourcemanager {
     bool checkResourceLoaded(resid_t res_id);
     Handle loadResource(resid_t res_id);
     void unloadResource(Handle res_hdl);
-    //void* getResourceDataPtr(Handle res_hdl);
+    // Grabs a weak reference to loaded data. Can't be depended on to stay loaded 
+    // UNLESS resource is a marked as a prerequisite of the resource requesting it.
+    void* weakGetResource(resid_t res_id, uint32_t typecc);
+    template<typename t_ty>
+    t_ty* tweakGetResource(resid_t res_id) {
+        return (t_ty*)weakGetResource(res_id, t_ty::getTypeCC());
+    }
 
     class Collection {
         HART_OBJECT_TYPE(HART_MAKE_FOURCC('r','s','c','t'), fb::ResourceCollection)

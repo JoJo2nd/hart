@@ -22,8 +22,7 @@
 #include "vec_aos.h"
 
 // object factory classes
-#include "hart/render/shader.h"
-#include "hart/render/material.h"
+#include "hart/render/render.h"
 
 #if (HART_PLATFORM == HART_PLATFORM_WINDOWS)
 #   define SDL_MAIN_HANDLED
@@ -497,7 +496,6 @@ namespace engine {
                     switch (event.type)
                     {
                     case SDL_QUIT:
-                        //m_eventQueue.postExitEvent();
                         exit = true;
                         break;
                     default:

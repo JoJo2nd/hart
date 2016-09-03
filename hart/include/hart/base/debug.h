@@ -82,19 +82,17 @@
 namespace debug {
 
 inline void outputdebugstring(char const* fmt_str, ...) {
+    va_list args;
+    va_start(args,fmt_str);
 #if HART_ENABLE_PROFILE
     char tmp_buffer[1024];
-    va_list args;
-    va_start(args,fmt_str);
     hcrt::vsprintf(tmp_buffer, 1024, fmt_str, args);
-    va_end(args);
     hprofile_log(tmp_buffer);
-#else
-    va_list args;
-    va_start(args,fmt_str);
-    ::vprintf(fmt_str, args);
-    va_end(args);
 #endif
+#if HART_ENABLE_STDIO
+    ::vprintf(fmt_str, args);
+#endif
+    va_end(args);
 }
 /*
 assertMsgFunc

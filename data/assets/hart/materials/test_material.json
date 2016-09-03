@@ -1,7 +1,7 @@
 {
     "techniques" : [
     {
-        "name":"standard",
+        "name":"Main",
         "passes": [
         {
             "state": {

@@ -9,12 +9,14 @@
 #include "hart/base/util.h"
 #include "hart/base/std.h"
 #include "hart/core/objectfactory.h"
+#include "hart/render/state.h"
 #include "hart/fbs/material_generated.h"
 #include "hart/fbs/materialsetup_generated.h"
 
 namespace hart {
 namespace render {
 
+typedef resource::TechniqueType TechniqueType;
 class Shader;
 
 class Material {
@@ -23,12 +25,13 @@ class Material {
         
     private:
         struct Pass {
+            State   state;
             Shader* vertex;
             Shader* pixel;
         };
 
         struct Technique {
-            hstd::string name;
+            TechniqueType type;
             hstd::vector<Pass> passes;
         };
 
@@ -40,7 +43,7 @@ class MaterialSetup {
     public:
         
     private:
-        
+        Material* material = nullptr;
 };
 
 }

@@ -1,21 +1,8 @@
 
 include "uuid.fbs";
+include "material.fbs";
 
 namespace hart.render.resource;
-
-enum MaterialInputType : byte {
-    Texture,
-    Vec4,
-    Mat33,
-    Mat44
-}
-
-table MaterialInput {
-    name:string;
-    type:MaterialInputType;
-    data:[float];
-    res:resource.uuid;
-}
 
 table MaterialSetup {
     material:resource.uuid;

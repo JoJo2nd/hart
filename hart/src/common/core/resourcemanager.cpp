@@ -244,6 +244,12 @@ static void* getResourceDataPtr(resid_t res_id, uint32_t* o_typecc) {
     return res.runtimeData;
 }
 
+void* weakGetResource(resid_t res_id, uint32_t o_typecc) {
+    uint32_t r_typecc;
+    void* data = getResourceDataPtr(res_id, &r_typecc);
+    return r_typecc == o_typecc ? data : nullptr;
+}
+
 bool Handle::loaded() {
     if (data)
         return true;

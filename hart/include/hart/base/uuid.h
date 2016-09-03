@@ -9,6 +9,7 @@
 #include "hart/base/debug.h"
 #include "hart/base/std.h"
 #include "hart/base/util.h"
+#include "hart/fbs/uuid_generated.h"
 #include <math.h>
 
 namespace hart {
@@ -23,6 +24,15 @@ struct uuid_t {
     bool operator == (uuid_t const& rhs) const;
     bool operator < (uuid_t const& rhs) const;
 };
+
+inline uuid_t fromData(resource::uuid const& v) {
+    uuid_t r;
+    r.words[2] = v.highword2();
+    r.words[3] = v.highword3();
+    r.words[1] = v.highword1();
+    r.words[0] = v.lowword();
+    return r;
+}
 
 inline bool compareUUID(const uuid_t& lhs, const uuid_t& rhs) {
     return lhs.dwords[0] == rhs.dwords[0] && lhs.dwords[1] == rhs.dwords[1];
