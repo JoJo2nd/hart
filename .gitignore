@@ -6,6 +6,7 @@ data/builder/hart/*
 *.lib
 *.png
 packaged.sha1.local
+local.manifest
 *_generated.h
 *.sublime-project
 *.sublime-workspace
