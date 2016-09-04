@@ -1,0 +1,17 @@
+#!/bin/sh
+#
+#
+
+echo "Checking for binary assets that need uploading"
+
+cd ./scripts
+python ./binary_asset_package.py -r ./../ -d ./../data/assets -d ./../data/builder -d ./../external/SDL2
+cd ./../
+
+files=`git status`
+re="binary.manifest"
+if [[ $files == *$re ]]
+then
+    echo "Updating manifest"
+    git add binary.manifest
+fi

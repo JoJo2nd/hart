@@ -1,0 +1,7 @@
+#!/bin/sh
+#
+#
+
+cd ./scripts
+python ./binary_asset_unpackage.py -r ./../
+cd ./../
