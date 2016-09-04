@@ -1,5 +1,5 @@
 /********************************************************************
-    Written by James Moran
+    Written by James Moran and Luke Trow
     Please see the file LICENSE.txt in the repository root directory.
 *********************************************************************/
 //NOTE: alot of this crap I don't need to worry about yet. First goal is to get a SDL2 window
