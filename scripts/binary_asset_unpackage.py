@@ -74,7 +74,7 @@ def main():
         os.remove('remote.zip')
 
     # update the local manifest
-    with open('./../local.manifest', 'wb') as f:
+    with open(join(root, 'local.manifest'), 'wb') as f:
         f.write(json.dumps(manifest, indent=2))
 
 
