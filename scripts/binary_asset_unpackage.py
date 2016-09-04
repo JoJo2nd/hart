@@ -66,8 +66,8 @@ def main():
         with zipfile.ZipFile('remote.zip', 'r') as zip_pkg:
             zip_pkg.extractall()
         # The extract creats a local 'file', move to the dest
-        if not os.path.exists(split(full_path)):
-            os.makedirs(split(full_path))
+        if not os.path.exists(split(full_path)[0]):
+            os.makedirs(split(full_path)[0])
         os.rename('file', full_path)
 
     if isfile('remote.zip'):
