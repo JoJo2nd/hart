@@ -62,7 +62,7 @@ def main():
         print "Downloading package %s"%(src_path)
         dbx.files_download_to_file('remote.zip', src_path)
 
-        print "Extracting package from %s"%(src_path)
+        print "Extracting package from %s to %s"%(src_path, f['dest'])
         with zipfile.ZipFile('remote.zip', 'r') as zip_pkg:
             zip_pkg.extractall()
         # The extract creats a local 'file', move to the dest
