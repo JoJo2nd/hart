@@ -5,6 +5,9 @@ data/builder/hart/*
 *.dll
 *.lib
 *.png
+*.qm
+*.tga
+*.lpf
 packaged.sha1.local
 local.manifest
 *_generated.h

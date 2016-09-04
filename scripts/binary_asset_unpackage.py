@@ -3,7 +3,7 @@ import zipfile
 import os
 import hashlib
 import json
-from os.path import join, realpath, splitext, relpath, isfile
+from os.path import join, realpath, splitext, relpath, isfile, split
 import dropbox
 
 parser = argparse.ArgumentParser(prog='binary asset unpackager',description='Script to download and unpackage binary data for a git repro')
@@ -66,6 +66,8 @@ def main():
         with zipfile.ZipFile('remote.zip', 'r') as zip_pkg:
             zip_pkg.extractall()
         # The extract creats a local 'file', move to the dest
+        if not os.path.exists(split(full_path)):
+            os.makedirs(split(full_path))
         os.rename('file', full_path)
 
     if isfile('remote.zip'):

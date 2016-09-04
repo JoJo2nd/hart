@@ -1,17 +1,260 @@
 {
-  "data\\builder\\texturecRelease.exe": {
-    "sha1": "b094f640dfd8d41aa58bc3489e75e378dce4a98a"
+  "tools\\Tiled\\plugins\\tiled\\replicaisland.dll": {
+    "sha1": "cf5bb26f7cafde3f5faf38c4b2dc53c10723acff"
   }, 
-  "data\\builder\\flatc.exe": {
-    "sha1": "1f9ad896f921107efef565838faad2f33690bf6c"
+  "tools\\Tiled\\translations\\tiled_pt_PT.qm": {
+    "sha1": "d54b4a91c16b45c671a6059f30f480e9e89e2e22"
   }, 
-  "data\\builder\\shadercRelease.exe": {
-    "sha1": "5e4668a25dbd5457a5a60608316f5222f2a2f020"
+  "tools\\Tiled\\Qt5Gui.dll": {
+    "sha1": "1a8f0099993697020ebe0f82927aed6fdb6a8e22"
+  }, 
+  "tools\\Tiled\\plugins\\tiled\\lua.dll": {
+    "sha1": "d68524f0a9db588b8bdc65c64e4f0431042c5b7c"
+  }, 
+  "tools\\Tilemancer-0.2.1\\libvorbis-0.dll": {
+    "sha1": "25a2450d5138fea22688342218dc1d6567f3c15a"
+  }, 
+  "tools\\Tiled\\translations\\tiled_nb.qm": {
+    "sha1": "535c74e6ccfb82bed6af42f4795a482ad8da3ece"
+  }, 
+  "tools\\Tiled\\examples\\sewer_automap\\rules_sewers.png": {
+    "sha1": "b98713d8036e0c163d9346fc4ef5c003f803556a"
   }, 
   "external\\SDL2\\lib\\x64\\SDL2.dll": {
     "sha1": "dc6bdf3aaf46e99aeb1c0cb80ab643fb8f1b0353"
   }, 
+  "tools\\Tiled\\translations\\tiled_cs.qm": {
+    "sha1": "c853eb6ef8434b024de9b8f6fa7899d034a63df4"
+  }, 
+  "tools\\Tilemancer-0.2.1\\SDL2.dll": {
+    "sha1": "fb8b1ba166913c18eb00f8ca53439d0f4ee54359"
+  }, 
+  "tools\\Tiled\\tiled.dll": {
+    "sha1": "a48fdb254278fa4e5128bbb56e42c498f4548740"
+  }, 
+  "tools\\Tiled\\translations\\tiled_ar_DZ.qm": {
+    "sha1": "4ec78e2fd1f3b7e41b02e23034a3748a4fef905f"
+  }, 
+  "tools\\Tilemancer-0.2.1\\libogg-0.dll": {
+    "sha1": "3154c99e41fc2760abccadce8152476d60f06041"
+  }, 
+  "data\\builder\\flatc.exe": {
+    "sha1": "1f9ad896f921107efef565838faad2f33690bf6c"
+  }, 
+  "tools\\Tilemancer-0.2.1\\libwinpthread-1.dll": {
+    "sha1": "27d500839633967c35d335719369373b1587b0c3"
+  }, 
+  "tools\\Tilemancer-0.2.1\\SDL2_image.dll": {
+    "sha1": "6f1937ca6b902ac4a0e510d388128da5d214bc4e"
+  }, 
+  "tools\\Tiled\\plugins\\tiled\\tengine.dll": {
+    "sha1": "d93ea766ec2a6903e39e24276b24ce5daa8bda27"
+  }, 
+  "tools\\Tilemancer-0.2.1\\libvorbisfile-3.dll": {
+    "sha1": "939bdbc844c45a2eb4ee5db6da1654407735eec8"
+  }, 
+  "tools\\Tiled\\translations\\tiled_pt.qm": {
+    "sha1": "b174bcf7fa026ef2481eac6929474bf27aa39bc9"
+  }, 
+  "tools\\Tiled\\translations\\tiled_en.qm": {
+    "sha1": "2ddd482c079396882efcd4e4b586cdb0815f2fa2"
+  }, 
+  "tools\\Tiled\\automappingconverter.exe": {
+    "sha1": "99a4a89caa33bff20c07737f853010276fdec987"
+  }, 
+  "tools\\Tilemancer-0.2.1\\libmodplug-1.dll": {
+    "sha1": "b3bb73ce0e77d1e8613f397b0ee3f5f3512b50e9"
+  }, 
+  "tools\\Tiled\\translations\\tiled_tr.qm": {
+    "sha1": "613a5bbbe187bffb086fa99343a1d9703a30e265"
+  }, 
+  "tools\\Tilemancer-0.2.1\\libpng16-16.dll": {
+    "sha1": "e4f7a5c5410664fc2ae47413d27d899ac5023e5c"
+  }, 
+  "tools\\Tiled\\terraingenerator.exe": {
+    "sha1": "2e378cca46fec7c8d5f26af6dd1a2c7282234941"
+  }, 
+  "tools\\Tilemancer-0.2.1\\Tilemancer.exe": {
+    "sha1": "28ad4e682d562bc54d7d6984cb7e6b219954c0df"
+  }, 
+  "tools\\Tiled\\plugins\\tiled\\droidcraft.dll": {
+    "sha1": "c252fd76e73ea684f1d9dd25946e6189cc34061f"
+  }, 
+  "tools\\Tiled\\translations\\tiled_zh.qm": {
+    "sha1": "488aca7946b83189b4b144289406b95b022662c3"
+  }, 
+  "tools\\Tiled\\translations\\qt_pt.qm": {
+    "sha1": "7ff61f4b8da29b686e3d3b3274da0a03b8cc95c8"
+  }, 
+  "tools\\Tilemancer-0.2.1\\libjpeg-9.dll": {
+    "sha1": "d3d91a0f56fcd84c014b5d18254527b961355b52"
+  }, 
+  "tools\\Tiled\\translations\\qt_es.qm": {
+    "sha1": "d69aebb88ea1f2526058a2d932eb62083d75eeac"
+  }, 
+  "tools\\Tiled\\translations\\tiled_it.qm": {
+    "sha1": "c80427a0124dc60e1b93be11f731ba287e48f1a9"
+  }, 
+  "tools\\Tiled\\translations\\qt_fr.qm": {
+    "sha1": "27051cc34db691542cca922caf16b9154cf65853"
+  }, 
+  "tools\\Tiled\\WinSparkle.dll": {
+    "sha1": "7b7dafdd05e473777f4342b310dddbd35e401215"
+  }, 
+  "tools\\Tiled\\translations\\tiled_es.qm": {
+    "sha1": "d773e4dc6386e53c95147eb3a800bb9197bcc631"
+  }, 
+  "tools\\Tilemancer-0.2.1\\libstdc++-6.dll": {
+    "sha1": "ded2e186bd7ce3055bff26af9edb5f76a1812f52"
+  }, 
+  "tools\\Tiled\\tiled.exe": {
+    "sha1": "eef8496b51251f7a6b1543c6a941dd93c3522321"
+  }, 
+  "tools\\Tiled\\plugins\\platforms\\qwindows.dll": {
+    "sha1": "b3bb082dcfac220abe6f9d0aaac2ea87fd5cdd81"
+  }, 
+  "tools\\Tilemancer-0.2.1\\libtiff-5.dll": {
+    "sha1": "95ce6e6d6299150aaac9f67089d78514036d21c4"
+  }, 
+  "tools\\Tiled\\plugins\\imageformats\\qtiff.dll": {
+    "sha1": "8d714dcbe4414ba96ad9340e811c9c471f4fa694"
+  }, 
+  "tools\\Tiled\\examples\\sewer_tileset.png": {
+    "sha1": "a736d50573c405702f08d1ae5ad7c2c326eb3c38"
+  }, 
+  "tools\\Tilemancer-0.2.1\\libfreetype-6.dll": {
+    "sha1": "83878a49d8254b871acf1bec3fe9a9e24cdfdfcf"
+  }, 
+  "tools\\Tiled\\Qt5OpenGL.dll": {
+    "sha1": "c42f53ab60508c01c699535017f7b71f987de871"
+  }, 
+  "tools\\Tiled\\Qt5Widgets.dll": {
+    "sha1": "9599fb7b2db57a4cb5349ef88ee8cc3b78bd4ddf"
+  }, 
+  "tools\\Tilemancer-0.2.1\\libFLAC-8.dll": {
+    "sha1": "591ca8d24b83ae5476a6d7b8d5b50928ca6847c1"
+  }, 
+  "tools\\Tiled\\examples\\perspective_walls.png": {
+    "sha1": "66421f72109786ffcdc5a5040b74117b48f9fccd"
+  }, 
+  "tools\\Tiled\\translations\\tiled_ru.qm": {
+    "sha1": "5c798f501c48e2f9a5e982b703ee8063c9437bec"
+  }, 
+  "tools\\Tiled\\plugins\\imageformats\\qjpeg.dll": {
+    "sha1": "acfcda1ee466d7b20777a71ea13eeb0e25562c30"
+  }, 
+  "data\\builder\\shadercRelease.exe": {
+    "sha1": "5e4668a25dbd5457a5a60608316f5222f2a2f020"
+  }, 
+  "tools\\Tilemancer-0.2.1\\SDL2_ttf.dll": {
+    "sha1": "02f8092bf3b51550bb5d1bd78e0e145df7e984dd"
+  }, 
+  "tools\\Tiled\\examples\\isometric_grass_and_water.png": {
+    "sha1": "3e10aa51e9003c5785deac8cbc0f4b557b2b5e8f"
+  }, 
+  "tools\\Tiled\\Qt5Core.dll": {
+    "sha1": "e279b3205854f1662afbedc875a65ccf761dfb13"
+  }, 
+  "tools\\Tiled\\examples\\tmw_desert_spacing.png": {
+    "sha1": "084ad1d18843acaa0bb220f482dd0f0f0cedcf59"
+  }, 
+  "tools\\Tilemancer-0.2.1\\zlib1.dll": {
+    "sha1": "90f59b2e8d2d1fac6f523d73fd497c0607ad2076"
+  }, 
+  "tools\\Tiled\\translations\\tiled_de.qm": {
+    "sha1": "6d1d77cf0b9eab50634ad011fb61d41fd46837f2"
+  }, 
+  "tools\\Tilemancer-0.2.1\\smpeg2.dll": {
+    "sha1": "f41923fd629145326b6671333709b39dad7fffb6"
+  }, 
+  "tools\\Tiled\\translations\\qt_ja.qm": {
+    "sha1": "d438b2711f4e90d92f9ef183438a20ea87d78c69"
+  }, 
+  "tools\\Tiled\\translations\\qt_zh_CN.qm": {
+    "sha1": "faa4eca2d1f9257f6b86b2b9cb93ee67b22ce7f8"
+  }, 
+  "tools\\Tiled\\translations\\tiled_ja.qm": {
+    "sha1": "15ed23f060b65bf2ce81d159a06202f0bd76e451"
+  }, 
+  "tools\\Tiled\\translations\\tiled_nl.qm": {
+    "sha1": "6c67db1f4d71b9b3aade6fbef58fa7a658f13756"
+  }, 
+  "tools\\Tiled\\translations\\tiled_bg.qm": {
+    "sha1": "f43f2b0f291fdf0e246ad08ae66b320a1f192925"
+  }, 
+  "tools\\Tiled\\translations\\qt_ru.qm": {
+    "sha1": "6a954e47a086f828da148627ea5fabe460a63533"
+  }, 
+  "tools\\Tiled\\plugins\\tiled\\json.dll": {
+    "sha1": "ee04d72f4a26c13c3fc6012be74ecebb51bbe6d0"
+  }, 
+  "tools\\Tiled\\examples\\buch-outdoor.png": {
+    "sha1": "d09c2d26ccd6fb4ee213e2b0b958e09fbed5da51"
+  }, 
+  "tools\\Tiled\\translations\\tiled_zh_TW.qm": {
+    "sha1": "9969f2f391a7879cb032b8fee6d9ddf3a2e52e30"
+  }, 
+  "tools\\Tiled\\Qt5Network.dll": {
+    "sha1": "2784f45787cda73979f85b81599be72a32e48a16"
+  }, 
+  "tools\\Tilemancer-0.2.1\\libwebp-4.dll": {
+    "sha1": "a969a74f71a9ad8990143a10dc094281457d75af"
+  }, 
+  "tools\\Tilemancer-0.2.1\\SDL2_mixer.dll": {
+    "sha1": "f9fe16fc6007d49dd0a3758dd7e3d977a22c3346"
+  }, 
+  "tools\\Tiled\\plugins\\imageformats\\qgif.dll": {
+    "sha1": "47ce9cfdf2f7d77d616cd73d4bd84ca31c43ac65"
+  }, 
+  "tools\\Tiled\\examples\\hexmini.png": {
+    "sha1": "fd6d5cc7778c675a9d9f53290c1f6dabb3169f91"
+  }, 
+  "tools\\Tiled\\tmxrasterizer.exe": {
+    "sha1": "e6c0b94c5eab79fcaa7eca51b4f8b2098a6639db"
+  }, 
+  "tools\\Tilemancer-0.2.1\\libgcc_s_sjlj-1.dll": {
+    "sha1": "81e60cf9780ac062d77c8725b1320c5b5929993b"
+  }, 
+  "tools\\Tilemancer-0.2.1\\glew32.dll": {
+    "sha1": "ff02434062d262c73263b23b0d97701ac2f04c78"
+  }, 
+  "data\\builder\\texturecRelease.exe": {
+    "sha1": "b094f640dfd8d41aa58bc3489e75e378dce4a98a"
+  }, 
+  "tools\\Tiled\\translations\\tiled_fr.qm": {
+    "sha1": "fa3f6cf58fa9c28b5c3a23faeaa5d1bb391ca3f4"
+  }, 
+  "tools\\Tiled\\translations\\qt_zh_TW.qm": {
+    "sha1": "5a023b5f311bcf84efcd0dbffd379ba3f28f20db"
+  }, 
+  "tools\\Tiled\\translations\\qt_cs.qm": {
+    "sha1": "94a07f3f1db668ac1ef660a6c0d55e6fb60b7992"
+  }, 
+  "tools\\Tiled\\translations\\qt_de.qm": {
+    "sha1": "2810dcdd7e56bf498ae3c1ec5ce8b23838c33413"
+  }, 
+  "tools\\Tiled\\translations\\tiled_pl.qm": {
+    "sha1": "d58e0f9107ca0b95522854d56f4da31cdbfae6c7"
+  }, 
+  "tools\\Tiled\\plugins\\tiled\\flare.dll": {
+    "sha1": "ab01feee3717511d9d5182c3e545b33fa8f8841e"
+  }, 
+  "tools\\Tiled\\plugins\\tiled\\tmw.dll": {
+    "sha1": "522e0063f358f074b1509e61d4993d9bfbaef9e7"
+  }, 
+  "tools\\Tilemancer-0.2.1\\data.lpf": {
+    "sha1": "88d2542af224992e758b944629ab0b427ed20d4d"
+  }, 
+  "tools\\Tiled\\plugins\\tiled\\csv.dll": {
+    "sha1": "e372ad56d5c8a23410c560853d93ef2645776287"
+  }, 
   "external\\SDL2\\lib\\x64\\SDL2.lib": {
     "sha1": "18eb3c8491f47eb2bf5924bcf9f956bbf2a18516"
+  }, 
+  "tools\\Tiled\\tmxviewer.exe": {
+    "sha1": "43ebcd31f0550b260025896fad3eb05c5873b771"
+  }, 
+  "tools\\Tiled\\translations\\qt_he.qm": {
+    "sha1": "f0cfce4a84c89e69e64dd380d54200a8eb0c2214"
   }
 }

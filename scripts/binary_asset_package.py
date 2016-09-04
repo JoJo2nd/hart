@@ -13,6 +13,7 @@ BUF_SIZE = 65536  # lets read stuff in 64kb chunks!
 parser = argparse.ArgumentParser(prog='binary asset packager',description='Script to package binary data from a git repro into a deploy-able zip')
 parser.add_argument('-d','--directory', action='append', help='Source directory to search. Recursive.')
 parser.add_argument('-r','--root', help='Directory to make paths relative too.')
+parser.add_argument('--preview', action='store_true')
 
 asset_types = [
     '.exe',
@@ -21,6 +22,8 @@ asset_types = [
     '.png',
     '.tga',
     '.bin',
+    '.qm',
+    '.lpf',
 ]
 
 def getFileSHA1(filepath):
@@ -65,31 +68,35 @@ def main():
 
     to_upload = [local for local in assets if ('/'+manifest[local]['sha1']+'.zip').lower() not in remote_files]
 
-    for u in to_upload:
-        zipped_name = manifest[u]['sha1']+'.zip'
-        with zipfile.ZipFile(zipped_name, 'w') as zip_pkg:
-            print u, "Compressing...",
-            zip_pkg.write(realpath(join(base_path, u)), 'file')
+    if args.preview:
+        for u in to_upload:
+            print u, "needs uploading."        
+    else:
+        for u in to_upload:
+            zipped_name = manifest[u]['sha1']+'.zip'
+            with zipfile.ZipFile(zipped_name, 'w') as zip_pkg:
+                print u, "Compressing...",
+                zip_pkg.write(realpath(join(base_path, u)), 'file')
 
-        with open(zipped_name, 'rb') as zf:
-            data = zf.read()
-            print 'Uploading %d bytes' % (os.path.getsize(zipped_name)),
+            with open(zipped_name, 'rb') as zf:
+                data = zf.read()
+                print 'Uploading %d bytes' % (os.path.getsize(zipped_name)),
+                try:
+                    res = dbx.files_upload(
+                        data,
+                        '/'+zipped_name,
+                        mode=dropbox.files.WriteMode.overwrite,
+                        mute=True)
+                except dropbox.exceptions.ApiError as err:
+                    print('*** API error', err)
+                    return None
+                print ' as ', res.name.encode('utf8'),
+
+            print '...deleting temp data.'
             try:
-                res = dbx.files_upload(
-                    data,
-                    '/'+zipped_name,
-                    mode=dropbox.files.WriteMode.overwrite,
-                    mute=True)
-            except dropbox.exceptions.ApiError as err:
-                print('*** API error', err)
-                return None
-            print ' as ', res.name.encode('utf8'),
-
-        print '...deleting temp data.'
-        try:
-            os.remove(zipped_name)
-        except:
-            pass
+                os.remove(zipped_name)
+            except:
+                pass
 
 
 
