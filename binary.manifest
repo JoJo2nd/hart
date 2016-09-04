@@ -1,0 +1,17 @@
+{
+  "data\\builder\\texturecRelease.exe": {
+    "sha1": "b094f640dfd8d41aa58bc3489e75e378dce4a98a"
+  }, 
+  "data\\builder\\flatc.exe": {
+    "sha1": "1f9ad896f921107efef565838faad2f33690bf6c"
+  }, 
+  "data\\builder\\shadercRelease.exe": {
+    "sha1": "5e4668a25dbd5457a5a60608316f5222f2a2f020"
+  }, 
+  "external\\SDL2\\lib\\x64\\SDL2.dll": {
+    "sha1": "dc6bdf3aaf46e99aeb1c0cb80ab643fb8f1b0353"
+  }, 
+  "external\\SDL2\\lib\\x64\\SDL2.lib": {
+    "sha1": "18eb3c8491f47eb2bf5924bcf9f956bbf2a18516"
+  }
+}
