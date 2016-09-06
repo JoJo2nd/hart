@@ -24,18 +24,12 @@
 // object factory classes
 #include "hart/render/render.h"
 
-#if (HART_PLATFORM == HART_PLATFORM_WINDOWS)
-#   define SDL_MAIN_HANDLED
-#endif // BX_PLATFORM_WINDOWS
-
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_syswm.h>
-
+//TODO: remove this include, depends on SDL.h include coming first so we'll 
+// hide it behind hart::render interface
 #include <bgfx/bgfx.h>
 #include <bgfx/bgfxplatform.h>
-#if defined(None) // X11 defines this...
-#   undef None
-#endif // defined(None)
 
 #include <stdio.h>
 #include <vector>
@@ -43,27 +37,6 @@
 
 namespace hart {
 namespace engine {
-
-    ///
-    static void* sdlNativeWindowHandle(SDL_Window* _window)
-    {
-        SDL_SysWMinfo wmi;
-        SDL_VERSION(&wmi.version);
-        if (!SDL_GetWindowWMInfo(_window, &wmi) )
-        {
-            return NULL;
-        }
-
-#   if BX_PLATFORM_LINUX || BX_PLATFORM_BSD
-        return (void*)wmi.info.x11.window;
-#   elif BX_PLATFORM_OSX
-        return wmi.info.cocoa.window;
-#   elif BX_PLATFORM_WINDOWS
-        return wmi.info.win.window;
-#   elif BX_PLATFORM_STEAMLINK
-        return wmi.info.vivante.window;
-#   endif // BX_PLATFORM_
-    }
 
     struct Context
     {
@@ -180,43 +153,6 @@ namespace engine {
                 bgfx::setViewTransform(0, NULL, (float*)&ortho);
             }
 
-    #if USE_ENTRY
-            for (uint32_t ii = 1; ii < BX_COUNTOF(m_window); ++ii)
-            {
-                Window& window = m_window[ii];
-                if (bgfx::isValid(window.m_fbh) )
-                {
-                    const uint8_t viewId = 0;
-                    bgfx::setViewClear(viewId
-                        , BGFX_CLEAR_COLOR|BGFX_CLEAR_DEPTH
-                        , 0x303030ff
-                        , 1.0f
-                        , 0
-                        );
-                    bgfx::setViewFrameBuffer(viewId, window.m_fbh);
-                    bgfx::setViewRect(viewId
-                        , 0
-                        , 0
-                        , window.m_state.m_width
-                        , window.m_state.m_height
-                        );
-                    float ortho[16];
-                    bx::mtxOrtho(ortho
-                        , 0.0f
-                        , float(window.m_state.m_width)
-                        , float(window.m_state.m_height)
-                        , 0.0f
-                        , -1.0f
-                        , 1.0f
-                        );
-                    bgfx::setViewTransform(viewId
-                        , NULL
-                        , ortho
-                        );
-                }
-            }
-    #endif // USE_ENTRY
-
             // Render command lists
             for (int32_t ii = 0, num = draw_data->CmdListsCount; ii < num; ++ii)
             {
@@ -331,39 +267,30 @@ namespace engine {
 
             m_width = hconfigopt::getUint("renderer", "width", 854);
             m_height = hconfigopt::getUint("renderer", "height", 480);
+            m_aspectRatio = float(m_width)/float(m_height);
 
-            SDL_Init(0
-                | SDL_INIT_GAMECONTROLLER
-                );
+            SDL_Init(SDL_INIT_GAMECONTROLLER);
 
             m_window = SDL_CreateWindow(hconfigopt::getStr("window", "title", "---")
                             , SDL_WINDOWPOS_UNDEFINED
                             , SDL_WINDOWPOS_UNDEFINED
                             , m_width
                             , m_height
-                            , SDL_WINDOW_SHOWN
-                            | SDL_WINDOW_RESIZABLE
-                            );
+                            , SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 
-            m_flags = ENTRY_WINDOW_FLAG_ASPECT_RATIO
-                | ENTRY_WINDOW_FLAG_FRAME;
-
+            hrnd::initialise(m_window);
             htime::initialise();
             hresmgr::initialise();
             hart::tasks::scheduler::initialise(
                 hconfigopt::getInt("taskgraph", "workercount", 4), 
                 hconfigopt::getUint("taskgraph", "jobqueuesize", 256));
 
-            bgfx::sdlSetWindow(m_window);
-            bgfx::renderFrame(); // calling this before bgfx::init prevents the render thread being created
-            bgfx::init(bgfx::RendererType::Direct3D11);
-
             //m_thread.init(MainThreadEntry::threadFunc, &m_mte);
 
             // Force window resolution...
             //WindowHandle defaultWindow = { 0 };
             //setWindowSize(defaultWindow, m_width, m_height, true);
-            SDL_SetWindowSize(m_window, m_width, m_height);
+            //SDL_SetWindowSize(m_window, m_width, m_height);
 
             // Application init
             static uint32_t buttom_remap[] = {
@@ -410,66 +337,58 @@ namespace engine {
             while (!sys_collection_hdl.loaded()) hresmgr::update();
 
             {
-            // ImGui init. Done after system collection load as this loads the imgui shaders
-            ImGuiIO& io = ImGui::GetIO();
-            io.DisplaySize.x = float(m_width);
-            io.DisplaySize.y = float(m_height);
-            io.IniFilename = "imgui.ini";
-            io.RenderDrawListsFn = imguiRenderStatic;  // Setup a render function, or set to NULL and call GetDrawData() after Render() to access the render data.
-            io.UserData = this;
+                // ImGui init. Done after system collection load as this loads the imgui shaders
+                ImGuiIO& io = ImGui::GetIO();
+                io.DisplaySize.x = float(m_width);
+                io.DisplaySize.y = float(m_height);
+                io.IniFilename = "imgui.ini";
+                io.RenderDrawListsFn = imguiRenderStatic;  // Setup a render function, or set to NULL and call GetDrawData() after Render() to access the render data.
+                io.UserData = this;
 
-            imgui.decl
-                .begin()
-                .add(bgfx::Attrib::Position,  2, bgfx::AttribType::Float)
-                .add(bgfx::Attrib::TexCoord0, 2, bgfx::AttribType::Float)
-                .add(bgfx::Attrib::Color0,    4, bgfx::AttribType::Uint8, true)
-                .end();
+                imgui.decl
+                    .begin()
+                    .add(bgfx::Attrib::Position,  2, bgfx::AttribType::Float)
+                    .add(bgfx::Attrib::TexCoord0, 2, bgfx::AttribType::Float)
+                    .add(bgfx::Attrib::Color0,    4, bgfx::AttribType::Uint8, true)
+                    .end();
 
-            imgui.textureUniform = bgfx::createUniform("s_tex", bgfx::UniformType::Int1);
+                imgui.textureUniform = bgfx::createUniform("s_tex", bgfx::UniformType::Int1);
 
-            uint8_t* data;
-            int32_t width;
-            int32_t height;
-            io.Fonts->GetTexDataAsRGBA32(&data, &width, &height);
-            imgui.texture = bgfx::createTexture2D( (uint16_t)width
-                , (uint16_t)height
-                , 1
-                , bgfx::TextureFormat::BGRA8
-                , 0
-                , bgfx::copy(data, width*height*4)
+                uint8_t* data;
+                int32_t width;
+                int32_t height;
+                io.Fonts->GetTexDataAsRGBA32(&data, &width, &height);
+                imgui.texture = bgfx::createTexture2D( (uint16_t)width
+                    , (uint16_t)height
+                    , 1
+                    , bgfx::TextureFormat::BGRA8
+                    , 0
+                    , bgfx::copy(data, width*height*4)
+                    );
+
+                static huuid::uuid_t vs_imgui_resid = huuid::fromDwords(0x25f9b47acb354dfd,0x83cf6931c1e339b4);
+                static huuid::uuid_t fs_imgui_resid = huuid::fromDwords(0x58be50a6196b43c6,0xa7868c6b7a9ef9f4);                
+
+                imgui.vsResHdl = hresmgr::loadResource(vs_imgui_resid);
+                imgui.fsResHdl = hresmgr::loadResource(fs_imgui_resid);
+                // get the loaded pointers
+                imgui.vsResHdl.loaded();
+                imgui.fsResHdl.loaded();
+                //
+                render::Shader* vs = (render::Shader*)imgui.vsResHdl.getData(render::Shader::getTypeCC());
+                render::Shader* fs = (render::Shader*)imgui.fsResHdl.getData(render::Shader::getTypeCC());
+                hdbassert(vs && fs, "ImGui shader aren't loaded. They should be loaded during startup");
+
+                imgui.program = bgfx::createProgram(
+                    vs->getShaderProfileObject(render::resource::Profile_Direct3D11),
+                    fs->getShaderProfileObject(render::resource::Profile_Direct3D11)
                 );
 
-            static huuid::uuid_t vs_imgui_resid = huuid::fromDwords(0x25f9b47acb354dfd,0x83cf6931c1e339b4);
-            static huuid::uuid_t fs_imgui_resid = huuid::fromDwords(0x58be50a6196b43c6,0xa7868c6b7a9ef9f4);                
-
-            imgui.vsResHdl = hresmgr::loadResource(vs_imgui_resid);
-            imgui.fsResHdl = hresmgr::loadResource(fs_imgui_resid);
-            // get the loaded pointers
-            imgui.vsResHdl.loaded();
-            imgui.fsResHdl.loaded();
-            //
-            render::Shader* vs = (render::Shader*)imgui.vsResHdl.getData(render::Shader::getTypeCC());
-            render::Shader* fs = (render::Shader*)imgui.fsResHdl.getData(render::Shader::getTypeCC());
-            hdbassert(vs && fs, "ImGui shader aren't loaded. They should be loaded during startup");
-
-            imgui.program = bgfx::createProgram(
-                vs->getShaderProfileObject(render::resource::Profile_Direct3D11),
-                fs->getShaderProfileObject(render::resource::Profile_Direct3D11)
-            );
-
-            bgfx::setViewClear(0
-                ,BGFX_CLEAR_COLOR|BGFX_CLEAR_DEPTH
-                ,0x303030ff
-                ,1.0f
-                ,0
-            );
-            bgfx::setViewRect(0
-                ,0
-                ,0
-                ,m_width
-                ,m_height
-            );
-
+                hrnd::ViewDef views;
+                views.id = (uint32_t)hrnd::View::Debug;
+                views.clearColour = true;
+                views.colourValue = 0x303030ff;
+                hrnd::resetViews(&views, 1);
             }
 
             // Info the game that main engine assets are loaded.
@@ -515,20 +434,25 @@ namespace engine {
 
                 ImGui::NewFrame();
                 
+                hprofile_start(game_pretick);
+                game->preTick(&taskGraph);
+                hprofile_end();
                 hprofile_start(game_tick);
-                game->tick(htime::deltaSec(), &taskGraph);
+                taskGraph.kick();
+                game->tick(htime::deltaSec());
                 //TODO: renderDebugMenus call & game->renderDebugMenus
                 ImGui::ShowTestWindow(&test_wnd_open);
                 hprofile_end();
-
-                taskGraph.kick();
+                hprofile_start(game_posttick);
+                game->postTick();
+                taskGraph.wait();
+                hprofile_end();
 
                 hprofile_start(RenderFrame);
+                game->render();
                 ImGui::Render();
                 bgfx::frame();
                 hprofile_end();
-
-                taskGraph.wait();
 
                 wheelDelta = 0;
             }
@@ -552,8 +476,6 @@ namespace engine {
 
         //Only support one window currently
         SDL_Window* m_window = nullptr;
-        uint32_t m_flags = 0;
-
         uint32_t m_width = HART_DEFAULT_WND_WIDTH;
         uint32_t m_height = HART_DEFAULT_WND_HEIGHT;
         float m_aspectRatio = float(HART_DEFAULT_WND_WIDTH)/float(HART_DEFAULT_WND_HEIGHT);

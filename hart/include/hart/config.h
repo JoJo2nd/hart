@@ -111,6 +111,10 @@
 #   define HART_FVN_PRIME (16777619)
 #endif
 
+#if (HART_PLATFORM == HART_PLATFORM_WINDOWS)
+#   define SDL_MAIN_HANDLED
+#endif
+
 #define BGFX_HANDLE_SET_INVALID(x) (x.idx = bgfx::invalidHandle)
 
 #include <stdint.h>

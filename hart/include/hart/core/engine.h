@@ -72,9 +72,18 @@ struct EventHandle {
 
 class GameInterface {
 public:
+    // Called after main system assets are loaded.
     virtual void postSystemAssetLoad() = 0;
+    // Called to initialise the frame task graph with any game jobs.
     virtual void taskGraphSetup(htasks::Graph* frameGraph) = 0;
-    virtual void tick(float delta, htasks::Graph* frameGraph) = 0;
+    // Called to allow work loads in the task graph to be setup up before the game logic update
+    virtual void preTick(htasks::Graph* frameGraph) = 0;
+    // Called every game logic update. Runs in parallel to frameGraph
+    virtual void tick(float delta) = 0;
+    // Called after game logic update. Runs in parallel to frameGraph
+    virtual void postTick() = 0;
+    // Called every frame to submit draw calls.
+    virtual void render() = 0;
 };
 
 int32_t run(int argc,char* argv[], GameInterface* game);

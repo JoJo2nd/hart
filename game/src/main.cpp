@@ -13,8 +13,17 @@ class Game : public hart::engine::GameInterface {
         //TODO: Inject game tasks into the frameGraph. Allows use to arrange game logic around engine flow
         htasks::TaskHandle res_update_task = frameGraph->findTaskByName("hresmgr::update");
     }
-    virtual void tick(float delta, htasks::Graph* frameGraph) {
+    virtual void preTick(htasks::Graph* frameGraph) {
         // work should be injected into the task graph. This should do nothing (or almost nothing).
+    }
+    virtual void tick(float delta) {
+        // TODO: do game tick
+    }
+    virtual void postTick() {
+
+    }
+    virtual void render() {
+
     }
 };
 
