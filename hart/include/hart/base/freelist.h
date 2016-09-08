@@ -14,20 +14,27 @@ namespace hart {
 template<typename t_ty, uintptr_t pageSize = 4096>
 class Freelist {
 
-    static const size_t NodePadSize = sizeof(t_ty) - sizeof(void*) - sizeof(uint32_t);
+    static const size_t NodePadSize = sizeof(t_ty);
     static const uintptr_t PtrMask = ~(pageSize - 1);
     static const uint32_t EmptyBlockCount = pageSize / sizeof(t_ty);
+	static const uint16_t InvalidNodeOffset = 0xFFFF;
     static_assert(pageSize >= sizeof(t_ty), "pageSize is smaller than type size");
     static_assert((pageSize & (pageSize - 1)) == 0, "pageSize must be a power of 2");
+    static_assert(pageSize <= 65535, "pageSize is too large");
+
 
     struct Node {
-        Node* next;
-        uint32_t nodeCount; // number of nodes after this that are free for allocation, inclusive of this node too.
-        uint8_t pad[NodePadSize];
+        union {
+            struct {
+                uint16_t next;      // 65535 when invalid
+                uint16_t nodeCount; // number of nodes after this that are free for allocation, inclusive of this node too.
+            };
+            uint8_t pad[NodePadSize];
+        };
     };
     struct Page {
         hstd::unique_ptr<uint8_t> pageMem;
-        uint32_t freeCount = EmptyBlockCount;
+        uint16_t freeCount = EmptyBlockCount;
         Node* freelist = nullptr;
     };
 
@@ -46,9 +53,17 @@ class Freelist {
         new_page.pageMem.reset(new uint8_t[pageSize]);
         new_page.freelist = (Node*)new_page.pageMem.get();
         new_page.freelist->nodeCount = new_page.freeCount;
-        new_page.freelist->next = nullptr;
+        new_page.freelist->next = InvalidNodeOffset;
         freelistPages.insert(freelistPages.begin(), std::move(new_page));
         return &freelistPages[0];
+    }
+    uint16_t getPageOffset(Page* page, Node* ptr) {
+        uintptr_t base = (uintptr_t)page->pageMem.get();
+        return (((uintptr_t)ptr-base)&0xFFFF);
+    }
+    Node* getPagePtr(Page* page, uint16_t offset) {
+		if (offset == InvalidNodeOffset) return nullptr;
+        return (Node*)(page->pageMem.get() + offset);
     }
     Page* findPage(void* ptr) {
         for (size_t i = 0, n = freelistPages.size(); i < n; ++i) {
@@ -73,18 +88,18 @@ public:
         auto* ptr = (t_ty*)page->freelist;
         --page->freelist->nodeCount;
         if (page->freelist->nodeCount == 0) {
-            page->freelist = page->freelist->next;
+            page->freelist = getPagePtr(page, page->freelist->next);
         } else {
             (page->freelist+1)->nodeCount = page->freelist->nodeCount;
-            (page->freelist + 1)->next = page->freelist->next;
-            page->freelist = page->freelist + 1;
+            (page->freelist+1)->next = page->freelist->next;
+            page->freelist = page->freelist+1;
         }
 
 #if HART_VERIFY_FREELIST
-        for (Node* i = page->freelist; i; i = i->next) {
-            hdbassert(i < i->next || i->next == nullptr, "Freelist allocator unallocated list is not address sorted");
-            hdbassert(i + i->nodeCount != i->next || i->next == nullptr, "Freelist allocator unallocated list is not merged correctly");
-        }
+		for (Node* i = page->freelist; i; i = getPagePtr(page, i->next)) {
+			hdbassert(i < getPagePtr(page, i->next) || getPagePtr(page, i->next) == nullptr, "Freelist allocator unallocated list is not address sorted");
+			hdbassert(i + i->nodeCount != getPagePtr(page, i->next) || getPagePtr(page, i->next) == nullptr, "Freelist allocator unallocated list is not merged correctly");
+		}
         for (size_t i = 0, n = freelistPages.size() - 1; i < n; ++i) {
             hdbassert(freelistPages[i].freeCount >= freelistPages[i + 1].freeCount, "Freelist bin pages aren't sorted correctly");
         }
@@ -102,7 +117,7 @@ public:
         if (!page->freelist) {
             page->freelist = fl_new_ptr;
             fl_new_ptr->nodeCount = 1;
-            fl_new_ptr->next = nullptr;
+            fl_new_ptr->next = 0;
             return;
         }
         
@@ -110,14 +125,14 @@ public:
         auto* node = page->freelist;
         while(node) {
             if (fl_new_ptr > node) {
-                if (prev) prev->next = fl_new_ptr;
-                fl_new_ptr->next = node;
+                if (prev) prev->next = getPageOffset(page, fl_new_ptr);
+                fl_new_ptr->next = getPageOffset(page, node);
                 fl_new_ptr->nodeCount = 1;
 
                 //check for merge forward
-                if (fl_new_ptr+1 == fl_new_ptr->next) {
-                    if (prev) prev->next = fl_new_ptr;
-                    fl_new_ptr->nodeCount += fl_new_ptr->next->nodeCount;
+                if (fl_new_ptr+1 == getPagePtr(page, fl_new_ptr->next)) {
+                    if (prev) prev->next = getPageOffset(page, fl_new_ptr);
+                    fl_new_ptr->nodeCount += getPagePtr(page, fl_new_ptr->next)->nodeCount;
                     fl_new_ptr->next = fl_new_ptr->next;
                 }
                 //check for merge backward
@@ -128,13 +143,13 @@ public:
                 break;
             }
             prev = node;
-            node = node->next;
+            node = getPagePtr(page, node->next);
         }
 
 #if HART_VERIFY_FREELIST
-        for (Node* i=page->freelist; i; i=i->next) {
-            hdbassert(i < i->next || i->next == nullptr, "Freelist allocator unallocated list is not address sorted");
-            hdbassert(i+i->nodeCount != i->next || i->next == nullptr, "Freelist allocator unallocated list is not merged correctly");
+        for (Node* i=page->freelist; i; i=getPagePtr(page, i->next)) {
+            hdbassert(i < getPagePtr(page, i->next) || getPagePtr(page, i->next) == nullptr, "Freelist allocator unallocated list is not address sorted");
+            hdbassert(i+i->nodeCount != getPagePtr(page, i->next) || getPagePtr(page, i->next) == nullptr, "Freelist allocator unallocated list is not merged correctly");
         }
         for (size_t i=0, n=freelistPages.size()-1; i<n; ++i) {
             hdbassert(freelistPages[i].freeCount <= freelistPages[i+1].freeCount, "Freelist bin pages aren't sorted correctly");

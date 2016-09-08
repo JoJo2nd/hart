@@ -23,7 +23,11 @@ namespace resourcemanager {
     struct Handle {
 
         bool loaded();
-        void const* getData(uint32_t expected_typecc) {
+        template<typename t_ty>
+        t_ty* getData() {
+            return (t_ty*)getData(t_ty::getTypeCC());
+        }
+        void* getData(uint32_t expected_typecc) {
             hdbassert(data, "Asset is not loaded yet. Check with call to loaded() first.");
             return (expected_typecc == typecc) ? data : nullptr;
         }
@@ -35,7 +39,7 @@ namespace resourcemanager {
         resid_t     id;
         uint32_t    typecc = 0;
         Resource const* info = nullptr;
-        void const* data = nullptr;
+        void* data = nullptr;
     };
 
     bool initialise();

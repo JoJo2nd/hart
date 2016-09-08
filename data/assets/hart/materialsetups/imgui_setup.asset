@@ -1,0 +1,18 @@
+{
+  "inputs": [
+    "imgui_setup.json", 
+    "..\\fbs\\materialsetup.fbs", 
+    "..\\fbs\\material.fbs", 
+    "..\\fbs\\renderstate.fbs", 
+    "..\\fbs\\uuid.fbs"
+  ], 
+  "uuid": "{013d1779-6343-4046-bc85-1eda6667af12}", 
+  "prerequisites": [
+    "{8426e6ae-b661-48cc-946c-afc26a53f1a3}"
+  ], 
+  "processoptions": {
+    "input": "imgui_setup.json"
+  }, 
+  "friendlyname": "system/materialsetup/imgui", 
+  "type": "materialsetup"
+}

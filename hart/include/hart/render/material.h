@@ -18,16 +18,40 @@ namespace render {
 
 typedef resource::TechniqueType TechniqueType;
 class Shader;
+struct Program;
 
 class Material {
     HART_OBJECT_TYPE(HART_MAKE_FOURCC('r','m','a','t'), resource::Material)
     public:
-        
+        Material() = default;
+        ~Material();
+
+        uint32_t getTechnqiuePassCount(TechniqueType in_type) { 
+            uint32_t idx = getTechnqiueIndex(in_type);
+            return (idx == ~0ul) ? 0 : (uint32_t)techniques[idx].passes.size();
+        }
+        Program* getTechnqiuePassProgram(TechniqueType in_type, uint32_t pass) { 
+            uint32_t idx = getTechnqiueIndex(in_type);
+            return (idx == ~0ul) ? nullptr : techniques[idx].passes[pass].program;
+        }
+        State getTechnqiuePassState(TechniqueType in_type, uint32_t pass) { 
+            uint32_t idx = getTechnqiueIndex(in_type);
+            return (idx == ~0ul) ? State() : techniques[idx].passes[pass].state;
+        }
     private:
+        uint32_t getTechnqiueIndex(TechniqueType in_type) { 
+            for (uint32_t i=0, n=(uint32_t)techniques.size(); i<n; ++i) {
+                if (techniques[i].type == in_type)
+                    return i;
+            }
+            return ~0ul;
+        }
+
         struct Pass {
             State   state;
             Shader* vertex;
             Shader* pixel;
+            Program* program;
         };
 
         struct Technique {
@@ -41,7 +65,8 @@ class Material {
 class MaterialSetup {
     HART_OBJECT_TYPE(HART_MAKE_FOURCC('r','m','s','t'), resource::MaterialSetup)
     public:
-        
+        void flushParameters() {/*TODO:*/}
+        Material* getMaterial() { return material; } 
     private:
         Material* material = nullptr;
 };

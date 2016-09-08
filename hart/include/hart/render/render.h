@@ -6,6 +6,7 @@
 #pragma once
 
 #include "hart/config.h"
+#include "hart/base/matrix.h"
 #include "hart/render/state.h"
 #include "hart/render/shader.h"
 #include "hart/render/material.h"
@@ -15,8 +16,8 @@ struct SDL_Window;
 namespace hart {
 namespace render {
 
-enum class View {
-    Debug = 32,
+enum View {
+    View_Debug = 32,
 };
 
 enum class Ratio {
@@ -77,6 +78,7 @@ struct ViewDef {
 };
 
 struct VertexDecl;
+struct Program;
 
 void initialise(SDL_Window* window);
 
@@ -85,13 +87,19 @@ void resetViews(ViewDef* views, size_t count);
 VertexDecl* createVertexDecl(VertexElement const* elements, uint16_t element_count);
 void destroyVertexDecl();
 
-void begin(uint16_t view_id, TechniqueType tech);
+Program* createProgram(Shader* vertex, Shader* pixel);
+void destroyProgram(Program* program);
+
+void begin(uint16_t view_id, TechniqueType tech, hMat44 const* view, hMat44 const* proj);
 void setMaterialSetup(MaterialSetup* mat);
-void setScissor();
+void setScissor(uint16_t x, uint16_t y, uint16_t w, uint16_t h);
 void setIndexBuffer();
 void setVertexBuffer();
 void submit();
 void submitInline(VertexDecl* fmt, void* idx, void* vtx, uint16_t prims);
+void beginInlineBatch(VertexDecl* fmt, void* idx, uint32_t numIndices, void* vtx, uint16_t numVertices);
+void inlineBatchSubmit(uint16_t ib_offset, uint32_t ib_count, uint16_t vb_offset, uint16_t vb_count);
+void endInlineBatch();
 void end();
 
 void endFrame();

@@ -1,0 +1,16 @@
+/********************************************************************
+    Written by James Moran
+    Please see the file LICENSE.txt in the repository root directory.
+*********************************************************************/
+#pragma once
+
+#include "vectormath_aos.h"
+#include "mat_aos.h"
+
+namespace hart {
+namespace math {
+    typedef Vectormath::Aos::Matrix4 Mat44;
+}
+}
+
+typedef hart::math::Mat44 hMat44;

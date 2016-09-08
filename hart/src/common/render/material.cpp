@@ -5,6 +5,7 @@
 
 #include "hart/render/material.h"
 #include "hart/render/shader.h"
+#include "hart/render/render.h"
 #include "hart/core/resourcemanager.h"
 
 HART_OBJECT_TYPE_DECL(hart::render::Material);
@@ -30,9 +31,19 @@ bool Material::deserialiseObject(MarshallType const* in_data, hobjfact::Serialis
             pass->state.deserialiseObject((*in_pass)[p]->state(), params);
             pass->vertex = hresmgr::tweakGetResource<Shader>(uuid::fromData(*(*in_pass)[p]->vertex()));
             pass->pixel = hresmgr::tweakGetResource<Shader>(uuid::fromData(*(*in_pass)[p]->pixel()));
+            pass->program = createProgram(pass->vertex, pass->pixel);
         }
     }
     return true;
+}
+
+Material::~Material() {
+    for (auto& tech : techniques) {
+        for (auto& pass : tech.passes) {
+            destroyProgram(pass.program);
+            pass.program = nullptr;
+        }
+    }
 }
 
 bool Material::serialiseObject(MarshallType**, hobjfact::SerialiseParams const&) const {

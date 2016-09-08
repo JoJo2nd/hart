@@ -16,10 +16,8 @@
 #include "hart/base/filesystem.h"
 #include "hart/base/util.h"
 #include "hart/base/time.h"
+#include "hart/base/matrix.h"
 #include "imgui.h"
-#include "vectormath_aos.h"
-#include "mat_aos.h"
-#include "vec_aos.h"
 
 // object factory classes
 #include "hart/render/render.h"
@@ -147,37 +145,18 @@ namespace engine {
             const float width  = io.DisplaySize.x;
             const float height = io.DisplaySize.y;
 
-            {
-                Vectormath::Aos::Matrix4 ortho;
-                ortho = Vectormath::Aos::Matrix4::orthographic(0.0f, width, height, 0.0f, -1.0f, 1.0f);
-                bgfx::setViewTransform(0, NULL, (float*)&ortho);
-            }
+            hMat44 ortho;
+            ortho = hMat44::orthographic(0.0f, width, height, 0.0f, -1.0f, 1.0f);
+            hrnd::begin(hrnd::View_Debug, hrnd::TechniqueType::TechniqueType_Main, nullptr, &ortho);
+            hrnd::setMaterialSetup(imgui.material);
 
             // Render command lists
             for (int32_t ii = 0, num = draw_data->CmdListsCount; ii < num; ++ii)
             {
-                bgfx::TransientVertexBuffer tvb;
-                bgfx::TransientIndexBuffer tib;
-
                 const ImDrawList* drawList = draw_data->CmdLists[ii];
                 uint32_t numVertices = (uint32_t)drawList->VtxBuffer.size();
                 uint32_t numIndices  = (uint32_t)drawList->IdxBuffer.size();
-
-                if (!bgfx::checkAvailTransientVertexBuffer(numVertices, imgui.decl)
-                ||  !bgfx::checkAvailTransientIndexBuffer(numIndices) )
-                {
-                    // not enough space in transient buffer just quit drawing the rest...
-                    break;
-                }
-
-                bgfx::allocTransientVertexBuffer(&tvb, numVertices, imgui.decl);
-                bgfx::allocTransientIndexBuffer(&tib, numIndices);
-
-                ImDrawVert* verts = (ImDrawVert*)tvb.data;
-                memcpy(verts, drawList->VtxBuffer.begin(), numVertices * sizeof(ImDrawVert) );
-
-                ImDrawIdx* indices = (ImDrawIdx*)tib.data;
-                memcpy(indices, drawList->IdxBuffer.begin(), numIndices * sizeof(ImDrawIdx) );
+                hrnd::beginInlineBatch(imgui.vDecl, (void*)drawList->IdxBuffer.begin(), numIndices, (void*)drawList->VtxBuffer.begin(), numVertices);
 
                 uint32_t offset = 0;
                 for (const ImDrawCmd* cmd = drawList->CmdBuffer.begin(), *cmdEnd = drawList->CmdBuffer.end(); cmd != cmdEnd; ++cmd)
@@ -188,14 +167,7 @@ namespace engine {
                     }
                     else if (0 != cmd->ElemCount)
                     {
-                        uint64_t state = 0
-                            | BGFX_STATE_RGB_WRITE
-                            | BGFX_STATE_ALPHA_WRITE
-                            | BGFX_STATE_MSAA
-                            ;
-
                         bgfx::TextureHandle th = imgui.texture;
-                        bgfx::ProgramHandle program = imgui.program;
 
                         if (NULL != cmd->TextureId)
                         {
@@ -214,27 +186,19 @@ namespace engine {
                             }
                             */
                         }
-                        else
-                        {
-                            state |= BGFX_STATE_BLEND_FUNC(BGFX_STATE_BLEND_SRC_ALPHA, BGFX_STATE_BLEND_INV_SRC_ALPHA);
-                        }
 
-                        const uint16_t xx = uint16_t(hutil::tmax(cmd->ClipRect.x, 0.0f) );
-                        const uint16_t yy = uint16_t(hutil::tmax(cmd->ClipRect.y, 0.0f) );
-                        bgfx::setScissor(xx, yy
-                                , uint16_t(hutil::tmin(cmd->ClipRect.z, 65535.0f)-xx)
-                                , uint16_t(hutil::tmin(cmd->ClipRect.w, 65535.0f)-yy)
-                                );
-
-                        bgfx::setState(state);
+                        uint16_t xx = uint16_t(hutil::tmax(cmd->ClipRect.x, 0.0f) );
+                        uint16_t yy = uint16_t(hutil::tmax(cmd->ClipRect.y, 0.0f) );
+                        uint16_t ww = uint16_t(hutil::tmin(cmd->ClipRect.z, 65535.0f)-xx);
+                        uint16_t hh = uint16_t(hutil::tmin(cmd->ClipRect.w, 65535.0f)-yy);
+                        hrnd::setScissor(xx, yy, ww, hh);
                         bgfx::setTexture(0, imgui.textureUniform, th);
-                        bgfx::setVertexBuffer(&tvb, 0, numVertices);
-                        bgfx::setIndexBuffer(&tib, offset, cmd->ElemCount);
-                        bgfx::submit(0, program);
+                        hrnd::inlineBatchSubmit(offset, cmd->ElemCount, 0, numVertices);
                     }
 
                     offset += cmd->ElemCount;
                 }
+                hrnd::endInlineBatch();
             }
         }
 
@@ -345,12 +309,12 @@ namespace engine {
                 io.RenderDrawListsFn = imguiRenderStatic;  // Setup a render function, or set to NULL and call GetDrawData() after Render() to access the render data.
                 io.UserData = this;
 
-                imgui.decl
-                    .begin()
-                    .add(bgfx::Attrib::Position,  2, bgfx::AttribType::Float)
-                    .add(bgfx::Attrib::TexCoord0, 2, bgfx::AttribType::Float)
-                    .add(bgfx::Attrib::Color0,    4, bgfx::AttribType::Uint8, true)
-                    .end();
+                hrnd::VertexElement elements[] = {
+                    {hrnd::Semantic::Position,  hrnd::SemanticType::Float, 2, false},
+                    {hrnd::Semantic::TexCoord0, hrnd::SemanticType::Float, 2, false},
+                    {hrnd::Semantic::Color0,    hrnd::SemanticType::Uint8, 4,  true},
+                };
+                imgui.vDecl = hrnd::createVertexDecl(elements, (uint16_t)HART_ARRAYSIZE(elements));
 
                 imgui.textureUniform = bgfx::createUniform("s_tex", bgfx::UniformType::Int1);
 
@@ -366,26 +330,17 @@ namespace engine {
                     , bgfx::copy(data, width*height*4)
                     );
 
-                static huuid::uuid_t vs_imgui_resid = huuid::fromDwords(0x25f9b47acb354dfd,0x83cf6931c1e339b4);
-                static huuid::uuid_t fs_imgui_resid = huuid::fromDwords(0x58be50a6196b43c6,0xa7868c6b7a9ef9f4);                
+                //TODO: exchange ths for a material
+                static huuid::uuid_t imgui_material = huuid::fromDwords(0x013d177963434046,0xbc851eda6667af12);
 
-                imgui.vsResHdl = hresmgr::loadResource(vs_imgui_resid);
-                imgui.fsResHdl = hresmgr::loadResource(fs_imgui_resid);
                 // get the loaded pointers
-                imgui.vsResHdl.loaded();
-                imgui.fsResHdl.loaded();
-                //
-                render::Shader* vs = (render::Shader*)imgui.vsResHdl.getData(render::Shader::getTypeCC());
-                render::Shader* fs = (render::Shader*)imgui.fsResHdl.getData(render::Shader::getTypeCC());
-                hdbassert(vs && fs, "ImGui shader aren't loaded. They should be loaded during startup");
-
-                imgui.program = bgfx::createProgram(
-                    vs->getShaderProfileObject(render::resource::Profile_Direct3D11),
-                    fs->getShaderProfileObject(render::resource::Profile_Direct3D11)
-                );
-
+                imgui.materialHdl = hresmgr::loadResource(imgui_material);
+                imgui.materialHdl.loaded();
+                imgui.material = imgui.materialHdl.getData<hrnd::MaterialSetup>();
+                
+                hdbassert(imgui.material, "ImGui material isn't loaded. It should be loaded during startup");
                 hrnd::ViewDef views;
-                views.id = (uint32_t)hrnd::View::Debug;
+                views.id = hrnd::View_Debug;
                 views.clearColour = true;
                 views.colourValue = 0x303030ff;
                 hrnd::resetViews(&views, 1);
@@ -466,12 +421,11 @@ namespace engine {
         }
 
         struct {
-            bgfx::VertexDecl    decl;
-            bgfx::ProgramHandle program;
+            hrnd::VertexDecl*    vDecl;
+            hrnd::MaterialSetup* material;
             bgfx::TextureHandle texture;
             bgfx::UniformHandle textureUniform;
-            hresmgr::Handle     vsResHdl;
-            hresmgr::Handle     fsResHdl;
+            hresmgr::Handle     materialHdl;
         } imgui;
 
         //Only support one window currently
