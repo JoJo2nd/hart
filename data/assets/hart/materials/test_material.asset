@@ -3,7 +3,8 @@
     "test_material.json", 
     "..\\fbs\\material.fbs", 
     "..\\fbs\\renderstate.fbs", 
-    "..\\fbs\\uuid.fbs"
+    "..\\fbs\\uuid.fbs", 
+    "..\\fbs\\vec_matrix.fbs"
   ], 
   "uuid": "{fce514b8-be3a-4a22-9abd-430a93e40273}", 
   "prerequisites": [

@@ -4,7 +4,8 @@
     "..\\fbs\\materialsetup.fbs", 
     "..\\fbs\\material.fbs", 
     "..\\fbs\\renderstate.fbs", 
-    "..\\fbs\\uuid.fbs"
+    "..\\fbs\\uuid.fbs", 
+    "..\\fbs\\vec_matrix.fbs"
   ], 
   "uuid": "{013d1779-6343-4046-bc85-1eda6667af12}", 
   "prerequisites": [

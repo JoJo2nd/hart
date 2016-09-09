@@ -5,5 +5,10 @@
       "highword3": 2750501738, 
       "highword2": 3266276500
     },
-    "inputs":[]
+    "inputs":[
+        {
+            "name":"s_tex",
+            "data_type":"Texture2DInput"
+        }
+    ]
 }

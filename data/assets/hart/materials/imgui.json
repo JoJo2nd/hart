@@ -1,32 +1,38 @@
 {
-    "techniques" : [
-    {
-        "name":"Main",
-        "passes": [
-        {
-            "state": {
-                "blendSrc":"SrcAlpha",
-                "blendDst":"InvSrcAlpha",
-                "blendFn":"Add",
-                "alphaBlendSrc":"SrcAlpha",
-                "alphaBlendDst":"InvSrcAlpha",
-                "alphaBlendFn":"Add",
-                "cull":"None"
-            },
-            "vertex": {
-              "highword1": 4249695691, 
-              "lowword": 2058680613, 
-              "highword3": 3023692737, 
-              "highword2": 829017987
-            }, 
-            "pixel": {
-              "highword1": 3326307097, 
-              "lowword": 2790309464, 
-              "highword3": 4109999738, 
-              "highword2": 1804371623
-            }
-        }
-        ]
-    }
-    ]
+  "defaultInputs":[
+      {
+          "name":"s_tex",
+          "data_type":"Texture2DInput"
+      }
+  ],
+  "techniques" : [
+  {
+      "name":"Main",
+      "passes": [
+      {
+          "state": {
+              "blendSrc":"SrcAlpha",
+              "blendDst":"InvSrcAlpha",
+              "blendFn":"Add",
+              "alphaBlendSrc":"SrcAlpha",
+              "alphaBlendDst":"InvSrcAlpha",
+              "alphaBlendFn":"Add",
+              "cull":"None"
+          },
+          "vertex": {
+            "highword1": 4249695691, 
+            "lowword": 2058680613, 
+            "highword3": 3023692737, 
+            "highword2": 829017987
+          }, 
+          "pixel": {
+            "highword1": 3326307097, 
+            "lowword": 2790309464, 
+            "highword3": 4109999738, 
+            "highword2": 1804371623
+          }
+      }
+      ]
+  }
+  ]
 }

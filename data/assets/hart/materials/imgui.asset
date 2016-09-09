@@ -3,7 +3,8 @@
     "imgui.json", 
     "..\\fbs\\material.fbs", 
     "..\\fbs\\renderstate.fbs", 
-    "..\\fbs\\uuid.fbs"
+    "..\\fbs\\uuid.fbs", 
+    "..\\fbs\\vec_matrix.fbs"
   ], 
   "uuid": "{8426e6ae-b661-48cc-946c-afc26a53f1a3}", 
   "prerequisites": [
