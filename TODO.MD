@@ -44,3 +44,8 @@ The TODO list...
 
 ### Move enums to seperate header files
 >* including fbs ones. Wrap them in their own fbs/headers and typedef.
+
+### Add keyboard support to Dear ImGUI
+
+### Add debug menus
+>* Add debug menu for resource manager. Should allow testing loading/unloading assets (outside of currently loaded assets). Should display **ALL** assets that can be loaded along side assets that currently loaded (plus refcount, friendly name, etc)
