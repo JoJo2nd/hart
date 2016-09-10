@@ -1,7 +1,7 @@
 The TODO list...
 ================
 
-### Swap over dear imgui render to use render api
+### ~~Swap over dear imgui render to use render api~~
 >* ~~Swap over vertex buffer gen to render api~~ **Done**
 >* ~~Add state to material parameters~~ **Done**
 >* ~~Add inline api for creating vertex buffers on the fly~~ **Done**
