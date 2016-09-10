@@ -117,9 +117,5 @@ bool State::deserialiseObject(MarshallType const* in_data, hobjfact::SerialisePa
     return true;
 }
 
-bool State::serialiseObject(MarshallType**, hobjfact::SerialiseParams const&) const {
-    return false;
-}
-
 }
 }

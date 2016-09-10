@@ -107,10 +107,6 @@ bool TextureRes::deserialiseObject(MarshallType const* in_data, hobjfact::Serial
     return true;
 }
 
-bool TextureRes::serialiseObject(MarshallType**, hobjfact::SerialiseParams const&) const {
-    return false;
-}
-
 TextureRes::~TextureRes() {
     render::destroyTexture(texture);
 }

@@ -51,11 +51,6 @@ namespace objectfactory {
             serialiserType const* src_t = flatbuffers::GetRoot<serialiserType>(src);
             return type_ptr->deserialiseObject(src_t, params);
         }
-        static bool serialiseType(void const* src, void** dst_ptr, SerialiseParams const& params) {
-            t_ty const* type_ptr = reinterpret_cast<t_ty const*>(src);
-            serialiserType** dst_ptr_t = reinterpret_cast<serialiserType**>(dst_ptr);
-            return type_ptr->serialiseObject(dst_ptr_t, params);
-        }
     };
 
     //////////////////////////////////////////////////////////////////////////
@@ -66,7 +61,6 @@ namespace objectfactory {
     typedef void (*ObjectConstructProc)(void* in_place);
     typedef void (*ObjectDestructProc)(void* obj_ptr);
     typedef bool (*ObjectDeserialiseProc)(void const* src, void* dst, SerialiseParams const& p);
-    typedef bool (*ObjectSerialiseProc)(void const* src, void** dst, SerialiseParams const& p);
 
     struct ObjectDefinition {
         ObjectDefinition() = default;
@@ -79,7 +73,6 @@ namespace objectfactory {
             ObjectConstructProc in_construct,
             ObjectDestructProc in_destruct,
             ObjectDeserialiseProc in_deserialise,
-            ObjectSerialiseProc in_serialise,
             void* in_user
             ) 
             : typecc(in_typecc)
@@ -90,7 +83,6 @@ namespace objectfactory {
             , construct(in_construct)
             , destruct(in_destruct)
             , deserialise(in_deserialise)
-            , serialise(in_serialise)
             , user(in_user)
         {
 
@@ -104,7 +96,6 @@ namespace objectfactory {
         ObjectConstructProc     construct = nullptr;
         ObjectDestructProc      destruct = nullptr;
         ObjectDeserialiseProc   deserialise = nullptr;
-        ObjectSerialiseProc     serialise = nullptr;
         void*                   user = nullptr;
     };
 
@@ -116,7 +107,6 @@ namespace objectfactory {
     typedef serialiser_type MarshallType; \
     static hobjfact::ObjectDefinition const& getObjectDefinition() { return typeDef; } \
     bool deserialiseObject(MarshallType const*, hobjfact::SerialiseParams const&); \
-    bool serialiseObject(MarshallType**, hobjfact::SerialiseParams const&) const; \
     private: 
 
 
@@ -132,7 +122,6 @@ namespace objectfactory {
         hobjfact::typehelper_t< type >::constructType, \
         hobjfact::typehelper_t< type >::destructType, \
         hobjfact::typehelper_t< type >::deserialiseType, \
-        hobjfact::typehelper_t< type >::serialiseType, \
         nullptr \
     )
 

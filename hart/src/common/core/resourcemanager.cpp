@@ -272,9 +272,5 @@ bool Collection::deserialiseObject(MarshallType const* in_data, hobjfact::Serial
     return true;
 }
 
-bool Collection::serialiseObject(MarshallType**, hobjfact::SerialiseParams const&) const {
-    return false;
-}
-
 }
 }

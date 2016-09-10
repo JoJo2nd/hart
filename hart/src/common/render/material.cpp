@@ -170,10 +170,6 @@ void Material::setParameters(MaterialHandleData const* hrestrict in_data, uint32
     }
 }
 
-bool Material::serialiseObject(MarshallType**, hobjfact::SerialiseParams const&) const {
-    return false;
-}
-
 bool MaterialSetup::deserialiseObject(MarshallType const* in_data, hobjfact::SerialiseParams const&) {
     material = hresmgr::tweakGetResource<Material>(uuid::fromData(*in_data->material()));
     //Process inputs
@@ -257,10 +253,6 @@ bool MaterialSetup::deserialiseObject(MarshallType const* in_data, hobjfact::Ser
     }
 
     return true;
-}
-
-bool MaterialSetup::serialiseObject(MarshallType**, hobjfact::SerialiseParams const&) const {
-    return false;
 }
 
 void MaterialSetup::setParameter(MaterialInputHandle p,Texture const* d)

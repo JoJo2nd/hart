@@ -35,9 +35,5 @@ Shader::~Shader() {
     }
 }
 
-bool Shader::serialiseObject(MarshallType**, hobjfact::SerialiseParams const&) const {
-    return false;
-}
-
 }
 }
