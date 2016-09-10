@@ -6,6 +6,7 @@
 #include "hart/render/material.h"
 #include "hart/render/shader.h"
 #include "hart/render/render.h"
+#include "hart/render/texture.h"
 #include "hart/core/resourcemanager.h"
 #include "hart/base/crt.h"
 
@@ -14,6 +15,23 @@ HART_OBJECT_TYPE_DECL(hart::render::MaterialSetup);
 
 namespace hart {
 namespace render {
+
+struct MaterialTextureSlot {
+    hresmgr::Handle* resource;
+    Texture texture;
+    uint8_t slot;
+};
+
+static bgfx::UniformType::Enum MaterialInputTypeToUniformType[resource::MaterialInputData_MAX+1] = {
+    bgfx::UniformType::End, // MaterialInputData_NONE = 0,
+    bgfx::UniformType::Vec4, // MaterialInputData_Vec3 = 1,
+    bgfx::UniformType::Vec4, // MaterialInputData_Vec4 = 2,
+    bgfx::UniformType::Mat4, // MaterialInputData_Mat33 = 3,
+    bgfx::UniformType::Mat4, // MaterialInputData_Mat44 = 4,
+    bgfx::UniformType::Int1, // MaterialInputData_Texture2DInput = 5,
+};
+
+
 bool Material::deserialiseObject(MarshallType const* in_data, hobjfact::SerialiseParams const& params) {
     auto const* in_tech = in_data->techniques();
     params.resdata->persistFileData = true;
@@ -34,46 +52,73 @@ bool Material::deserialiseObject(MarshallType const* in_data, hobjfact::Serialis
     //Process inputs
     auto const* in_inputs = in_data->defaultInputs();
     inputs.resize(in_inputs->size());
+    uint32_t datalen = 0;
     for (uint32_t i=0, n=in_inputs->size(); i<n; ++i) {
         resource::MaterialInput const* in_input = (*in_inputs)[i];
         inputs[i].name = in_input->name()->c_str();
         inputs[i].dataType = in_input->data_type();
+        inputs[i].dataIdx = Input::Invalid;
+        inputs[i].uniform = bgfx::createUniform(inputs[i].name, MaterialInputTypeToUniformType[inputs[i].dataType]);
         if (void const* raw_data = in_input->data()) {
             switch(inputs[i].dataType) {
             case resource::MaterialInputData_Vec3: {
-                inputs[i].dataIdx = (uint16_t)inputsData.vec.size();
+                inputs[i].dataIdx = (uint16_t)datalen;
+                hdbassert(inputs[i].dataIdx == datalen, "Size overflow\n");
                 hart::resource::Vec3* v = (hart::resource::Vec3*)raw_data;
-                inputsData.vec.push_back(hVec4(v->x(), v->y(), v->z(), 0.f));
+                hVec4 vv(v->x(), v->y(), v->z(), 0.f);
+                inputData.resize(datalen+sizeof(vv));
+                hcrt::memcpy(&inputData[datalen], &vv, sizeof(vv));
+                datalen += sizeof(vv);
             } break;
             case resource::MaterialInputData_Vec4: {
-                inputs[i].dataIdx = (uint16_t)inputsData.vec.size();
+                inputs[i].dataIdx = (uint16_t)datalen;
+                hdbassert(inputs[i].dataIdx == datalen, "Size overflow\n");
                 hart::resource::Vec4* v = (hart::resource::Vec4*)raw_data;
-                inputsData.vec.push_back(hVec4(v->x(), v->y(), v->z(), v->w()));
+                hVec4 vv(v->x(), v->y(), v->z(), v->w());
+                inputData.resize(datalen+sizeof(vv));
+                hcrt::memcpy(&inputData[datalen], &vv, sizeof(vv));
+                datalen += sizeof(vv);
             } break;
             case resource::MaterialInputData_Mat33: {
-                inputs[i].dataIdx = (uint16_t)inputsData.matrix.size();
+                inputs[i].dataIdx = (uint16_t)datalen;
+                hdbassert(inputs[i].dataIdx == datalen, "Size overflow\n");
                 hart::resource::Mat33* m = (hart::resource::Mat33*)raw_data;
-                inputsData.matrix.push_back(hMat44(
-                    hVec4(m->row1()->x(), m->row1()->y(), m->row1()->z(), 0.f),
-                    hVec4(m->row2()->x(), m->row2()->y(), m->row2()->z(), 0.f),
-                    hVec4(m->row3()->x(), m->row3()->y(), m->row3()->z(), 0.f),
-                    hVec4(           0.f,            0.f,            0.f, 1.f)
-                ));
+                hMat33 mm(
+                    hVec3(m->row1()->x(), m->row1()->y(), m->row1()->z()),
+                    hVec3(m->row2()->x(), m->row2()->y(), m->row2()->z()),
+                    hVec3(m->row3()->x(), m->row3()->y(), m->row3()->z())
+                );
+                inputData.resize(datalen+sizeof(mm));
+                hcrt::memcpy(&inputData[datalen], &mm, sizeof(mm));
+                datalen += sizeof(mm);
             } break;
             case resource::MaterialInputData_Mat44: {
-                inputs[i].dataIdx = (uint16_t)inputsData.matrix.size();
+                inputs[i].dataIdx = (uint16_t)datalen;
+                hdbassert(inputs[i].dataIdx == datalen, "Size overflow\n");
                 hart::resource::Mat44* m = (hart::resource::Mat44*)raw_data;
-                inputsData.matrix.push_back(hMat44(
+                hMat44 mm(
                     hVec4(m->row1()->x(), m->row1()->y(), m->row1()->z(), m->row1()->w()),
                     hVec4(m->row2()->x(), m->row2()->y(), m->row2()->z(), m->row2()->w()),
                     hVec4(m->row3()->x(), m->row3()->y(), m->row3()->z(), m->row3()->w()),
                     hVec4(m->row4()->x(), m->row4()->y(), m->row4()->z(), m->row4()->w())
-                ));
+                );
+                inputData.resize(datalen+sizeof(mm));
+                hcrt::memcpy(&inputData[datalen], &mm, sizeof(mm));
+                datalen += sizeof(mm);
             } break;
             case resource::MaterialInputData_Texture2DInput: {
-                //inputs[i].dataIdx = (uint16_t)inputsData.texture.size();
-                //hart::resource::uuid* u = (hart::resource::uuid*)raw_data;
-                //inputsData.texture.push_back(hresmgr::tweakGetResource<Texture2D>(huuid::fromData(*u)));
+                inputs[i].dataIdx = (uint16_t)datalen;
+                hdbassert(inputs[i].dataIdx == datalen, "Size overflow\n");
+                resource::Texture2DInput* t = (resource::Texture2DInput*)raw_data;
+                Texture invalid_tex = BGFX_INVALID_HANDLE;
+                MaterialTextureSlot tslot = {
+                    nullptr,
+                    t->resid() ? hresmgr::tweakGetResource<TextureRes>(huuid::fromData(*t->resid()))->getTexture() : invalid_tex,
+                    t->slot()
+                };
+                inputData.resize(datalen+sizeof(tslot));
+                hcrt::memcpy(&inputData[datalen], &tslot, sizeof(tslot));
+                datalen += sizeof(tslot);
             } break;
             }
         }
@@ -84,8 +129,43 @@ bool Material::deserialiseObject(MarshallType const* in_data, hobjfact::Serialis
 Material::~Material() {
     for (auto& tech : techniques) {
         for (auto& pass : tech.passes) {
-            destroyProgram(pass.program);
-            pass.program = nullptr;
+            hrnd::destroyProgram(pass.program);
+            pass.program = getInvalidProgram();
+        }
+    }
+    for (auto& in : inputs) {
+        bgfx::destroyUniform(in.uniform);
+    }
+}
+
+void Material::setParameters(MaterialHandleData const* hrestrict in_data, uint32_t in_data_count, uint8_t const* hrestrict base_add) {
+    uint32_t n_inputs = uint32_t(inputs.size());
+    for (uint32_t i=0; i<n_inputs; ++i) {
+        inputs[i].set = 0;
+    }
+
+    uint8_t const* dafault_add = inputData.data();
+    for (uint32_t i=0, n=in_data_count; i<n; ++i) {
+        uint32_t i_idx = in_data[i].handle.idx;
+        inputs[i_idx].set = 1;
+        if (in_data[i].handle.type >= resource::MaterialInputData_Texture2DInput) {
+            MaterialTextureSlot* tslot = (MaterialTextureSlot*)(base_add+in_data[i].dataOffset);
+            MaterialTextureSlot* dtslot = (MaterialTextureSlot*)(dafault_add+inputs[i_idx].dataIdx);
+            bgfx::setTexture(dtslot->slot, inputs[i_idx].uniform, tslot->texture);
+        } else {
+            bgfx::setUniform(inputs[i_idx].uniform, base_add+in_data[i].dataOffset);
+        }
+    }
+
+    // Apply any default that weren't set by in_data
+    for (uint32_t i=0; i<n_inputs; ++i) {
+        if (inputs[i].set == 0 && inputs[i].dataIdx != Input::Invalid) {
+            if (inputs[i].dataType >= resource::MaterialInputData_Texture2DInput) {
+                MaterialTextureSlot* tslot = (MaterialTextureSlot*)(dafault_add+inputs[i].dataIdx);
+                bgfx::setTexture(tslot->slot, inputs[i].uniform, tslot->texture);
+            } else {
+                bgfx::setUniform(inputs[i].uniform, dafault_add+inputs[i].dataIdx);
+            }
         }
     }
 }
@@ -124,11 +204,10 @@ bool MaterialSetup::deserialiseObject(MarshallType const* in_data, hobjfact::Ser
             case resource::MaterialInputData_Mat33: {
                 inputs[i].dataLen = sizeof(hMat44);
                 hart::resource::Mat33* m = (hart::resource::Mat33*)raw_data;
-                hMat44 d(
-                    hVec4(m->row1()->x(),m->row1()->y(),m->row1()->z(),0.f),
-                    hVec4(m->row2()->x(),m->row2()->y(),m->row2()->z(),0.f),
-                    hVec4(m->row3()->x(),m->row3()->y(),m->row3()->z(),0.f),
-                    hVec4(0.f,0.f,0.f,1.f)
+                hMat33 d(
+                    hVec3(m->row1()->x(),m->row1()->y(),m->row1()->z()),
+                    hVec3(m->row2()->x(),m->row2()->y(),m->row2()->z()),
+                    hVec3(m->row3()->x(),m->row3()->y(),m->row3()->z())
                 );
                 inputData.resize(inputs[i].dataOffset+inputs[i].dataLen);
                 hcrt::memcpy(&inputData[inputs[i].dataOffset], &d, inputs[i].dataLen);
@@ -146,9 +225,15 @@ bool MaterialSetup::deserialiseObject(MarshallType const* in_data, hobjfact::Ser
                 hcrt::memcpy(&inputData[inputs[i].dataOffset], &d, inputs[i].dataLen);
             } break;
             case resource::MaterialInputData_Texture2DInput: {
-                inputs[i].dataLen = sizeof(void*);
-                //hart::resource::uuid* u = (hart::resource::uuid*)raw_data;
-                //inputsData.texture.push_back(hresmgr::tweakGetResource<Texture2D>(huuid::fromData(*u)));
+                inputs[i].dataLen = sizeof(MaterialTextureSlot);
+                resource::Texture2DInput* t = (resource::Texture2DInput*)raw_data;
+                MaterialTextureSlot tslot = {
+                    nullptr,
+                    hresmgr::tweakGetResource<TextureRes>(huuid::fromData(*t->resid()))->getTexture(),
+                    t->slot()
+                };
+                inputData.resize(inputs[i].dataOffset+inputs[i].dataLen);
+                hcrt::memcpy(&inputData[inputs[i].dataOffset], &tslot, sizeof(tslot));
             } break;
             }
         } else {
@@ -164,17 +249,26 @@ bool MaterialSetup::deserialiseObject(MarshallType const* in_data, hobjfact::Ser
                 inputData.resize(inputs[i].dataOffset+inputs[i].dataLen);
             } break;
             case resource::MaterialInputData_Texture2DInput: {
-                inputs[i].dataLen = sizeof(void*);
+                inputs[i].dataLen = sizeof(MaterialTextureSlot);
                 inputData.resize(inputs[i].dataOffset+inputs[i].dataLen);
             } break;
             }
         }
     }
+
     return true;
 }
 
 bool MaterialSetup::serialiseObject(MarshallType**, hobjfact::SerialiseParams const&) const {
     return false;
+}
+
+void MaterialSetup::setParameter(MaterialInputHandle p,Texture const* d)
+{
+    hdbassert(p.isValid() && p.type >= resource::MaterialInputData_Texture2DInput,"Invalid parameter handle!\n");
+    MaterialTextureSlot slot ={nullptr,*d,0};
+    hcrt::memcpy(&inputData[inputs[p.idx].dataOffset],&slot,sizeof(slot));
+    dirty = true;
 }
 
 }

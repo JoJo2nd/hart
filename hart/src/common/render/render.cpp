@@ -4,13 +4,12 @@
 *********************************************************************/
 
 #include "hart/render/render.h"
-#include "hart/base/freelist.h"
-
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_syswm.h>
-
-#include "bgfx/bgfx.h"
-#include "bgfx/bgfxplatform.h"    
+#include "hart/base/freelist.h"  
+#include "hart/render/state.h"
+#include "hart/render/shader.h"
+#include "hart/render/material.h"
+#include "hart/render/vertexdecl.h"
+#include "hart/render/program.h"
 
 namespace hart {
 namespace render {
@@ -18,10 +17,6 @@ namespace render {
 struct VertexDecl {
     uint16_t stride;
     bgfx::VertexDecl decl;
-};
-
-struct Program {
-    bgfx::ProgramHandle prog;
 };
 
 static struct {
@@ -41,16 +36,16 @@ static struct {
     } scissor;
     bool doingInlineSubmit : 1;
     bool dirtyScissor : 1;
+    bool forceFlushMat : 1;
     struct PassInfo {
         State state;
-        Program* prog;
+        Program prog;
     } currentPass[MaxPasses];
 } drawCtx;
 static bgfx::Caps gfxCaps;
 static resource::Profile currentProfile = resource::Profile_Direct3D11;
 static hstd::vector<uint8_t> viewIDRemap;
 static hart::Freelist<VertexDecl, 256> vertexDeclFreelist;
-static hart::Freelist<Program> programFreelist;
 static bgfx::Attrib::Enum bgfxAttribRemap[] = {
     bgfx::Attrib::Position,  // from Semantic::Position
     bgfx::Attrib::Normal,    // from Semantic::Normal
@@ -111,20 +106,11 @@ void destroyVertexDecl(VertexDecl* vd) {
     vertexDeclFreelist.release(vd);
 }
 
-Program* createProgram(Shader* vertex, Shader* pixel) {
-    Program* p = new (programFreelist.allocate()) Program();
-    p->prog = bgfx::createProgram(
+Program createProgram(Shader* vertex, Shader* pixel) {
+    Program p = bgfx::createProgram(
         vertex->getShaderProfileObject(currentProfile),
         pixel->getShaderProfileObject(currentProfile));
     return p;
-}
-
-void destroyProgram(Program* p) {
-    if (!p) return;
-
-    bgfx::destroyProgram(p->prog);
-    p->~Program();
-    programFreelist.release(p);
 }
 
 void initialise(SDL_Window* window) {
@@ -163,6 +149,7 @@ void begin(uint16_t view_id, TechniqueType tech, hMat44 const* view, hMat44 cons
     drawCtx.currentMatSetup = nullptr;
     drawCtx.doingInlineSubmit = false;
     drawCtx.dirtyScissor = false;
+    drawCtx.forceFlushMat = false;
     bgfx::setViewTransform((uint8_t)drawCtx.currentView, view, proj);
 }
 
@@ -177,6 +164,7 @@ void setScissor(uint16_t x, uint16_t y, uint16_t w, uint16_t h) {
 void setMaterialSetup(MaterialSetup* mat) {
     hdbassert(mat && mat->getMaterial(), "material pass must valid");
     drawCtx.currentMatSetup = mat;
+    drawCtx.forceFlushMat = true;
     drawCtx.currentPassCount = (uint8_t)mat->getMaterial()->getTechnqiuePassCount(drawCtx.activeTech);
     for (uint8_t i=0, n=drawCtx.currentPassCount; i<n; ++i) {
         drawCtx.currentPass[i].state = mat->getMaterial()->getTechnqiuePassState(drawCtx.activeTech, i); 
@@ -203,11 +191,13 @@ void submitInline(VertexDecl* fmt, void* idx, void* vtx, uint16_t numVertices, u
     if (drawCtx.dirtyScissor) {
         bgfx::setScissor(drawCtx.scissor.x, drawCtx.scissor.y, drawCtx.scissor.w, drawCtx.scissor.h);
     }
-    drawCtx.dirtyScissor = false;
+    drawCtx.currentMatSetup->flushParameters(drawCtx.forceFlushMat);
     for (uint8_t p=0, n=drawCtx.currentPassCount; p < n; ++p) {
         bgfx::setState(drawCtx.currentPass[p].state.stateMask);
-        bgfx::submit(drawCtx.currentView, drawCtx.currentPass[p].prog->prog);
+        bgfx::submit(drawCtx.currentView, drawCtx.currentPass[p].prog);
     }
+    drawCtx.dirtyScissor = false;
+    drawCtx.forceFlushMat = false;
 }
 
 void beginInlineBatch(VertexDecl* fmt, void* idx, uint32_t numIndices, void* vtx, uint16_t numVertices) {
@@ -234,10 +224,12 @@ void inlineBatchSubmit(uint16_t ib_offset, uint32_t ib_count, uint16_t vb_offset
     if (drawCtx.dirtyScissor) {
         bgfx::setScissor(drawCtx.scissor.x, drawCtx.scissor.y, drawCtx.scissor.w, drawCtx.scissor.h);
     }
+    drawCtx.currentMatSetup->flushParameters(drawCtx.forceFlushMat);
     for (uint8_t p=0, n=drawCtx.currentPassCount; p < n; ++p) {
         bgfx::setState(drawCtx.currentPass[p].state.stateMask);
-        bgfx::submit(drawCtx.currentView, drawCtx.currentPass[p].prog->prog);
+        bgfx::submit(drawCtx.currentView, drawCtx.currentPass[p].prog);
     }
+    drawCtx.forceFlushMat = false;
     drawCtx.dirtyScissor = false;
 }
 

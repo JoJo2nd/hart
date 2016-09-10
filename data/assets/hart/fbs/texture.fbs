@@ -1,0 +1,17 @@
+
+include "textureformats.fbs";
+
+namespace hart.render.resource;
+
+table Texture {
+    type:render.TextureType;
+    format:render.TextureFormat;
+    width:uint;
+    height:uint;
+    depth:uint;
+    mips:uint;
+    data:[ubyte];
+}
+
+file_identifier "texr";
+root_type Texture;

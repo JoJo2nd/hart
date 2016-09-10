@@ -17,17 +17,17 @@
 #include "hart/base/util.h"
 #include "hart/base/time.h"
 #include "hart/base/matrix.h"
+#include "hart/render/vertexdecl.h"
+#include "hart/render/render.h"
 #include "imgui.h"
 
 // object factory classes
-#include "hart/render/render.h"
+#include "hart/render/shader.h"
+#include "hart/render/material.h"
+#include "hart/render/texture.h"
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_syswm.h>
-//TODO: remove this include, depends on SDL.h include coming first so we'll 
-// hide it behind hart::render interface
-#include <bgfx/bgfx.h>
-#include <bgfx/bgfxplatform.h>
 
 #include <stdio.h>
 #include <vector>
@@ -167,8 +167,6 @@ namespace engine {
                     }
                     else if (0 != cmd->ElemCount)
                     {
-                        bgfx::TextureHandle th = imgui.texture;
-
                         if (NULL != cmd->TextureId)
                         {
                             hdbfatal("STUB: ImGui render texture callback");
@@ -192,7 +190,8 @@ namespace engine {
                         uint16_t ww = uint16_t(hutil::tmin(cmd->ClipRect.z, 65535.0f)-xx);
                         uint16_t hh = uint16_t(hutil::tmin(cmd->ClipRect.w, 65535.0f)-yy);
                         hrnd::setScissor(xx, yy, ww, hh);
-                        bgfx::setTexture(0, imgui.textureUniform, th);
+                        //bgfx::setTexture(0, imgui.textureUniform, th);
+                        imgui.material->setParameter(imgui.textureInputHandle, &imgui.texture);
                         hrnd::inlineBatchSubmit(offset, cmd->ElemCount, 0, numVertices);
                     }
 
@@ -249,13 +248,6 @@ namespace engine {
                 hconfigopt::getInt("taskgraph", "workercount", 4), 
                 hconfigopt::getUint("taskgraph", "jobqueuesize", 256));
 
-            //m_thread.init(MainThreadEntry::threadFunc, &m_mte);
-
-            // Force window resolution...
-            //WindowHandle defaultWindow = { 0 };
-            //setWindowSize(defaultWindow, m_width, m_height, true);
-            //SDL_SetWindowSize(m_window, m_width, m_height);
-
             // Application init
             static uint32_t buttom_remap[] = {
                 1, 0, 2, 3, 4
@@ -292,6 +284,7 @@ namespace engine {
             hobjfact::objectFactoryRegistar(hrnd::Shader::getObjectDefinition(), nullptr);
             hobjfact::objectFactoryRegistar(hrnd::Material::getObjectDefinition(), nullptr);
             hobjfact::objectFactoryRegistar(hrnd::MaterialSetup::getObjectDefinition(), nullptr);
+            hobjfact::objectFactoryRegistar(hrnd::TextureRes::getObjectDefinition(), nullptr);
             hobjfact::objectFactoryRegistar(hresmgr::Collection::getObjectDefinition(), nullptr);
 
             // init engine
@@ -316,29 +309,24 @@ namespace engine {
                 };
                 imgui.vDecl = hrnd::createVertexDecl(elements, (uint16_t)HART_ARRAYSIZE(elements));
 
-                imgui.textureUniform = bgfx::createUniform("s_tex", bgfx::UniformType::Int1);
 
                 uint8_t* data;
                 int32_t width;
                 int32_t height;
                 io.Fonts->GetTexDataAsRGBA32(&data, &width, &height);
-                imgui.texture = bgfx::createTexture2D( (uint16_t)width
-                    , (uint16_t)height
-                    , 1
-                    , bgfx::TextureFormat::BGRA8
-                    , 0
-                    , bgfx::copy(data, width*height*4)
-                    );
+                imgui.texture = hrnd::createTexture2D(width, height, 1, hrnd::TextureFormat_BGRA8, 0, data, width*height*4);
 
-                //TODO: exchange ths for a material
+                //TODO: maybe not hardcode this? could come from the ini file...
                 static huuid::uuid_t imgui_material = huuid::fromDwords(0x013d177963434046,0xbc851eda6667af12);
 
                 // get the loaded pointers
                 imgui.materialHdl = hresmgr::loadResource(imgui_material);
                 imgui.materialHdl.loaded();
                 imgui.material = imgui.materialHdl.getData<hrnd::MaterialSetup>();
-                
-                hdbassert(imgui.material, "ImGui material isn't loaded. It should be loaded during startup");
+                hdbassert(imgui.material, "ImGui material isn't loaded. It should be loaded during startup.\n");
+                imgui.textureInputHandle = imgui.material->getInputParameterHandle("s_tex");
+                hdbassert(imgui.textureInputHandle.isValid(), "ImGui material is missing s_tex texture input.\n");
+
                 hrnd::ViewDef views;
                 views.id = hrnd::View_Debug;
                 views.clearColour = true;
@@ -424,7 +412,7 @@ namespace engine {
             hrnd::VertexDecl*    vDecl;
             hrnd::MaterialSetup* material;
             bgfx::TextureHandle texture;
-            bgfx::UniformHandle textureUniform;
+            hrnd::MaterialInputHandle textureInputHandle;
             hresmgr::Handle     materialHdl;
         } imgui;
 

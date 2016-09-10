@@ -117,4 +117,8 @@
 
 #define BGFX_HANDLE_SET_INVALID(x) (x.idx = bgfx::invalidHandle)
 
+#if HART_PLATFORM == HART_PLATFORM_WINDOWS
+#   define hrestrict __restrict
+#endif
+
 #include <stdint.h>

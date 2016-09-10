@@ -7,6 +7,7 @@
 
 #include "hart/config.h"
 #include "hart/base/util.h"
+#include "hart/render/program.h"
 #include "hart/core/objectfactory.h"
 #include "hart/fbs/shader_generated.h"
 #include "bgfx/bgfx.h"
@@ -14,15 +15,13 @@
 namespace hart {
 namespace render {
 
-struct Program;
-
 class Shader {
     HART_OBJECT_TYPE(HART_MAKE_FOURCC('s','d','r','c'), resource::ShaderCollection)
     public:
         ~Shader();
         
     private:
-        friend Program* createProgram(Shader*, Shader*);
+        friend Program createProgram(Shader*, Shader*);
 
         bgfx::ShaderHandle getShaderProfileObject(resource::Profile p) {
             return shaders[p];

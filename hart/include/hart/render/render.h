@@ -7,14 +7,16 @@
 
 #include "hart/config.h"
 #include "hart/base/matrix.h"
-#include "hart/render/state.h"
-#include "hart/render/shader.h"
-#include "hart/render/material.h"
+#include "hart/render/technique.h"
 
 struct SDL_Window;
 
 namespace hart {
 namespace render {
+
+class Material;
+class MaterialSetup;
+class Shader;
 
 enum View {
     View_Debug = 32,
@@ -27,37 +29,6 @@ enum class Ratio {
     Eighth,    // 
     Sixteenth, // 
     Double,    // 
-};
-
-enum class Semantic {
-    Position,  //
-    Normal,    //
-    Tangent,   //
-    Bitangent, //
-    Color0,    //
-    Color1,    //
-    TexCoord0, //
-    TexCoord1, //
-    TexCoord2, //
-    TexCoord3, //
-    TexCoord4, //
-    TexCoord5, //
-    TexCoord6, //
-    TexCoord7, //
-};
-
-enum class SemanticType {
-    Uint8,  //
-    Int16,  //
-    Half,   // May not be supported everywhere
-    Float,  //
-};
-
-struct VertexElement {
-    Semantic sem;
-    SemanticType semType;
-    uint8_t elementCount;
-    bool normalized;
 };
 
 struct ViewDef {
@@ -78,17 +49,10 @@ struct ViewDef {
 };
 
 struct VertexDecl;
-struct Program;
 
 void initialise(SDL_Window* window);
 
 void resetViews(ViewDef* views, size_t count);
-
-VertexDecl* createVertexDecl(VertexElement const* elements, uint16_t element_count);
-void destroyVertexDecl();
-
-Program* createProgram(Shader* vertex, Shader* pixel);
-void destroyProgram(Program* program);
 
 void begin(uint16_t view_id, TechniqueType tech, hMat44 const* view, hMat44 const* proj);
 void setMaterialSetup(MaterialSetup* mat);

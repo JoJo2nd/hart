@@ -10,7 +10,9 @@
 namespace hart {
 namespace math {
     typedef Vectormath::Aos::Matrix4 Mat44;
+    typedef Vectormath::Aos::Matrix3 Mat33;
 }
 }
 
 typedef hart::math::Mat44 hMat44;
+typedef hart::math::Mat33 hMat33;

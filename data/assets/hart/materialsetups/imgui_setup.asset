@@ -4,6 +4,7 @@
     "..\\fbs\\materialsetup.fbs", 
     "..\\fbs\\material.fbs", 
     "..\\fbs\\renderstate.fbs", 
+    "..\\fbs\\techniquetype.fbs", 
     "..\\fbs\\uuid.fbs", 
     "..\\fbs\\vec_matrix.fbs"
   ], 
