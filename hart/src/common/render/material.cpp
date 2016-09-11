@@ -51,6 +51,7 @@ bool Material::deserialiseObject(MarshallType const* in_data, hobjfact::Serialis
     }
     //Process inputs
     auto const* in_inputs = in_data->defaultInputs();
+    if (!in_inputs) return true;
     inputs.resize(in_inputs->size());
     uint32_t datalen = 0;
     for (uint32_t i=0, n=in_inputs->size(); i<n; ++i) {
@@ -174,6 +175,7 @@ bool MaterialSetup::deserialiseObject(MarshallType const* in_data, hobjfact::Ser
     material = hresmgr::tweakGetResource<Material>(uuid::fromData(*in_data->material()));
     //Process inputs
     auto const* in_inputs = in_data->inputs();
+    if (!in_inputs) return true;
     inputs.resize(in_inputs->size());
     for(uint32_t i=0,n=in_inputs->size(); i<n; ++i) {
         resource::MaterialInput const* in_input = (*in_inputs)[i];

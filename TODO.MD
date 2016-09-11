@@ -48,4 +48,5 @@ The TODO list...
 ### Add keyboard support to Dear ImGUI
 
 ### Add debug menus
->* Add debug menu for resource manager. Should allow testing loading/unloading assets (outside of currently loaded assets). Should display **ALL** assets that can be loaded along side assets that currently loaded (plus refcount, friendly name, etc)
+>* ~~Add register function for debug menus~~
+>* ~~Add debug menu for resource manager.~~ Should allow testing loading/unloading assets (outside of currently loaded assets). ~~Should display **ALL** assets that can be loaded along side assets that currently loaded (plus refcount, friendly name, etc)~~

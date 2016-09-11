@@ -31,6 +31,9 @@ namespace resourcemanager {
             hdbassert(data, "Asset is not loaded yet. Check with call to loaded() first.");
             return (expected_typecc == typecc) ? data : nullptr;
         }
+        bool isValid() {
+            return !huuid::isNull(id);
+        }
 
     private:
         friend Handle loadResource(resid_t res_id);

@@ -10,6 +10,7 @@
 #include "hart/core/objectfactory.h"
 #include "hart/fbs/resourcedb_generated.h"
 #include "hart/base/mutex.h"
+#include "hart/core/engine.h"
 
 HART_OBJECT_TYPE_DECL(hart::resourcemanager::Collection);
 
@@ -24,6 +25,9 @@ struct Resource {
     hstd::unique_ptr<uint8_t> loadtimeData;
     void* runtimeData = nullptr;     //
     hatomic::aint32_t refCount = 0; // Only valid when runtimeData is !nullptr (or resource system is loading runtime data. Need extra flag?)
+#if HART_DEBUG_INFO
+    Handle debugLoadHandle;
+#endif
 };
 
 struct LoadRequest {
@@ -51,6 +55,7 @@ static struct {
     ResourceLoadState resState = ResourceLoadState::Waiting;
     hfs::FileHandle fileHdl;
     hfs::FileOpHandle fileOp;
+    engine::DebugMenuHandle dbmenuHdl;
 } ctx;
 
 bool initialise() {
@@ -83,12 +88,72 @@ bool initialise() {
         Resource& res = ctx.resources[id];
         res.uuid = id;
         res.info = (*asset_infos)[i];
-        hdbprintf("uuid: %x-%x-%x-%x ", id.words[0], id.words[1], id.words[2], id.words[3]);
-        hdbprintf("friendly name: %s filepath: %s\n", (*asset_infos)[i]->friendlyName()->c_str(), (*asset_infos)[i]->filepath()->c_str());
     }
 
     hfs::closeFile(res_file);
-
+#if HART_DEBUG_INFO
+    ctx.dbmenuHdl = engine::addDebugMenu("Resource Manager", []() {
+        hScopedMutex sentry(&ctx.access);
+        if (ImGui::Begin("Resource Manager", nullptr, ImGuiWindowFlags_NoTitleBar|ImGuiWindowFlags_MenuBar)) {
+            static resid_t to_load;
+            auto const* asset_uuids = ctx.resourceListings->assetUUIDs();
+            bool loadResource = false;
+            if (!huuid::isNull(to_load) && !ctx.resources[to_load].debugLoadHandle.isValid()) {
+                if (ImGui::Button("Test Load Resource")) {
+                    ctx.resources[to_load].debugLoadHandle = hresmgr::loadResource(to_load);
+                }
+            }
+            if (!huuid::isNull(to_load) && ctx.resources[to_load].debugLoadHandle.isValid() && ctx.resources[to_load].debugLoadHandle.loaded()) {
+                if (ImGui::Button("Test Unload Resource")) {
+                    
+                }
+            }
+            ImGui::Separator();
+            ImGui::Columns(4, "resources");
+            ImGui::Text("Friendly Name"); ImGui::NextColumn();
+            ImGui::Text("UUID"); ImGui::NextColumn();
+            ImGui::Text("TypeCC"); ImGui::NextColumn();
+            ImGui::Text("RefCount"); ImGui::NextColumn();
+            ImGui::Separator();
+            static int32_t selected = -1;
+            int32_t index = 0;
+            for (const auto& i : ctx.resources) {
+                Resource const& r = i.second;
+                char txt_buf[256];
+                if (ImGui::Selectable(r.info->friendlyName()->c_str(), selected == index, ImGuiSelectableFlags_SpanAllColumns)) {
+                    selected = index;
+                    to_load = r.uuid;
+                }
+                if (ImGui::IsItemHovered()) {
+                    auto const* prerequisites = r.info->prerequisites();
+                    if (prerequisites) {
+                        ImGui::BeginTooltip();
+                        ImGui::Text("Depends on asset(s):");
+                        for (uint32_t i = 0, n = prerequisites->size(); i < n; ++i) {
+                            uint32_t ridx = (*prerequisites)[i];
+                            resid_t p = huuid::fromData(*(*asset_uuids)[ridx]);
+                            ImGui::Text("%s", ctx.resources[p].info->friendlyName()->c_str());
+                        }
+                        ImGui::EndTooltip();
+                    }
+                }
+                ImGui::NextColumn();
+                huuid::toString(r.uuid, txt_buf, HART_ARRAYSIZE(txt_buf));
+                ImGui::Text(txt_buf); ImGui::NextColumn();
+                if (r.typecc) {
+                    (*(uint32_t*)txt_buf)=r.typecc;
+                    txt_buf[4]=0;
+                    ImGui::Text(txt_buf); ImGui::NextColumn();
+                } else {
+                    ImGui::Text("Unknown until loaded once"); ImGui::NextColumn();
+                }
+                ImGui::Text("%d", hatomic::atomicGet(r.refCount)); ImGui::NextColumn();
+                ++index;
+            }
+        }
+        ImGui::End();
+    });
+#endif
     return true;    
 }
 
@@ -161,7 +226,7 @@ void update() {
 }
 
 void shutdown() {
-
+    engine::removeDebugMenu(ctx.dbmenuHdl);
 }
 
 static void loadResourceInternal(resid_t res_id) {

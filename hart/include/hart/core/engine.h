@@ -8,6 +8,7 @@
 #include "hart/config.h"
 #include "hart/base/std.h"
 #include "hart/core/taskgraph.h"
+#include "imgui/imgui.h"
 #include <SDL2/SDL_events.h>
 
 #define ENTRY_WINDOW_FLAG_NONE         UINT32_C(0x00000000)
@@ -69,6 +70,8 @@ struct EventHandle {
     Event event;
     uint32_t loc;
 };
+typedef hstd::function<void()> DebugMenuCallback;
+typedef uint32_t DebugMenuHandle;
 
 class GameInterface {
 public:
@@ -90,6 +93,12 @@ int32_t run(int argc,char* argv[], GameInterface* game);
 
 EventHandle addEventHandler(Event sysEventID, EventHandler handler);
 void removeEventHandler(EventHandle handle);
+
+#if HART_DEBUG_INFO
+DebugMenuHandle addDebugMenu(char const* name, DebugMenuCallback debug_menu);
+void removeDebugMenu(DebugMenuHandle handle);
+#endif
+
 }
 } 
 namespace hEngine = hart::engine;
