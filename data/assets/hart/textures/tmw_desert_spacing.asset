@@ -1,0 +1,14 @@
+{
+  "inputs": [
+    "tmw_desert_spacing.png"
+  ], 
+  "uuid": "{4d8982cb-a5bf-4afa-b174-5543a0f0ed16}", 
+  "prerequisites": [], 
+  "processoptions": {
+    "generatemips": true, 
+    "input": "%(asset_root)/tmw_desert_spacing.png", 
+    "format": "RGBA8"
+  }, 
+  "friendlyname": "system/texture/test", 
+  "type": "texture"
+}

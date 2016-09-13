@@ -4,12 +4,7 @@ include "textureformats.fbs";
 namespace hart.render.resource;
 
 table Texture {
-    type:render.TextureType;
-    format:render.TextureFormat;
-    width:uint;
-    height:uint;
-    depth:uint;
-    mips:uint;
+    // If a texture needs custom formatting, add enum to catch that here.
     data:[ubyte];
 }
 

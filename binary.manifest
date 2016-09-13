@@ -41,6 +41,9 @@
   "data\\builder\\flatc.exe": {
     "sha1": "1f9ad896f921107efef565838faad2f33690bf6c"
   }, 
+  "tools\\Tilemancer-0.2.1\\zlib1.dll": {
+    "sha1": "90f59b2e8d2d1fac6f523d73fd497c0607ad2076"
+  }, 
   "tools\\Tilemancer-0.2.1\\libwinpthread-1.dll": {
     "sha1": "27d500839633967c35d335719369373b1587b0c3"
   }, 
@@ -158,8 +161,8 @@
   "tools\\Tiled\\examples\\tmw_desert_spacing.png": {
     "sha1": "084ad1d18843acaa0bb220f482dd0f0f0cedcf59"
   }, 
-  "tools\\Tilemancer-0.2.1\\zlib1.dll": {
-    "sha1": "90f59b2e8d2d1fac6f523d73fd497c0607ad2076"
+  "tools\\Tiled\\examples\\hexmini.png": {
+    "sha1": "fd6d5cc7778c675a9d9f53290c1f6dabb3169f91"
   }, 
   "tools\\Tiled\\translations\\tiled_de.qm": {
     "sha1": "6d1d77cf0b9eab50634ad011fb61d41fd46837f2"
@@ -206,9 +209,6 @@
   "tools\\Tiled\\plugins\\imageformats\\qgif.dll": {
     "sha1": "47ce9cfdf2f7d77d616cd73d4bd84ca31c43ac65"
   }, 
-  "tools\\Tiled\\examples\\hexmini.png": {
-    "sha1": "fd6d5cc7778c675a9d9f53290c1f6dabb3169f91"
-  }, 
   "tools\\Tiled\\tmxrasterizer.exe": {
     "sha1": "e6c0b94c5eab79fcaa7eca51b4f8b2098a6639db"
   }, 
@@ -253,6 +253,9 @@
   }, 
   "tools\\Tiled\\tmxviewer.exe": {
     "sha1": "43ebcd31f0550b260025896fad3eb05c5873b771"
+  }, 
+  "data\\assets\\hart\\textures\\tmw_desert_spacing.png": {
+    "sha1": "084ad1d18843acaa0bb220f482dd0f0f0cedcf59"
   }, 
   "tools\\Tiled\\translations\\qt_he.qm": {
     "sha1": "f0cfce4a84c89e69e64dd380d54200a8eb0c2214"

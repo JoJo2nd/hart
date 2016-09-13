@@ -28,7 +28,7 @@ namespace crt {
         ::memmove(dest,src,size);
     }
 
-    inline int memcpy(const void* lhs,const void* rhs,size_t size) {
+    inline int memcmp(const void* lhs,const void* rhs,size_t size) {
         return ::memcmp(lhs,rhs,size);
     }
 
