@@ -21,18 +21,21 @@ The TODO list...
 >* Create the unload queue and process it. Then add test case.
 
 ### Get Textures loading
->* fixup texture processor for [builder.py](https://github.com/JoJo2nd/hart/blob/master/data/builder/builder.py)
+>* ~~fixup texture processor for [builder.py](https://github.com/JoJo2nd/hart/blob/master/data/builder/builder.py)~~ **Done**
 >* ~~define class for texture, needed to be object to load/unload. May need one per dim i.e. 1D, 2D, 3D, Cube~~ **Done**
->* get texture1D loading working...May not need
->* get texture2D loading working
->* get texture3D loading working
->* get textureCube loading working...May not need
+>* ~~get texture1D loading working...May not need~~ **Done**
+>* ~~get texture2D loading working~~ **Done**
+>* ~~get texture3D loading working~~ **Done**
+>* ~~get textureCube loading working...May not need~~ **Done**
 
-### Load a collection of game objects
->* ???
+### Load a collection of game objects (Not 100% sure how this system will work yet...)
+>* Define game object in assets. This could be a collection of components in flatbuffer json format? Leaning towards a template file in this format with extra json file overridding some properties of the template. dot asset file would link to the extra json file and define a UUID for object (as with other resources). That UUID is the object's name (forever, to enable save/load) and then other resoruces (e.g. levels? scripts?) link to the object by UUID (by prerequisites for hard links, resid_t/uuid_t for soft links)
+>* Added builder process script to deal with whatever final game object format will be
+>* Load game object in runtime.
+>* Load game object in runtime alongside save data to allow restoring a saved game.
 
 ### Save a collection of game objects
->* Strip the current serialise function from objects
+>* ~~Strip the current serialise function from objects~~ **Done**
 >* ???
 
 ### Load and render map exported from Tiled.
