@@ -20,7 +20,7 @@ ObjectDefinition const* getObjectDefinition(uint32_t typecc) {
     return &definition;
 }
 
-bool objectFactoryRegistar(ObjectDefinition const& definition, void* user) {
+bool objectFactoryRegister(ObjectDefinition const& definition, void* user) {
     if (!definition.typecc) {
         return false;
     }
@@ -51,6 +51,34 @@ void* deserialiseObject(void const* data, size_t len, SerialiseParams* params, u
     *out_typecc = data_typecc;
     // return new object
     return vobj;
+}
+
+entity::Component* createComponentObject(void const* data, size_t len, SerialiseParams* params, uint32_t* out_typecc) {
+    hdbassert(params, "params must not be null");
+    // Get typecc from data (see BufferHasIdentifier)
+    uint32_t data_typecc = *((uint32_t*)((char const*)(data) + sizeof(flatbuffers::uoffset_t)));
+    // read data
+    ObjectDefinition const& definition = objectDefTable[data_typecc];
+    if (!definition.typecc) {
+        hdbfatal("Unknown typecc 0x%08X", data_typecc);
+        return nullptr;
+    }
+
+    if (!definition.component) {
+        hdbfatal("Type 0x%08X cannpt be constructed as a component type", data_typecc);
+        return nullptr;
+    }
+
+    params->user = definition.user;
+    // alloc & construct
+    void* vobj = definition.objMalloc();
+    entity::Component* comp_ptr = definition.component(vobj);
+    // deseralise
+    definition.deserialise(data, vobj, *params);
+    // update type info
+    *out_typecc = data_typecc;
+    // return new object
+    return comp_ptr;
 }
 
 }

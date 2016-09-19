@@ -1,0 +1,14 @@
+/********************************************************************
+    Written by James Moran
+    Please see the file LICENSE.txt in the repository root directory.
+*********************************************************************/
+namespace hart.entity.resource;
+
+table EntityTemplate {
+    componentOffsets:[uint];
+    componentData:[ubyte];
+}
+
+
+file_identifier "etpl";
+root_type EntityTemplate;

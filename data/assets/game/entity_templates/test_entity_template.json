@@ -1,0 +1,32 @@
+{
+    "player": {
+        "exp":0,
+        "level":1,
+        "someFlag": {"val":false},
+        "test_uuid": {
+          "highword1": 575290046, 
+          "lowword": 3088377340, 
+          "highword3": 1929569427, 
+          "highword2": 172211610
+        },
+        "inner": {
+            "inner_exp": 12345,
+            "another_test_uuid": {
+              "highword1": 575290046, 
+              "lowword": 3088377340, 
+              "highword3": 1929569427, 
+              "highword2": 172211610
+            },
+            "test_uuid": {
+                "highword1": 4199202725, 
+                "lowword": 3414329677, 
+                "highword3": 384692384, 
+                "highword2": 1129673905
+            }
+        }
+    }, 
+    "test": {
+        "exp":1001,
+        "level":99
+    }
+}

@@ -1,0 +1,37 @@
+{
+    "entityTemplate": {
+      "highword1": 3309558947, 
+      "lowword": 2434434475, 
+      "highword3": 389849934, 
+      "highword2": 3484348084
+    },
+    "properties": {
+        "player": {
+            "exp":100,
+            "test_uuid": {
+              "highword1": 3326307097, 
+              "lowword": 2790309464, 
+              "highword3": 4109999738, 
+              "highword2": 1804371623
+            },
+            "inner": {
+                "another_test_uuid": {
+                  "highword1": 1178616675, 
+                  "lowword": 2031566081, 
+                  "highword3": 313485158, 
+                  "highword2": 3659433404
+                },
+                "test_uuid": {
+                  "highword1": 4232531207, 
+                  "lowword": 1468356863, 
+                  "highword3": 3125716674, 
+                  "highword2": 1682513835
+                }
+            }
+        }, 
+        "test": {
+            "exp":10,
+            "level":16
+        }
+    }
+}

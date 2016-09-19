@@ -3,6 +3,48 @@
     Please see the file HEART_LICENSE.txt in the source's root directory.
 *********************************************************************/
 #pragma once
+
+#include "hart/core/entity.h"
+#include "hart/core/objectfactory.h"
+#include "hart/base/freelist.h"
+
+/********************************************************************
+
+ Possible Entity layout:
+ In assets:
+   + Object Template defining the list of component types to create with default values. Must define the component name (to be matched in a seperate file to a .fbs file? or just an .fbs filepath)
+   ++ When built; Each component is a byte blob within this entity container (uint8* components[total_bytes]; uint32 componentOffsets[no_components];)
+   + Object Templates are included in object assets, which can override parameters in the template (via "component"{ "property":new_value }).
+   + The object asset is merged down to a collection of json files (one per component) and each is then packed into a flatbuffer and merged into an entity flatbuffer (which is mainly a array with offsets)
+   + As entities are resources, they can have prerequisites but will probably need a script to gather these automagically.
+   ++ idea for script: List componets and properties that are resource links (i.e. uuids). Script walks all object assets, does the merge down phase (so make this shared code) and gathers any uuids properties it finds.
+== OR ==
+   + Object Template assets defining the list of component types to create with default values. Must define the component name (to be matched in a seperate file to a .fbs file? or just an .fbs filepath)
+   ++ When built; Each component is a byte blob within this entity container (uint8* components[total_bytes]; uint32 componentOffsets[no_components];)
+   + Object Templates are separate assets, which are referenced by Object assets. These can override parameters in the template (via "component"{ "property":new_value }).
+   ++ When built; Each component is a byte blob within this entity container (uint8* components[total_bytes]; uint32 componentOffsets[no_components];) with a reference to the template Object Template asset
+   + As entities are resources, they can have prerequisites but will probably need a script to gather these automagically. The Object Template asset is automatically one of these prerequisites
+   ++ idea for script: List componets and properties that are resource links (i.e. uuids). Script walks all object assets and object template assets and gathers any uuids properties it finds.
+   + At load the component merges the template version of a componet plus the object version of the component. 
+
+Method 1 is a litter simpler to implement in the runtime. Method 2 would reduce the amount of data loaded at runtime...a lot.
+
+********************************************************************/
+
+namespace hart {
+namespace entity {
+
+static hart::Freelist<ComponentSlot, 65536/sizeof(ComponentSlot)> componentHandles;
+
+// TODO: move these to entity.cpp?
+
+HART_OBJECT_TYPE_DECL(EntityTemplate);
+HART_OBJECT_TYPE_DECL(Entity);
+
+
+}
+}
+
 #if 0
 #include "components/hEntityFactory.h"
 #include "base/hUUID.h"

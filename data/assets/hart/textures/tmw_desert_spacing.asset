@@ -6,7 +6,7 @@
   "prerequisites": [], 
   "processoptions": {
     "generatemips": true, 
-    "input": "%(asset_root)/tmw_desert_spacing.png", 
+    "input": "tmw_desert_spacing.png", 
     "format": "RGBA8"
   }, 
   "friendlyname": "system/texture/test", 

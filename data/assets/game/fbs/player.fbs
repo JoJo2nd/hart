@@ -1,0 +1,23 @@
+/********************************************************************
+    Written by James Moran
+    Please see the file LICENSE.txt in the repository root directory.
+*********************************************************************/
+include "../../hart/fbs/opt.fbs";
+include "../../hart/fbs/uuid.fbs";
+
+table InnerPlayer {
+    inner_exp:uint;
+    another_test_uuid:hart.resource.uuid;
+    test_uuid:hart.resource.uuid;
+}
+
+table Player {
+    exp:uint;
+    level:ubyte;
+    someFlag:hart.opt_bool;
+    test_uuid:hart.resource.uuid;
+    inner:InnerPlayer;
+}
+
+file_identifier "plyr";
+root_type Player;

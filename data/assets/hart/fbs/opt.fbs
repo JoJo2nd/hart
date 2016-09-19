@@ -1,0 +1,14 @@
+
+namespace hart;
+
+struct opt_float {
+    val:float;
+}
+
+struct opt_bool {
+    val:bool;
+}
+
+struct opt_uint {
+    val:uint;
+}

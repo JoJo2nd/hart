@@ -12,6 +12,6 @@
   "processoptions": {
     "platformext": "-p ps_5_0 --debug", 
     "type": "fragment", 
-    "input": "%(asset_root)/fs_imgui.sc"
+    "input": "fs_imgui.sc"
   }
 }

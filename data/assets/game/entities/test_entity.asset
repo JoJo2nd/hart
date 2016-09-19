@@ -1,0 +1,24 @@
+{
+  "inputs": [
+    "..\\fbs\\test.fbs", 
+    "..\\..\\hart\\fbs\\entity.fbs", 
+    "..\\..\\hart\\fbs\\uuid.fbs", 
+    "test_entity.json", 
+    "..\\..\\hart\\fbs\\opt.fbs", 
+    "..\\fbs\\player.fbs", 
+    "..\\..\\hart\\fbs\\opt.fbs", 
+    "..\\..\\hart\\fbs\\uuid.fbs"
+  ], 
+  "uuid": "{90d9fd63-5f1b-4a3a-bc4d-90c1d3c2cc59}", 
+  "prerequisites": [
+    "{ab851a91-a3dc-43c5-b4ee-aecf4ea33c17}", 
+    "{58be50a6-196b-43c6-a786-8c6b7a9ef9f4}", 
+    "{013d1779-6343-4046-bc85-1eda6667af12}", 
+    "{ff588557-074d-47fc-ab1f-4964c2a64eba}"
+  ], 
+  "processoptions": {
+    "input": "test_entity.json"
+  }, 
+  "friendlyname": "game/test/entity", 
+  "type": "entity"
+}

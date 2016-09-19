@@ -12,6 +12,6 @@
   "processoptions": {
     "platformext": "-p vs_5_0 --debug", 
     "type": "vertex", 
-    "input": "%(asset_root)/vs_imgui.sc"
+    "input": "vs_imgui.sc"
   }
 }

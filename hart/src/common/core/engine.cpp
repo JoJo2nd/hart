@@ -309,11 +309,13 @@ struct Context {
         }
         */
         // Init objects
-        hobjfact::objectFactoryRegistar(hrnd::Shader::getObjectDefinition(), nullptr);
-        hobjfact::objectFactoryRegistar(hrnd::Material::getObjectDefinition(), nullptr);
-        hobjfact::objectFactoryRegistar(hrnd::MaterialSetup::getObjectDefinition(), nullptr);
-        hobjfact::objectFactoryRegistar(hrnd::TextureRes::getObjectDefinition(), nullptr);
-        hobjfact::objectFactoryRegistar(hresmgr::Collection::getObjectDefinition(), nullptr);
+        hobjfact::objectFactoryRegister(hrnd::Shader::getObjectDefinition(), nullptr);
+        hobjfact::objectFactoryRegister(hrnd::Material::getObjectDefinition(), nullptr);
+        hobjfact::objectFactoryRegister(hrnd::MaterialSetup::getObjectDefinition(), nullptr);
+        hobjfact::objectFactoryRegister(hrnd::TextureRes::getObjectDefinition(), nullptr);
+        hobjfact::objectFactoryRegister(hresmgr::Collection::getObjectDefinition(), nullptr);
+
+        game->postObjectFactoryRegister();
 
         // init engine
         huuid::uuid_t sys_collection_resid = huuid::fromDwords(0x06360489280d4059,0x8faabfb0ed97e6fa);

@@ -10,6 +10,6 @@
   "processoptions": {
     "platformext": "-p vs_5_0 --debug", 
     "type": "vertex", 
-    "input": "%(asset_root)/vs_imgui_colour.sc"
+    "input": "vs_imgui_colour.sc"
   }
 }

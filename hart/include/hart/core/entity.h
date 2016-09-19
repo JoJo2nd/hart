@@ -5,79 +5,70 @@
 #pragma once
 
 #include "hart/config.h"
+#include "hart/base/uuid.h"
 #include "hart/core/objectfactory.h"
-#include "hart/core/entityfactory.h"
+#include "hart/fbs/entity_generated.h"
+#include "hart/fbs/entitytemplate_generated.h"
 
-namespace Heart {
-    class hEntity;
-    class hEntityContext;
+namespace hart {
+namespace entity {
 
-    struct hComponentDefinition {
-        const hObjectDefinition* typeDefintion = nullptr;
-        hObjectMarshall* marshall = nullptr;
-        hUint32 id = 0; // component ID within an entity
-    };
+class Entity;
+struct ComponentSlot;
 
-    class hEntityComponent {
-        hEntity* owner = nullptr;
+class Component {
+    Entity* owner = nullptr;
+    ComponentSlot* slot = nullptr;
+public:
+    virtual ~Component() {}
 
-        friend hEntity* hEntityFactory::createEntity(hUuid_t, hComponentDefinition*, hSize_t);
-        friend void hEntityFactory::destroyEntity(hUuid_t);
-    public:
-        virtual ~hEntityComponent() {}
-    
-        hEntity* getOwner() const { return owner; }
-        virtual void onOwningLevelLoadComplete() {};
-        std::function<void (hEntityComponent*)> componentDestruct;
-    };
+    //hEntity* getOwner() const { return owner; }
+};
 
-    class hEntity {
-    public:
-        struct Component {
-            hUintptr_t typeID = 0;
-            const hObjectDefinition* typeDef = nullptr;
-            hEntityComponent* ptr = nullptr;
-            hUint32 id = 0;
-            hBool linked = false;
-        };
+struct ComponentSlot {
+    Component* pointer;
+    uint16_t stamp;
+    uint32_t typeCC;
+};
 
-        template < typename t_ty >
-        t_ty* getComponent() {
-            for (const auto& i : entityComponents) {
-                if (i.typeID == t_ty::getRuntimeTypeID() && i.linked)
-                    return static_cast<t_ty*>(i.ptr);
-            }
-            return nullptr;
+struct ComponentHandle {
+    ComponentSlot* slot; 
+    uint32_t typeCC;
+    uint16_t stamp;
+};
+
+
+class EntityTemplate {
+    HART_OBJECT_TYPE(HART_MAKE_FOURCC('e','t','p','l'), resource::EntityTemplate)
+public:
+};
+
+class Entity {
+    HART_OBJECT_TYPE(HART_MAKE_FOURCC('e','n','t','y'), resource::Entity)
+public:
+    template < typename t_ty >
+    t_ty* getComponent() {
+        for (const auto& i : components) {
+            if (i.typeCC == t_ty::getTypeCC())
+                return static_cast<t_ty*>(i.ptr);
         }
-        template < typename t_ty >
-        t_ty* getComponent(hUint32 in_id) {
-            for (const auto& i : entityComponents) {
-                if (i.typeID == t_ty::getRuntimeTypeID() && i.id == in_id && i.linked)
-                    return static_cast<t_ty*>(i.ptr);
-            }
-            return nullptr;
-        }
-        hUint getComponentCount() const { return (hUint)entityComponents.size(); } 
-        hUuid_t getEntityID() const { return entityId; }
-        void setTransitent(hBool val) { transient = val; }
-        hBool getTransient() const { return transient; }
-        const std::vector<Component>& getComponents() const { return entityComponents; }
-#if HEART_DEBUG_INFO
-        const hChar* getFriendlyName() const { return friendlyName.c_str(); }
-        void setFriendlyName(const hChar* name) { friendlyName = hStringID(name); }
+        return nullptr;
+    }
+    uint32_t getComponentCount() const { return (uint32_t)components.size(); } 
+    huuid::uuid_t getEntityID() const { return entityId; }
+    const std::vector<ComponentHandle>& getComponents() const { return components; }
+#if HART_DEBUG_INFO
+    const char* getFriendlyName() const { return friendlyName.c_str(); }
+    void setFriendlyName(const char* name) { friendlyName = name; }
 #endif
-        void serialise(proto::EntityDefinition* obj, const char* entity_guid_str, const hSerialisedEntitiesParameters& params) const;
 
-    private:
-        friend hEntity* hEntityFactory::createEntity(hUuid_t, hComponentDefinition*, hSize_t);
-        friend void hEntityFactory::destroyEntity(hUuid_t);
-        friend void hEntityFactory::destroyEntity(hEntity*);
-        friend class hLevel;
+private:
+    huuid::uuid_t entityId;
+    hstd::vector<ComponentHandle> components;
+#if HART_DEBUG_INFO
+    hstd::string friendlyName;
+#endif
+};
 
-        hUuid_t entityId;
-        hBool transient = false;
-        std::vector<Component> entityComponents;
-        hStringID friendlyName;
-    };
-
+}
 }

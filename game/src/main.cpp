@@ -6,6 +6,9 @@
 #include "hart/core/engine.h"
 
 class Game : public hart::engine::GameInterface {
+    virtual void postObjectFactoryRegister() {
+        //TODO: Register any game class objects here.
+    }
     virtual void postSystemAssetLoad() {
         //TODO: Grab any required assets here.
     }

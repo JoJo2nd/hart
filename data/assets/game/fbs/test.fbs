@@ -1,0 +1,15 @@
+/********************************************************************
+    Written by James Moran
+    Please see the file LICENSE.txt in the repository root directory.
+*********************************************************************/
+
+include "../../hart/fbs/opt.fbs";
+
+table Test {
+    exp:uint;
+    level:ubyte;
+    someTestValue:hart.opt_uint;
+}
+
+file_identifier "test";
+root_type Test;

@@ -10,6 +10,6 @@
   "processoptions": {
     "platformext": "-p ps_5_0 --debug", 
     "type": "fragment", 
-    "input": "%(asset_root)/fs_imgui_colour.sc"
+    "input": "fs_imgui_colour.sc"
   }
 }

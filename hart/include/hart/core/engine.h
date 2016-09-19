@@ -75,6 +75,8 @@ typedef uint32_t DebugMenuHandle;
 
 class GameInterface {
 public:
+    // Called after engine object classes have be registered
+    virtual void postObjectFactoryRegister() = 0;
     // Called after main system assets are loaded.
     virtual void postSystemAssetLoad() = 0;
     // Called to initialise the frame task graph with any game jobs.
