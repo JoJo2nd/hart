@@ -5,6 +5,8 @@
 
 include "../../hart/fbs/opt.fbs";
 
+namespace resource;
+
 table Test {
     exp:uint;
     level:ubyte;

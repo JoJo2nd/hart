@@ -54,8 +54,11 @@ namespace objectfactory {
             serialiserType const* src_t = flatbuffers::GetRoot<serialiserType>(src);
             return type_ptr->deserialiseObject(src_t, params);
         }
-        static entity::Component* constructTypeAsComponent(void* mem) {
+        static entity::Component* constructTypeAsComponent(void* mem, void const* overrides, void const* base) {
             t_ty* r = new (mem) t_ty();
+            serialiserType const* overrides_t = flatbuffers::GetRoot<serialiserType>(overrides);
+            serialiserType const* base_t = flatbuffers::GetRoot<serialiserType>(base);
+            r->deserialiseComponent(overrides_t, base_t);
             return static_cast<entity::Component*>(r);
         }
     };
@@ -68,7 +71,7 @@ namespace objectfactory {
     typedef void (*ObjectConstructProc)(void* in_place);
     typedef void (*ObjectDestructProc)(void* obj_ptr);
     typedef bool (*ObjectDeserialiseProc)(void const* src, void* dst, SerialiseParams const& p);
-    typedef entity::Component* (*ObjectComponentProc)(void const* mem);
+    typedef entity::Component* (*ObjectComponentProc)(void* mem, void const* overrides, void const* base);
 
     struct ObjectDefinition {
         ObjectDefinition() = default;
@@ -107,6 +110,7 @@ namespace objectfactory {
         ObjectDestructProc      destruct = nullptr;
         ObjectDeserialiseProc   deserialise = nullptr;
         ObjectComponentProc     component = nullptr;
+
         void*                   user = nullptr;
     };
 
@@ -118,6 +122,12 @@ namespace objectfactory {
     typedef serialiser_type MarshallType; \
     static hobjfact::ObjectDefinition const& getObjectDefinition() { return typeDef; } \
     bool deserialiseObject(MarshallType const*, hobjfact::SerialiseParams const&); \
+    private: 
+
+#define HART_COMPONENT_OBJECT_TYPE(typecc, serialiser_type) \
+    HART_OBJECT_TYPE(typecc, serialiser_type) \
+    public: \
+    bool deserialiseComponent(MarshallType const* overrides, MarshallType const* base); \
     private: 
 
 
@@ -160,7 +170,6 @@ namespace objectfactory {
     
 const ObjectDefinition*        getObjectDefinition(uint32_t typecc);
 void*                          deserialiseObject(void const* data, size_t len, SerialiseParams* params, uint32_t* out_typecc);
-entity::Component*             createComponentObject(void const* data, size_t len, SerialiseParams* params, uint32_t* out_typecc);
 bool                           objectFactoryRegister(ObjectDefinition const& obj_def, void* user);
 
 }

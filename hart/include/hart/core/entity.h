@@ -21,6 +21,10 @@ class Component {
     ComponentSlot* slot = nullptr;
 public:
     virtual ~Component() {}
+    void initialise(Entity* in_owner, ComponentSlot* in_slot) {
+        owner=in_owner;
+        slot=in_slot;
+    }
 
     //hEntity* getOwner() const { return owner; }
 };
@@ -41,6 +45,19 @@ struct ComponentHandle {
 class EntityTemplate {
     HART_OBJECT_TYPE(HART_MAKE_FOURCC('e','t','p','l'), resource::EntityTemplate)
 public:
+    struct ComponentTemplate {
+        uint32_t typeCC;
+        uint8_t const* dataPtr;
+    };
+    hstd::vector<ComponentTemplate> componentTemplates;
+    uint8_t const* getComponentTemplateData(uint32_t typecc) {
+        for (auto const& i : componentTemplates) {
+            if (i.typeCC == typecc) {
+                return i.dataPtr;
+            }
+        }
+        return nullptr;
+    }
 };
 
 class Entity {
@@ -63,6 +80,7 @@ public:
 #endif
 
 private:
+    EntityTemplate* templateEntity;
     huuid::uuid_t entityId;
     hstd::vector<ComponentHandle> components;
 #if HART_DEBUG_INFO
@@ -72,3 +90,5 @@ private:
 
 }
 }
+
+namespace hety = hart::entity;

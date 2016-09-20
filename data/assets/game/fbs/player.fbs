@@ -5,6 +5,8 @@
 include "../../hart/fbs/opt.fbs";
 include "../../hart/fbs/uuid.fbs";
 
+namespace resource;
+
 table InnerPlayer {
     inner_exp:uint;
     another_test_uuid:hart.resource.uuid;

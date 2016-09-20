@@ -4,10 +4,56 @@
 *********************************************************************/
 
 #include "hart/core/engine.h"
+#include "hart/core/objectfactory.h"
+#include "hart/core/entity.h"
+#include "fbs/player_generated.h"
+#include "fbs/test_generated.h"
+
+class Player : public hety::Component {
+    HART_COMPONENT_OBJECT_TYPE(HART_MAKE_FOURCC('p','l','y','r'), resource::Player)
+public:
+    uint32_t exp;
+    uint8_t level;
+    bool someFlag;
+};
+
+HART_COMPONENT_OBJECT_TYPE_DECL(Player);
+
+bool Player::deserialiseObject(MarshallType const*, hobjfact::SerialiseParams const&) {
+    return true;
+}
+bool Player::deserialiseComponent(MarshallType const* overrides, MarshallType const* base) {
+    exp = overrides->exp();
+    level = overrides->level();
+    someFlag = overrides->someFlag() ? overrides->someFlag()->val() : base->someFlag() ? base->someFlag()->val() : false;
+    return true;
+}
+
+class Test : public hety::Component {
+    HART_COMPONENT_OBJECT_TYPE(HART_MAKE_FOURCC('t','e','s','t'), resource::Test)
+public:
+    uint32_t exp;
+    uint8_t level;
+    uint32_t someTestValue;
+};
+
+HART_COMPONENT_OBJECT_TYPE_DECL(Test);
+
+bool Test::deserialiseObject(MarshallType const*, hobjfact::SerialiseParams const&) {
+    return true;
+}
+bool Test::deserialiseComponent(MarshallType const* overrides, MarshallType const* base) {
+    exp = overrides->exp();
+    level = overrides->level();
+    if (overrides->someTestValue()) someTestValue = overrides->someTestValue()->val(); else if (base->someTestValue()) someTestValue = base->someTestValue()->val();
+    return true;
+}
 
 class Game : public hart::engine::GameInterface {
     virtual void postObjectFactoryRegister() {
         //TODO: Register any game class objects here.
+        hobjfact::objectFactoryRegister(Player::getObjectDefinition(), nullptr);
+        hobjfact::objectFactoryRegister(Test::getObjectDefinition(), nullptr);
     }
     virtual void postSystemAssetLoad() {
         //TODO: Grab any required assets here.

@@ -24,6 +24,7 @@
 #include "hart/render/shader.h"
 #include "hart/render/material.h"
 #include "hart/render/texture.h"
+#include "hart/core/entity.h"
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_syswm.h>
@@ -313,6 +314,8 @@ struct Context {
         hobjfact::objectFactoryRegister(hrnd::Material::getObjectDefinition(), nullptr);
         hobjfact::objectFactoryRegister(hrnd::MaterialSetup::getObjectDefinition(), nullptr);
         hobjfact::objectFactoryRegister(hrnd::TextureRes::getObjectDefinition(), nullptr);
+		hobjfact::objectFactoryRegister(entity::EntityTemplate::getObjectDefinition(), nullptr);
+		hobjfact::objectFactoryRegister(entity::Entity::getObjectDefinition(), nullptr);
         hobjfact::objectFactoryRegister(hresmgr::Collection::getObjectDefinition(), nullptr);
 
         game->postObjectFactoryRegister();

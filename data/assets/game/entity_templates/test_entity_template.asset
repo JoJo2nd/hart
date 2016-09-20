@@ -1,12 +1,12 @@
 {
   "inputs": [
+    "..\\..\\hart\\fbs\\uuid.fbs", 
     "..\\fbs\\test.fbs", 
     "..\\..\\hart\\fbs\\entitytemplate.fbs", 
     "..\\..\\hart\\fbs\\opt.fbs", 
     "test_entity_template.json", 
-    "..\\fbs\\player.fbs", 
     "..\\..\\hart\\fbs\\opt.fbs", 
-    "..\\..\\hart\\fbs\\uuid.fbs"
+    "..\\fbs\\player.fbs"
   ], 
   "uuid": "{ab851a91-a3dc-43c5-b4ee-aecf4ea33c17}", 
   "prerequisites": [
