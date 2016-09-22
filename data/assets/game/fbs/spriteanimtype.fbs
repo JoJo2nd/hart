@@ -1,0 +1,14 @@
+/********************************************************************
+    Written by James Moran
+    Please see the file LICENSE.txt in the repository root directory.
+*********************************************************************/
+
+enum SpriteAnimType : ushort {
+    Idle,
+    RunUp,
+    RunDown,
+    RunLeft,
+    RunRight,
+    Attack,
+    TakeDamage,
+}

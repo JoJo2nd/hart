@@ -1,0 +1,44 @@
+/********************************************************************
+    Written by James Moran
+    Please see the file LICENSE.txt in the repository root directory.
+*********************************************************************/
+include "../../hart/fbs/opt.fbs";
+include "../../hart/fbs/uuid.fbs";
+include "spriteanimtype.fbs";
+
+namespace resource;
+
+struct SpriteAnimFrame {
+    lenght:float;
+    frame:ubyte;
+}
+
+table SpriteAnim {
+    animType:SpriteAnimType;
+    frames:[SpriteAnimFrame];
+}
+
+struct SpriteFrame {
+    u1:float;
+    v1:float;
+    u2:float;
+    v2:float;
+    page:ubyte;
+}
+
+table SpritePage {
+    cellWidth:ubyte;
+    cellHeight:ubyte;
+    xCells:ushort;
+    yCells:ushort;
+    data:[ubyte];
+}
+
+table Sprite {
+    pages:[SpritePage];
+    frames:[SpriteFrame];
+    anims:[SpriteAnim];
+}
+
+file_identifier "sprt";
+root_type Sprite;

@@ -8,6 +8,8 @@ data/builder/hart/*
 *.qm
 *.tga
 *.lpf
+*.zip
+*.piskel
 packaged.sha1.local
 local.manifest
 *_generated.h

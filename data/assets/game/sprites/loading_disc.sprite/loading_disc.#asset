@@ -1,0 +1,10 @@
+{
+  "inputs": [], 
+  "uuid": "{9ff1b0f0-17dc-4fc5-a117-581112df17a1}", 
+  "prerequisites": [], 
+  "processoptions": {
+    "input": "loading_disc.zip"
+  }, 
+  "friendlyname": "game/test/sprite", 
+  "type": "sprite"
+}
