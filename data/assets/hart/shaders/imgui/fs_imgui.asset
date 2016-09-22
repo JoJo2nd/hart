@@ -7,11 +7,11 @@
     "..\\..\\..\\..\\..\\external\\bgfx\\src\\bgfx_shader.sh", 
     "..\\common\\shaderlib.sh"
   ], 
-  "type": "shader", 
-  "uuid": "{58be50a6-196b-43c6-a786-8c6b7a9ef9f4}", 
   "processoptions": {
+    "input": "fs_imgui.sc", 
     "platformext": "-p ps_5_0 --debug", 
-    "type": "fragment", 
-    "input": "fs_imgui.sc"
-  }
+    "type": "fragment"
+  }, 
+  "type": "shader", 
+  "uuid": "{58be50a6-196b-43c6-a786-8c6b7a9ef9f4}"
 }

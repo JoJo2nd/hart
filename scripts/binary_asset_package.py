@@ -24,6 +24,8 @@ asset_types = [
     '.bin',
     '.qm',
     '.lpf',
+    '.zip',
+    '.piskel',
 ]
 
 def getFileSHA1(filepath):
@@ -59,7 +61,7 @@ def main():
         manifest[asset] = { 'sha1': getFileSHA1(join(base_path, asset)) }
 
     with open('./../binary.manifest', 'wb') as f:
-        f.write(json.dumps(manifest, indent=2))
+        f.write(json.dumps(manifest, indent=2, sort_keys=True))
 
     remote_files = []
     #use empty string to get root folder

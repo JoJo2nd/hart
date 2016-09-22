@@ -75,7 +75,7 @@ def main():
 
     # update the local manifest
     with open(join(root, 'local.manifest'), 'wb') as f:
-        f.write(json.dumps(manifest, indent=2))
+        f.write(json.dumps(manifest, indent=2, sort_keys=True))
 
 
 #    try:

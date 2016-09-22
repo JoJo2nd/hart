@@ -1,4 +1,5 @@
 {
+  "friendlyname": "system/test/materialsetup", 
   "inputs": [
     "test_material_setup.json", 
     "..\\fbs\\materialsetup.fbs", 
@@ -8,13 +9,12 @@
     "..\\fbs\\uuid.fbs", 
     "..\\fbs\\vec_matrix.fbs"
   ], 
-  "uuid": "{725fd798-2136-4453-8118-ee631f531f45}", 
   "prerequisites": [
     "{fce514b8-be3a-4a22-9abd-430a93e40273}"
   ], 
   "processoptions": {
     "input": "test_material_setup.json"
   }, 
-  "friendlyname": "system/test/materialsetup", 
-  "type": "materialsetup"
+  "type": "materialsetup", 
+  "uuid": "{725fd798-2136-4453-8118-ee631f531f45}"
 }

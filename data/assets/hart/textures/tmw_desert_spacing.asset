@@ -1,14 +1,14 @@
 {
+  "friendlyname": "system/texture/test", 
   "inputs": [
     "tmw_desert_spacing.png"
   ], 
-  "uuid": "{4d8982cb-a5bf-4afa-b174-5543a0f0ed16}", 
   "prerequisites": [], 
   "processoptions": {
+    "format": "RGBA8", 
     "generatemips": true, 
-    "input": "tmw_desert_spacing.png", 
-    "format": "RGBA8"
+    "input": "tmw_desert_spacing.png"
   }, 
-  "friendlyname": "system/texture/test", 
-  "type": "texture"
+  "type": "texture", 
+  "uuid": "{4d8982cb-a5bf-4afa-b174-5543a0f0ed16}"
 }

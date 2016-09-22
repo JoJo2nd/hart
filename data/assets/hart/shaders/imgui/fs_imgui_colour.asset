@@ -5,11 +5,11 @@
     "varying.def.sc", 
     "..\\..\\..\\..\\..\\external\\bgfx\\src\\bgfx_shader.sh"
   ], 
-  "type": "shader", 
-  "uuid": "{ff588557-074d-47fc-ab1f-4964c2a64eba}", 
   "processoptions": {
+    "input": "fs_imgui_colour.sc", 
     "platformext": "-p ps_5_0 --debug", 
-    "type": "fragment", 
-    "input": "fs_imgui_colour.sc"
-  }
+    "type": "fragment"
+  }, 
+  "type": "shader", 
+  "uuid": "{ff588557-074d-47fc-ab1f-4964c2a64eba}"
 }

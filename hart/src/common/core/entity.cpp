@@ -69,10 +69,10 @@ bool Entity::deserialiseObject(MarshallType const* in_data, hobjfact::SerialiseP
         // Get typecc from data (see BufferHasIdentifier)
         uint32_t data_typecc = *((uint32_t*)(comp_ptr + sizeof(flatbuffers::uoffset_t)));
         uint8_t const* tpl_comp_ptr = templateEntity->getComponentTemplateData(data_typecc);
-        // Template much contain component. entities cannot add new components.
+        // Template must contain component. entities cannot add new components.
         if (tpl_comp_ptr) {
             hobjfact::ObjectDefinition const* def = hobjfact::getObjectDefinition(data_typecc);
-            hdbassert(def && def->component, "Not type def of typecc %d", data_typecc);
+            hdbassert(def && def->component, "No type def of typecc %d", data_typecc);
             ComponentSlot* slot = componentHandles.allocate();
             slot->pointer = def->component(def->objMalloc(), comp_ptr, tpl_comp_ptr);
             slot->stamp = componentStamp++;

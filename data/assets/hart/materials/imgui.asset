@@ -1,12 +1,13 @@
 {
+  "friendlyname": "system/material/imgui", 
   "inputs": [
     "imgui.json", 
+    "..\\fbs\\material.fbs", 
     "..\\fbs\\renderstate.fbs", 
     "..\\fbs\\techniquetype.fbs", 
     "..\\fbs\\uuid.fbs", 
     "..\\fbs\\vec_matrix.fbs"
   ], 
-  "uuid": "{8426e6ae-b661-48cc-946c-afc26a53f1a3}", 
   "prerequisites": [
     "{25f9b47a-cb35-4dfd-83cf-6931c1e339b4}", 
     "{58be50a6-196b-43c6-a786-8c6b7a9ef9f4}"
@@ -14,6 +15,6 @@
   "processoptions": {
     "input": "imgui.json"
   }, 
-  "friendlyname": "system/material/imgui", 
-  "type": "material"
+  "type": "material", 
+  "uuid": "{8426e6ae-b661-48cc-946c-afc26a53f1a3}"
 }
