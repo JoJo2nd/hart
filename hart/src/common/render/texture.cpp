@@ -370,6 +370,11 @@ TextureRes::~TextureRes() {
     render::destroyTexture(texture);
 }
 
+Texture createTexture(void const* raw_data, uint32_t data_len) {
+    bgfx::Memory const* m = bgfx::copy(raw_data, data_len);
+    return createTexture(m);
+}
+
 Texture createTexture2D(uint16_t width, uint16_t height, uint8_t numMips, TextureFormat format, uint32_t flags, void const* mem, uint32_t memlen) {
     bgfx::Memory const* m = bgfx::copy(mem, memlen);
     return bgfx::createTexture2D(width, height, numMips, TextureFormatTobgfxTextureFormat[format], flags, m);

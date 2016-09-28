@@ -1,0 +1,31 @@
+{
+    "layout": {
+        "cellsX": 4,
+        "cellsY": 1,
+        "padding": 1
+    },
+    "animations": [
+        {
+            "animType":"Idle",
+            "frames": [
+                {
+                    "frame":0,
+                    "lenght": 0.1
+                },
+                {
+                    "frame":1,
+                    "lenght": 0.1
+                },
+                {
+                    "frame":2,
+                    "lenght": 0.1
+                },
+                {
+                    "frame":3,
+                    "lenght": 0.1
+                }
+            ]
+        }
+    ]    
+
+}

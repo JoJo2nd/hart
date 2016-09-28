@@ -131,19 +131,28 @@ namespace objectfactory {
     private: 
 
 
-#define HART_OBJECT_TYPE_DECL(type) \
+#define HART_OBJECT_TYPE_DECL_CUSTOM(type, mallocFn, freeFn, constructFn, destructFn, user) \
     hobjfact::ObjectDefinition \
         type \
          ::typeDef( \
         type::getTypeCC(), \
         #type, \
         sizeof(type),\
+        mallocFn, \
+        freeFn, \
+        constructFn, \
+        destructFn, \
+        hobjfact::typehelper_t< type >::deserialiseType, \
+        nullptr, \
+        user \
+    )
+
+#define HART_OBJECT_TYPE_DECL(type) \
+    HART_OBJECT_TYPE_DECL_CUSTOM(type, \
         hobjfact::typehelper_t< type >::mallocType, \
         hobjfact::typehelper_t< type >::freeType, \
         hobjfact::typehelper_t< type >::constructType, \
         hobjfact::typehelper_t< type >::destructType, \
-        hobjfact::typehelper_t< type >::deserialiseType, \
-        nullptr, /** No component constructor */\
         nullptr \
     )
 

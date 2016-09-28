@@ -18,6 +18,7 @@ namespace resourcemanager {
 
     struct ResourceLoadData {
         bool persistFileData = false;
+        char const* friendlyName = nullptr;
     };
 
     struct Handle {

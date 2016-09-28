@@ -196,22 +196,10 @@ struct Context {
                 }
                 else if (0 != cmd->ElemCount)
                 {
-                    if (NULL != cmd->TextureId)
-                    {
-                        hdbfatal("STUB: ImGui render texture callback");
-                        /*
-                        union { ImTextureID ptr; struct { bgfx::TextureHandle handle; uint8_t flags; uint8_t mip; } s; } texture = { cmd->TextureId };
-                        state |= 0 != (IMGUI_FLAGS_ALPHA_BLEND & texture.s.flags)
-                            ? BGFX_STATE_BLEND_FUNC(BGFX_STATE_BLEND_SRC_ALPHA, BGFX_STATE_BLEND_INV_SRC_ALPHA)
-                            : BGFX_STATE_NONE
-                            ;
-                        th = texture.s.handle;
-                        if (0 != texture.s.mip)
-                        {
-                            extern bgfx::ProgramHandle imguiGetImageProgram(uint8_t _mip);
-                            program = imguiGetImageProgram(texture.s.mip);
-                        }
-                        */
+                    if (NULL != cmd->TextureId) {
+                        imgui.material->setParameter(imgui.textureInputHandle, (hrnd::Texture*)&cmd->TextureId);
+                    } else {
+                        imgui.material->setParameter(imgui.textureInputHandle, &imgui.texture);
                     }
 
                     uint16_t xx = uint16_t(hutil::tmax(cmd->ClipRect.x, 0.0f) );
@@ -219,8 +207,6 @@ struct Context {
                     uint16_t ww = uint16_t(hutil::tmin(cmd->ClipRect.z, 65535.0f)-xx);
                     uint16_t hh = uint16_t(hutil::tmin(cmd->ClipRect.w, 65535.0f)-yy);
                     hrnd::setScissor(xx, yy, ww, hh);
-                    //bgfx::setTexture(0, imgui.textureUniform, th);
-                    imgui.material->setParameter(imgui.textureInputHandle, &imgui.texture);
                     hrnd::inlineBatchSubmit(offset, cmd->ElemCount, 0, numVertices);
                 }
 

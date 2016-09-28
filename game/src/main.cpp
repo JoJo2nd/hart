@@ -49,11 +49,15 @@ bool Test::deserialiseComponent(MarshallType const* overrides, MarshallType cons
     return true;
 }
 
+// Prototype for functions registering classes. Saves having to include the header files here
+void registierSpriteObject();
+
 class Game : public hart::engine::GameInterface {
     virtual void postObjectFactoryRegister() {
         //TODO: Register any game class objects here.
         hobjfact::objectFactoryRegister(Player::getObjectDefinition(), nullptr);
         hobjfact::objectFactoryRegister(Test::getObjectDefinition(), nullptr);
+        registierSpriteObject();
     }
     virtual void postSystemAssetLoad() {
         //TODO: Grab any required assets here.
