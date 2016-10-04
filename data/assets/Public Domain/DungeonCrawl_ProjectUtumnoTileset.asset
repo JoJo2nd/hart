@@ -1,0 +1,14 @@
+{
+  "friendlyname": "tileset/texture/01", 
+  "inputs": [
+    "DungeonCrawl_ProjectUtumnoTileset.png"
+  ], 
+  "prerequisites": [], 
+  "processoptions": {
+    "format": "RGBA8", 
+    "generatemips": false, 
+    "input": "DungeonCrawl_ProjectUtumnoTileset.png"
+  }, 
+  "type": "texture", 
+  "uuid": "{bfdb284f-bd27-47fe-9dfa-59428aab19a2}"
+}

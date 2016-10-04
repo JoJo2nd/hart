@@ -1,0 +1,39 @@
+/********************************************************************
+    Written by James Moran
+    Please see the file LICENSE.txt in the repository root directory.
+*********************************************************************/
+include "../../hart/fbs/opt.fbs";
+include "../../hart/fbs/uuid.fbs";
+include "../../hart/fbs/vec_matrix.fbs";
+include "tileset.fbs";
+include "layertype.fbs";
+
+namespace resource;
+
+table CollisionPrim {
+    x:float;
+    y:float;
+    points:[hart.resource.Vec2];
+}
+
+table LvlEntity {
+    levelid:uint;
+    assetuuid:hart.resource.uuid;
+}
+
+table LvlLayer {
+    width:uint;
+    height:uint;
+    name:LayerType;
+    tiles:[ushort];
+}
+
+table Level {
+    collisionprims:[CollisionPrim];
+    entities:[LvlEntity];
+    layers:[LvlLayer];
+    tilesets:[TileSet];
+}
+
+file_identifier "lvl_";
+root_type Level;

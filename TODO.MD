@@ -44,6 +44,10 @@ The TODO list...
 >* Create component to reference, instance and play anims on sprite.
 >* Create sprite rendering functions and data
 
+### Load a tileset exported from Tiled
+>* write builder pipeline/script to generate asset
+>* Load asset file in runtime
+
 ### Load and render map exported from Tiled.
 >* export and process map in builder.py
 >* write gather prerequisites script

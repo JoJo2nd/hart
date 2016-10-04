@@ -1,0 +1,39 @@
+/********************************************************************
+    Written by James Moran
+    Please see the file LICENSE.txt in the repository root directory.
+*********************************************************************/
+include "../../hart/fbs/opt.fbs";
+include "../../hart/fbs/uuid.fbs";
+
+namespace resource;
+
+struct TileAnimFrame {
+    id:ushort;
+    len:ushort;
+}
+
+table TileAnimations {
+    frames:[TileAnimFrame];
+}
+
+struct Tile {
+    id:ushort;
+    transparent:bool = false;
+    animated:bool = false;
+}
+
+table TileSet {
+    tilewidth:uint;
+    tileheight:uint;
+    tilecount:uint;
+    tilecolumns:uint;
+    spacing:uint;
+    margin:uint;
+    firstgid:uint;
+    tiles:[Tile];
+    animations:[TileAnimations];
+    imageasset:hart.resource.uuid;
+}
+
+file_identifier "tset";
+root_type TileSet;

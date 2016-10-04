@@ -62,7 +62,7 @@ bool Material::deserialiseObject(MarshallType const* in_data, hobjfact::Serialis
         inputs[i].uniform = bgfx::createUniform(inputs[i].name, MaterialInputTypeToUniformType[inputs[i].dataType]);
         if (void const* raw_data = in_input->data()) {
             switch(inputs[i].dataType) {
-            case resource::MaterialInputData_Vec3: {
+            case resource::MaterialInputData_Vec3Input: {
                 inputs[i].dataIdx = (uint16_t)datalen;
                 hdbassert(inputs[i].dataIdx == datalen, "Size overflow\n");
                 hart::resource::Vec3* v = (hart::resource::Vec3*)raw_data;
@@ -71,7 +71,7 @@ bool Material::deserialiseObject(MarshallType const* in_data, hobjfact::Serialis
                 hcrt::memcpy(&inputData[datalen], &vv, sizeof(vv));
                 datalen += sizeof(vv);
             } break;
-            case resource::MaterialInputData_Vec4: {
+            case resource::MaterialInputData_Vec4Input: {
                 inputs[i].dataIdx = (uint16_t)datalen;
                 hdbassert(inputs[i].dataIdx == datalen, "Size overflow\n");
                 hart::resource::Vec4* v = (hart::resource::Vec4*)raw_data;
@@ -80,28 +80,28 @@ bool Material::deserialiseObject(MarshallType const* in_data, hobjfact::Serialis
                 hcrt::memcpy(&inputData[datalen], &vv, sizeof(vv));
                 datalen += sizeof(vv);
             } break;
-            case resource::MaterialInputData_Mat33: {
+            case resource::MaterialInputData_Mat33Input: {
                 inputs[i].dataIdx = (uint16_t)datalen;
                 hdbassert(inputs[i].dataIdx == datalen, "Size overflow\n");
                 hart::resource::Mat33* m = (hart::resource::Mat33*)raw_data;
                 hMat33 mm(
-                    hVec3(m->row1()->x(), m->row1()->y(), m->row1()->z()),
-                    hVec3(m->row2()->x(), m->row2()->y(), m->row2()->z()),
-                    hVec3(m->row3()->x(), m->row3()->y(), m->row3()->z())
+                    hVec3(m->row1().x(), m->row1().y(), m->row1().z()),
+                    hVec3(m->row2().x(), m->row2().y(), m->row2().z()),
+                    hVec3(m->row3().x(), m->row3().y(), m->row3().z())
                 );
                 inputData.resize(datalen+sizeof(mm));
                 hcrt::memcpy(&inputData[datalen], &mm, sizeof(mm));
                 datalen += sizeof(mm);
             } break;
-            case resource::MaterialInputData_Mat44: {
+            case resource::MaterialInputData_Mat44Input: {
                 inputs[i].dataIdx = (uint16_t)datalen;
                 hdbassert(inputs[i].dataIdx == datalen, "Size overflow\n");
                 hart::resource::Mat44* m = (hart::resource::Mat44*)raw_data;
                 hMat44 mm(
-                    hVec4(m->row1()->x(), m->row1()->y(), m->row1()->z(), m->row1()->w()),
-                    hVec4(m->row2()->x(), m->row2()->y(), m->row2()->z(), m->row2()->w()),
-                    hVec4(m->row3()->x(), m->row3()->y(), m->row3()->z(), m->row3()->w()),
-                    hVec4(m->row4()->x(), m->row4()->y(), m->row4()->z(), m->row4()->w())
+                    hVec4(m->row1().x(), m->row1().y(), m->row1().z(), m->row1().w()),
+                    hVec4(m->row2().x(), m->row2().y(), m->row2().z(), m->row2().w()),
+                    hVec4(m->row3().x(), m->row3().y(), m->row3().z(), m->row3().w()),
+                    hVec4(m->row4().x(), m->row4().y(), m->row4().z(), m->row4().w())
                 );
                 inputData.resize(datalen+sizeof(mm));
                 hcrt::memcpy(&inputData[datalen], &mm, sizeof(mm));
@@ -185,39 +185,39 @@ bool MaterialSetup::deserialiseObject(MarshallType const* in_data, hobjfact::Ser
         inputs[i].dataOffset = (uint16_t)inputData.size();
         if(void const* raw_data = in_input->data()) {
             switch(in_input->data_type()) {
-            case resource::MaterialInputData_Vec3: {
+            case resource::MaterialInputData_Vec3Input: {
                 inputs[i].dataLen = sizeof(hVec4);
                 hart::resource::Vec3* v = (hart::resource::Vec3*)raw_data;
                 hVec4 vv(v->x(),v->y(),v->z(),0.f);
                 inputData.resize(inputs[i].dataOffset+inputs[i].dataLen);
                 hcrt::memcpy(&inputData[inputs[i].dataOffset], &vv, inputs[i].dataLen);
             } break;
-            case resource::MaterialInputData_Vec4: {
+            case resource::MaterialInputData_Vec4Input: {
                 inputs[i].dataLen = sizeof(hVec4);
                 hart::resource::Vec4* v = (hart::resource::Vec4*)raw_data;
                 hVec4 vv(v->x(),v->y(),v->z(),v->w());
                 inputData.resize(inputs[i].dataOffset+inputs[i].dataLen);
                 hcrt::memcpy(&inputData[inputs[i].dataOffset], &vv, inputs[i].dataLen);
             } break;
-            case resource::MaterialInputData_Mat33: {
+            case resource::MaterialInputData_Mat33Input: {
                 inputs[i].dataLen = sizeof(hMat44);
                 hart::resource::Mat33* m = (hart::resource::Mat33*)raw_data;
                 hMat33 d(
-                    hVec3(m->row1()->x(),m->row1()->y(),m->row1()->z()),
-                    hVec3(m->row2()->x(),m->row2()->y(),m->row2()->z()),
-                    hVec3(m->row3()->x(),m->row3()->y(),m->row3()->z())
+                    hVec3(m->row1().x(),m->row1().y(),m->row1().z()),
+                    hVec3(m->row2().x(),m->row2().y(),m->row2().z()),
+                    hVec3(m->row3().x(),m->row3().y(),m->row3().z())
                 );
                 inputData.resize(inputs[i].dataOffset+inputs[i].dataLen);
                 hcrt::memcpy(&inputData[inputs[i].dataOffset], &d, inputs[i].dataLen);
             } break;
-            case resource::MaterialInputData_Mat44: {
+            case resource::MaterialInputData_Mat44Input: {
                 inputs[i].dataLen = sizeof(hMat44);
                 hart::resource::Mat44* m = (hart::resource::Mat44*)raw_data;
                 hMat44 d(
-                    hVec4(m->row1()->x(),m->row1()->y(),m->row1()->z(),m->row1()->w()),
-                    hVec4(m->row2()->x(),m->row2()->y(),m->row2()->z(),m->row2()->w()),
-                    hVec4(m->row3()->x(),m->row3()->y(),m->row3()->z(),m->row3()->w()),
-                    hVec4(m->row4()->x(),m->row4()->y(),m->row4()->z(),m->row4()->w())
+                    hVec4(m->row1().x(),m->row1().y(),m->row1().z(),m->row1().w()),
+                    hVec4(m->row2().x(),m->row2().y(),m->row2().z(),m->row2().w()),
+                    hVec4(m->row3().x(),m->row3().y(),m->row3().z(),m->row3().w()),
+                    hVec4(m->row4().x(),m->row4().y(),m->row4().z(),m->row4().w())
                 );
                 inputData.resize(inputs[i].dataOffset+inputs[i].dataLen);
                 hcrt::memcpy(&inputData[inputs[i].dataOffset], &d, inputs[i].dataLen);
@@ -236,13 +236,13 @@ bool MaterialSetup::deserialiseObject(MarshallType const* in_data, hobjfact::Ser
             }
         } else {
             switch(in_input->data_type()) {
-            case resource::MaterialInputData_Vec3:
-            case resource::MaterialInputData_Vec4: {
+            case resource::MaterialInputData_Vec3Input:
+            case resource::MaterialInputData_Vec4Input: {
                 inputs[i].dataLen = sizeof(hMat44); 
                 inputData.resize(inputs[i].dataOffset+inputs[i].dataLen); 
             } break;
-            case resource::MaterialInputData_Mat33:
-            case resource::MaterialInputData_Mat44: {
+            case resource::MaterialInputData_Mat33Input:
+            case resource::MaterialInputData_Mat44Input: {
                 inputs[i].dataLen = sizeof(hMat44);
                 inputData.resize(inputs[i].dataOffset+inputs[i].dataLen);
             } break;

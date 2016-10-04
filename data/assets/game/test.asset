@@ -1,0 +1,24 @@
+{
+  "friendlyname": "game/test/level", 
+  "inputs": [
+    "..\\hart\\textures\\tmw_desert_spacing.png", 
+    "..\\hart\\fbs\\uuid.fbs", 
+    "fbs\\tileset.fbs", 
+    "..\\Public Domain\\DungeonCrawl_ProjectUtumnoTileset.png", 
+    "fbs\\layertype.fbs", 
+    "..\\hart\\fbs\\opt.fbs", 
+    "fbs\\level.fbs", 
+    "test.tmx", 
+    "..\\hart\\fbs\\vec_matrix.fbs"
+  ], 
+  "prerequisites": [
+    "{bfdb284f-bd27-47fe-9dfa-59428aab19a2}", 
+    "{4d8982cb-a5bf-4afa-b174-5543a0f0ed16}", 
+    "{90d9fd63-5f1b-4a3a-bc4d-90c1d3c2cc59}"
+  ], 
+  "processoptions": {
+    "input": "test.tmx"
+  }, 
+  "type": "level", 
+  "uuid": "{3bc618ba-12f2-44c8-bd34-268174366c8c}"
+}

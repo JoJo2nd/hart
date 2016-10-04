@@ -26,6 +26,7 @@ asset_types = [
     '.lpf',
     '.zip',
     '.piskel',
+    '.7z',
 ]
 
 def getFileSHA1(filepath):

@@ -4,7 +4,6 @@
     "..\\fbs\\test.fbs", 
     "..\\..\\hart\\fbs\\entitytemplate.fbs", 
     "..\\..\\hart\\fbs\\opt.fbs", 
-    "test_entity_template.json", 
     "..\\fbs\\player.fbs", 
     "..\\..\\hart\\fbs\\opt.fbs", 
     "..\\..\\hart\\fbs\\uuid.fbs"

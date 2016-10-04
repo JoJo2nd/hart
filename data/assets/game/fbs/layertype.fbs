@@ -1,0 +1,18 @@
+/********************************************************************
+    Written by James Moran
+    Please see the file LICENSE.txt in the repository root directory.
+*********************************************************************/
+
+//TODO: flesh out these names fully. 
+// Order in this enum equals layer render order
+enum LayerType : ushort {
+    background_01,
+    background_02,
+    background_03,
+    background_04,
+    
+    sprite_01,
+    sprite_02,
+    sprite_03,
+    sprite_04,
+}

@@ -1,4 +1,31 @@
 {
+  "data\\assets\\BSD licence\\monster2animcharsprites.7z": {
+    "sha1": "310c9651bdf77a4857e5801fa96529fbf7b45be7"
+  }, 
+  "data\\assets\\Hyptosis\\hyptosis_sprites-and-tiles-for-you.png": {
+    "sha1": "22337085af9122178e1fad0c9b482c20f004765e"
+  }, 
+  "data\\assets\\Hyptosis\\hyptosis_til-art-batch-2.png": {
+    "sha1": "79b7eb282fabe8b22e50e3f213e17887b305e872"
+  }, 
+  "data\\assets\\Hyptosis\\hyptosis_tile-art-batch-1.png": {
+    "sha1": "0b701106d1d29e7f730850ea02b00769c4f5bec1"
+  }, 
+  "data\\assets\\Hyptosis\\hyptosis_tile-art-batch-3.png": {
+    "sha1": "394f3f2d6f00ebcde733ebe081ec6cf0afad208c"
+  }, 
+  "data\\assets\\Hyptosis\\hyptosis_tile-art-batch-4.png": {
+    "sha1": "67ceff349ae192a8881ee07ed7e5f859db84bd35"
+  }, 
+  "data\\assets\\Hyptosis\\hyptosis_tile-art-batch-5.png": {
+    "sha1": "83e41eac93a9fa97dc46af261e1343a91386b196"
+  }, 
+  "data\\assets\\Public Domain\\DungeonCrawl_ProjectUtumnoTileset.png": {
+    "sha1": "6b5a8de42c5961b21d20bf3a047a2bed7d900371"
+  }, 
+  "data\\assets\\Public Domain\\crawl-tiles Oct-5-2010.zip": {
+    "sha1": "8c8068a0788a3ddb3428798ce3ebc0e355a59919"
+  }, 
   "data\\assets\\game\\sprites\\loading_disc.sprite\\loading_disc.piskel": {
     "sha1": "ef1734d27756d792ff442d8da3d08284586b1fd8"
   }, 

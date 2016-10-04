@@ -6,7 +6,7 @@
   "prerequisites": [], 
   "processoptions": {
     "format": "RGBA8", 
-    "generatemips": true, 
+    "generatemips": false, 
     "input": "tmw_desert_spacing.png"
   }, 
   "type": "texture", 

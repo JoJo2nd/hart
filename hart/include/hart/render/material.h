@@ -136,12 +136,12 @@ class MaterialSetup {
             return h;
         }
         void setParameter(MaterialInputHandle p, hMat44 const* d) {
-            hdbassert(p.isValid() && p.type == resource::MaterialInputData_Mat44, "Invalid parameter handle!\n");
+            hdbassert(p.isValid() && p.type == resource::MaterialInputData_Mat44Input, "Invalid parameter handle!\n");
             hcrt::memcpy(&inputData[inputs[p.idx].dataOffset], &d, sizeof(hMat44));
             dirty = true;
         }
         void setParameter(MaterialInputHandle p, hVec4 const* d) {
-            hdbassert(p.isValid() && p.type == resource::MaterialInputData_Vec4, "Invalid parameter handle!\n");
+            hdbassert(p.isValid() && p.type == resource::MaterialInputData_Vec4Input, "Invalid parameter handle!\n");
             hcrt::memcpy(&inputData[inputs[p.idx].dataOffset], &d, sizeof(hVec4));
             dirty = true;
         }
