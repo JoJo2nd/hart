@@ -1,0 +1,44 @@
+{
+  "defaultInputs":[
+      {
+          "name":"s_tex",
+          "data_type":"Texture2DInput",
+          "data": {
+            "slot": 0,
+            "pointsample":true,
+            "wrapU":"Clamp",
+            "wrapV":"Clamp"
+          }
+      }
+  ],
+  "techniques" : [
+  {
+      "name":"Main",
+      "passes": [
+      {
+          "state": {
+              "blendSrc":"SrcAlpha",
+              "blendDst":"InvSrcAlpha",
+              "blendFn":"Add",
+              "alphaBlendSrc":"SrcAlpha",
+              "alphaBlendDst":"InvSrcAlpha",
+              "alphaBlendFn":"Add",
+              "cull":"None"
+          },
+          "vertex": {
+            "highword1": 4148359381, 
+            "highword2": 4293175953, 
+            "highword3": 3278764903, 
+            "lowword": 3389802092
+          },  
+          "pixel": {
+            "highword1": 2420557173, 
+            "highword2": 2057296526, 
+            "highword3": 4120179140, 
+            "lowword": 4266303233
+          }
+      }
+      ]
+  }
+  ]
+}

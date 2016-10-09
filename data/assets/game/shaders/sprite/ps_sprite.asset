@@ -1,0 +1,17 @@
+{
+  "friendlyname": "game/shaders/ps/sprite", 
+  "inputs": [
+    "ps_sprite.sc", 
+    "varying.def.sc", 
+    "..\\..\\..\\hart\\shaders\\common\\common.sh", 
+    "..\\..\\..\\..\\..\\external\\bgfx\\src\\bgfx_shader.sh", 
+    "..\\..\\..\\hart\\shaders\\common\\shaderlib.sh"
+  ], 
+  "processoptions": {
+    "input": "ps_sprite.sc", 
+    "platformext": "-p ps_5_0 --debug", 
+    "type": "fragment"
+  }, 
+  "type": "shader", 
+  "uuid": "{019f4afe-75c5-4690-8eda-9f7ac4f194f5}"
+}

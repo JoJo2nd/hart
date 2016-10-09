@@ -6,18 +6,35 @@ include "techniquetype.fbs";
 
 namespace hart.render.resource;
 
+enum TextureWrap : ushort {
+    Mirror,
+    Clamp
+}
+
 table Texture1DInput {
     slot:ubyte;
+    pointsample:bool;
+    anisotropic:bool;
+    wrapU:TextureWrap;
     resid:resource.uuid;
 }
 
 table Texture2DInput {
     slot:ubyte;
+    pointsample:bool;
+    anisotropic:bool;
+    wrapU:TextureWrap;
+    wrapV:TextureWrap;
     resid:resource.uuid;
 }
 
 table Texture3DInput {
     slot:ubyte;
+    pointsample:bool;
+    anisotropic:bool;
+    wrapU:TextureWrap;
+    wrapV:TextureWrap;
+    wrapW:TextureWrap;
     resid:resource.uuid;
 }
 

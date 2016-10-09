@@ -346,11 +346,14 @@ struct Context {
             imgui.textureInputHandle = imgui.material->getInputParameterHandle("s_tex");
             hdbassert(imgui.textureInputHandle.isValid(), "ImGui material is missing s_tex texture input.\n");
 
-            hrnd::ViewDef views;
-            views.id = hrnd::View_Debug;
-            views.clearColour = true;
-            views.colourValue = 0x303030ff;
-            hrnd::resetViews(&views, 1);
+            hrnd::ViewDef views[2];
+            views[0].id = hrnd::View_Main;
+            views[0].clearColour = true;
+            views[0].colourValue = 0x303030ff;
+            views[1].id = hrnd::View_Debug;
+            views[1].clearColour = false;
+            views[1].colourValue = 0x303030ff;
+            hrnd::resetViews(views, 2);
         }
 
         // Info the game that main engine assets are loaded.

@@ -1,0 +1,20 @@
+{
+  "friendlyname": "game/material/sprite", 
+  "inputs": [
+    "sprite.json", 
+    "..\\..\\hart\\fbs\\material.fbs", 
+    "..\\..\\hart\\fbs\\renderstate.fbs", 
+    "..\\..\\hart\\fbs\\techniquetype.fbs", 
+    "..\\..\\hart\\fbs\\uuid.fbs", 
+    "..\\..\\hart\\fbs\\vec_matrix.fbs"
+  ], 
+  "prerequisites": [
+    "{6c460cca-d5f0-42f7-91aa-e4ff67fb6dc3}", 
+    "{019f4afe-75c5-4690-8eda-9f7ac4f194f5}"
+  ], 
+  "processoptions": {
+    "input": "sprite.json"
+  }, 
+  "type": "material", 
+  "uuid": "{1df9d614-635b-44dc-883c-b5ceb637e0c2}"
+}

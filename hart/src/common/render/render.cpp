@@ -172,6 +172,46 @@ void setMaterialSetup(MaterialSetup* mat) {
     }
 }
 
+void submit(VertexBuffer in_vb) {
+    if (in_vb.type == 1)
+        bgfx::setVertexBuffer(in_vb.dyvb);
+    else
+        bgfx::setVertexBuffer(in_vb.vb);
+
+    if (drawCtx.dirtyScissor) {
+        bgfx::setScissor(drawCtx.scissor.x, drawCtx.scissor.y, drawCtx.scissor.w, drawCtx.scissor.h);
+    }
+    drawCtx.currentMatSetup->flushParameters(drawCtx.forceFlushMat);
+    for (uint8_t p=0, n=drawCtx.currentPassCount; p < n; ++p) {
+        bgfx::setState(drawCtx.currentPass[p].state.stateMask);
+        bgfx::submit(drawCtx.currentView, drawCtx.currentPass[p].prog);
+    }
+    drawCtx.dirtyScissor = false;
+    drawCtx.forceFlushMat = false;
+}
+
+void submit(IndexBuffer in_ib, VertexBuffer in_vb) {
+    if (in_ib.type == 1)
+        bgfx::setIndexBuffer(in_ib.dyib);
+    else
+        bgfx::setIndexBuffer(in_ib.ib);
+    if (in_vb.type == 1)
+        bgfx::setVertexBuffer(in_vb.dyvb);
+    else
+        bgfx::setVertexBuffer(in_vb.vb);
+
+    if (drawCtx.dirtyScissor) {
+        bgfx::setScissor(drawCtx.scissor.x, drawCtx.scissor.y, drawCtx.scissor.w, drawCtx.scissor.h);
+    }
+    drawCtx.currentMatSetup->flushParameters(drawCtx.forceFlushMat);
+    for (uint8_t p=0, n=drawCtx.currentPassCount; p < n; ++p) {
+        bgfx::setState(drawCtx.currentPass[p].state.stateMask);
+        bgfx::submit(drawCtx.currentView, drawCtx.currentPass[p].prog);
+    }
+    drawCtx.dirtyScissor = false;
+    drawCtx.forceFlushMat = false;
+}
+
 void submitInline(VertexDecl* fmt, void* idx, void* vtx, uint16_t numVertices, uint16_t prims) {
     hdbassert(fmt && vtx, "Invalid fmt or vtx parameter(s)\n");
     uint32_t numIndices = prims*3;
@@ -239,6 +279,57 @@ void endInlineBatch() {
 
 void end() {
 
+}
+
+IndexBuffer createIndexBuffer(void* data, uint32_t datalen, uint32_t flags) {
+    hdbassert(!(flags & ~Flag_IndexBuffer_FlagMask), "Unsupported flag requiested");
+    IndexBuffer r;
+    r.type = (flags & Flag_IndexBuffer_Dynamic) ? 1 : 0;
+    if (r.type == 1)
+        if (data == nullptr)
+            r.dyib = bgfx::createDynamicIndexBuffer(datalen, BGFX_BUFFER_NONE);
+        else {
+            r.dyib = bgfx::createDynamicIndexBuffer(bgfx::copy(data, datalen), BGFX_BUFFER_NONE);
+        }
+    else
+        r.ib = bgfx::createIndexBuffer(bgfx::copy(data, datalen), BGFX_BUFFER_NONE);
+
+    return r;
+}
+void destroyIndexBuffer(IndexBuffer in_ib) {
+    if (in_ib.type == 1) {
+        bgfx::destroyDynamicIndexBuffer(in_ib.dyib);
+    } else {
+        bgfx::destroyIndexBuffer(in_ib.ib);
+    }
+}
+
+VertexBuffer createVertexBuffer(void* data, uint32_t datalen, VertexDecl const* fmt, uint32_t flags) {
+    hdbassert(!(flags & ~Flag_VertexBuffer_FlagMask), "Unsupported flag requiested");
+    hdbassert(fmt, "vertex format is invalid.");
+    VertexBuffer r;
+    r.type = (flags & Flag_VertexBuffer_Dynamic) ? 1 : 0;
+    if (r.type == 1)
+        if (data == nullptr)
+            r.dyvb = bgfx::createDynamicVertexBuffer(datalen, fmt->decl, BGFX_BUFFER_NONE);
+        else {
+            r.dyvb = bgfx::createDynamicVertexBuffer(bgfx::copy(data, datalen), fmt->decl, BGFX_BUFFER_NONE);
+        }
+    else
+        r.vb = bgfx::createVertexBuffer(bgfx::copy(data, datalen), fmt->decl, BGFX_BUFFER_NONE);
+
+    return r;
+}
+
+void updateVertexBuffer(VertexBuffer in_vb, void* data, uint32_t datalen) {
+    bgfx::updateDynamicVertexBuffer(in_vb.dyvb, 0, bgfx::copy(data, datalen));
+}
+
+void destroyVertexBuffer(VertexBuffer in_vb) {
+    if (in_vb.type == 1)
+        bgfx::destroyDynamicVertexBuffer(in_vb.dyvb);
+    else
+        bgfx::destroyVertexBuffer(in_vb.vb);
 }
 
 }

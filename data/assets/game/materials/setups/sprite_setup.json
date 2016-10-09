@@ -1,0 +1,14 @@
+{
+    "material":{
+      "highword1": 3695467363, 
+      "highword2": 3467984008, 
+      "highword3": 3269474230, 
+      "lowword": 349632797
+    },
+    "inputs":[
+        {
+            "name":"s_tex",
+            "data_type":"Texture2DInput"
+        }
+    ]
+}

@@ -4,12 +4,7 @@
 *********************************************************************/
 #pragma once
 
-#include "hart/core/objectfactory.h"
-#include "hart/core/entity.h"
-#include "hart/base/vec.h"
-#include "hart/base/freelist.h"
-#include "hart/base/std.h"
-#include "hart/render/texture.h"
+#include "hart/hart.h"
 #include "fbs/sprite_generated.h"
 #include "fbs/spriteanimtype_generated.h"
 

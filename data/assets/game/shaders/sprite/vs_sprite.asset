@@ -1,0 +1,15 @@
+{
+  "friendlyname": "game/shaders/vs/sprite", 
+  "inputs": [
+    "vs_sprite.sc", 
+    "varying.def.sc", 
+    "..\\..\\..\\..\\..\\external\\bgfx\\src\\bgfx_shader.sh"
+  ], 
+  "processoptions": {
+    "input": "vs_sprite.sc", 
+    "platformext": "-p vs_5_0 --debug", 
+    "type": "vertex"
+  }, 
+  "type": "shader", 
+  "uuid": "{6c460cca-d5f0-42f7-91aa-e4ff67fb6dc3}"
+}

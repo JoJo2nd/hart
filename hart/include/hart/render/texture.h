@@ -21,6 +21,10 @@ class TextureRes {
         ~TextureRes();
         
         Texture getTexture() const { return texture; }
+        uint32_t getWidth() const { return width; }
+        uint32_t getHeight() const { return height; }
+        uint32_t getDepth() const { return depth; }
+        TextureType getType() const { return type; }
 
     private:
         uint32_t width, height, depth;

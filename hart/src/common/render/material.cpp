@@ -20,6 +20,7 @@ struct MaterialTextureSlot {
     hresmgr::Handle* resource;
     Texture texture;
     uint8_t slot;
+    uint16_t flags;
 };
 
 static bgfx::UniformType::Enum MaterialInputTypeToUniformType[resource::MaterialInputData_MAX+1] = {
@@ -112,10 +113,18 @@ bool Material::deserialiseObject(MarshallType const* in_data, hobjfact::Serialis
                 hdbassert(inputs[i].dataIdx == datalen, "Size overflow\n");
                 resource::Texture2DInput* t = (resource::Texture2DInput*)raw_data;
                 Texture invalid_tex = BGFX_INVALID_HANDLE;
+                uint16_t flags = 0;
+                if (t->pointsample()) flags |= BGFX_TEXTURE_MIP_POINT | BGFX_TEXTURE_MIN_POINT | BGFX_TEXTURE_MAG_POINT;
+                if (t->anisotropic()) flags |= BGFX_TEXTURE_MIN_ANISOTROPIC | BGFX_TEXTURE_MAG_ANISOTROPIC;
+                if (t->wrapU() == resource::TextureWrap_Mirror) flags |= BGFX_TEXTURE_U_MIRROR;
+                if (t->wrapV() == resource::TextureWrap_Mirror) flags |= BGFX_TEXTURE_V_MIRROR;
+                if (t->wrapU() == resource::TextureWrap_Clamp) flags |= BGFX_TEXTURE_U_CLAMP;
+                if (t->wrapV() == resource::TextureWrap_Clamp) flags |= BGFX_TEXTURE_V_CLAMP;
                 MaterialTextureSlot tslot = {
                     nullptr,
                     t->resid() ? hresmgr::tweakGetResource<TextureRes>(huuid::fromData(*t->resid()))->getTexture() : invalid_tex,
-                    t->slot()
+                    t->slot(),
+                    flags
                 };
                 inputData.resize(datalen+sizeof(tslot));
                 hcrt::memcpy(&inputData[datalen], &tslot, sizeof(tslot));
@@ -152,7 +161,7 @@ void Material::setParameters(MaterialHandleData const* hrestrict in_data, uint32
         if (in_data[i].handle.type >= resource::MaterialInputData_Texture2DInput) {
             MaterialTextureSlot* tslot = (MaterialTextureSlot*)(base_add+in_data[i].dataOffset);
             MaterialTextureSlot* dtslot = (MaterialTextureSlot*)(dafault_add+inputs[i_idx].dataIdx);
-            bgfx::setTexture(dtslot->slot, inputs[i_idx].uniform, tslot->texture);
+            bgfx::setTexture(dtslot->slot, inputs[i_idx].uniform, tslot->texture, dtslot->flags);
         } else {
             bgfx::setUniform(inputs[i_idx].uniform, base_add+in_data[i].dataOffset);
         }
@@ -163,7 +172,7 @@ void Material::setParameters(MaterialHandleData const* hrestrict in_data, uint32
         if (inputs[i].set == 0 && inputs[i].dataIdx != Input::Invalid) {
             if (inputs[i].dataType >= resource::MaterialInputData_Texture2DInput) {
                 MaterialTextureSlot* tslot = (MaterialTextureSlot*)(dafault_add+inputs[i].dataIdx);
-                bgfx::setTexture(tslot->slot, inputs[i].uniform, tslot->texture);
+                bgfx::setTexture(tslot->slot, inputs[i].uniform, tslot->texture, tslot->flags);
             } else {
                 bgfx::setUniform(inputs[i].uniform, dafault_add+inputs[i].dataIdx);
             }
@@ -225,10 +234,18 @@ bool MaterialSetup::deserialiseObject(MarshallType const* in_data, hobjfact::Ser
             case resource::MaterialInputData_Texture2DInput: {
                 inputs[i].dataLen = sizeof(MaterialTextureSlot);
                 resource::Texture2DInput* t = (resource::Texture2DInput*)raw_data;
+                uint16_t flags = 0;
+                if (t->pointsample()) flags |= BGFX_TEXTURE_MIP_POINT | BGFX_TEXTURE_MIN_POINT | BGFX_TEXTURE_MAG_POINT;
+                if (t->anisotropic()) flags |= BGFX_TEXTURE_MIN_ANISOTROPIC | BGFX_TEXTURE_MAG_ANISOTROPIC;
+                if (t->wrapU() == resource::TextureWrap_Mirror) flags |= BGFX_TEXTURE_U_MIRROR;
+                if (t->wrapV() == resource::TextureWrap_Mirror) flags |= BGFX_TEXTURE_V_MIRROR;
+                if (t->wrapU() == resource::TextureWrap_Clamp) flags |= BGFX_TEXTURE_U_CLAMP;
+                if (t->wrapV() == resource::TextureWrap_Clamp) flags |= BGFX_TEXTURE_V_CLAMP;
                 MaterialTextureSlot tslot = {
                     nullptr,
                     hresmgr::tweakGetResource<TextureRes>(huuid::fromData(*t->resid()))->getTexture(),
-                    t->slot()
+                    t->slot(),
+                    flags
                 };
                 inputData.resize(inputs[i].dataOffset+inputs[i].dataLen);
                 hcrt::memcpy(&inputData[inputs[i].dataOffset], &tslot, sizeof(tslot));

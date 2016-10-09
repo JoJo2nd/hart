@@ -4,11 +4,6 @@
 *********************************************************************/
 
 #include "sprite.h"
-#include "hart/render/texture.h"
-#include "hart/core/engine.h"
-#include "hart/base/util.h"
-#include "hart/base/time.h"
-#include "hart/core/resourcemanager.h"
 
 static hart::Freelist<Sprite> spriteFreelist;
 #if HART_DEBUG_INFO

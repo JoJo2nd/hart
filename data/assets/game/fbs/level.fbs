@@ -19,6 +19,7 @@ table CollisionPrim {
 table LvlEntity {
     levelid:uint;
     assetuuid:hart.resource.uuid;
+    //todo: entity flags (like make clone, never save?)
 }
 
 table LvlLayer {

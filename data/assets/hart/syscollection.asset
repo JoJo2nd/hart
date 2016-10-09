@@ -2,7 +2,8 @@
   "inputs": [], 
   "uuid": "{06360489-280d-4059-8faa-bfb0ed97e6fa}", 
   "prerequisites": [
-    "{013d1779-6343-4046-bc85-1eda6667af12}"
+    "{013d1779-6343-4046-bc85-1eda6667af12}",
+    "{682625d0-ef63-442e-a4a1-21a0b24a2d17}"
   ], 
   "processoptions": {}, 
   "friendlyname": "hart/sys/asset/collection", 

@@ -3,9 +3,8 @@
     Please see the file LICENSE.txt in the repository root directory.
 *********************************************************************/
 
-#include "hart/core/engine.h"
-#include "hart/core/objectfactory.h"
-#include "hart/core/entity.h"
+#include "hart/hart.h"
+#include "sprite_renderer.h"
 #include "fbs/player_generated.h"
 #include "fbs/test_generated.h"
 
@@ -51,6 +50,10 @@ bool Test::deserialiseComponent(MarshallType const* overrides, MarshallType cons
 
 // Prototype for functions registering classes. Saves having to include the header files here
 void registierSpriteObject();
+void registierLevelObject();
+
+// save the includes. also only temp/testing.
+void updateAllLevelAnimations();
 
 class Game : public hart::engine::GameInterface {
     virtual void postObjectFactoryRegister() {
@@ -58,9 +61,13 @@ class Game : public hart::engine::GameInterface {
         hobjfact::objectFactoryRegister(Player::getObjectDefinition(), nullptr);
         hobjfact::objectFactoryRegister(Test::getObjectDefinition(), nullptr);
         registierSpriteObject();
+        registierLevelObject();
     }
     virtual void postSystemAssetLoad() {
         //TODO: Grab any required assets here.
+
+        // Initialise any global systems here.
+        initialiseSpriteRenderer();
     }
     virtual void taskGraphSetup(htasks::Graph* frameGraph) {
         //TODO: Inject game tasks into the frameGraph. Allows use to arrange game logic around engine flow
@@ -71,12 +78,14 @@ class Game : public hart::engine::GameInterface {
     }
     virtual void tick(float delta) {
         // TODO: do game tick
+        updateAllLevelAnimations();
     }
     virtual void postTick() {
 
     }
     virtual void render() {
-
+        // TODO: correct window size
+        renderSprites(1280, 720);
     }
 };
 
