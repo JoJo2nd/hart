@@ -45,12 +45,42 @@ The TODO list...
 >* Create sprite rendering functions and data
 
 ### Load a tileset exported from Tiled
->* write builder pipeline/script to generate asset
->* Load asset file in runtime
+>* ~~write builder pipeline/script to generate asset~~ **Done but to be dropped**
+>* ~~Load asset file in runtime~~ **Done to allow loading embedded tilesets in levels**
 
 ### Load and render map exported from Tiled.
->* export and process map in builder.py
->* write gather prerequisites script
+>* ~~export and process map in builder.py~~ **Done**
+>* ~~load level asset~~ **Done**
+>* ~~render level asset~~ **Done**
+>* link entities to levels that loaded them
+
+### Add basic collision systems
+>* ~~Add basic AABB tests (AABBxAABB, RayxAABB, MovingAABBs)~~ **Done**
+>* Add collision system for board phase pass (collect objects near player/NPC/moving objects)
+>* Add **simple** physics system for collision reaction (verlet integration for solve & response)
+>* Add callback system for other collision types (phantoms/trigger zones/NPC interactions)
+
+### Add simple string collection resource
+>* for translations (but will be english only ATM), 
+>* use CSV for format
+>* add generated header enum for reading table of values
+>* support hash table for debug builds to speed up iteration (no extra compiles...)
+
+### Add Player entity
+>* with saving
+
+### Add Shop entity NPC
+>* with test dialog
+>* with saving purchase history (items go out of stock)
+>* use test menu built in ImGUI
+
+### Add test NPC with debug choices
+>* ala FFVIII debug menu. Allows setup of debug levels/stages/etc.
+>* use test menu built in ImGUI.
+
+### Add menu system
+>* replace any in-game ImGUI menus
+>* Style in a classic JRPG style (borrow one to start with)
 
 ### Remove magic numbers
 >* I have a habit of using ~0ul in a number of places. Need to replace these with constants.
