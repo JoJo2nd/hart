@@ -9,6 +9,7 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <math.h>
 
 namespace hart {
 namespace crt {
@@ -128,6 +129,10 @@ namespace crt {
 
     inline int strncmp(const char* str1,const char* str2,size_t n) {
         return ::strncmp(str1,str2,n);
+    }
+
+    inline float fabs(float f) {
+        return (float)::fabs(f);
     }
 }
 }

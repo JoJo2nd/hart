@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="32" tileheight="32" nextobjectid="8">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="32" tileheight="32" nextobjectid="14">
  <tileset firstgid="1" name="DungeonCrawl_ProjectUtumnoTileset" tilewidth="32" tileheight="32" tilecount="3072" columns="64">
   <image source="../Public Domain/DungeonCrawl_ProjectUtumnoTileset.png" width="2048" height="1536"/>
   <terraintypes>
@@ -482,6 +482,12 @@
   <object id="3" x="947" y="49">
    <polygon points="0,0 154,0 155,34 285,32 284,96 315,97 315,227 346,226 345,445 223,444 223,413 95,413 94,350 63,348 63,286 30,283 29,153 -1,155"/>
   </object>
+  <object id="8" x="294" y="257" width="87" height="32"/>
+  <object id="9" x="481" y="127" width="28" height="32"/>
+  <object id="10" x="322" y="159" width="27" height="33"/>
+  <object id="11" x="193" y="65" width="31" height="31"/>
+  <object id="12" x="165" y="228" width="340" height="28"/>
+  <object id="13" x="168" y="288" width="334" height="33"/>
  </objectgroup>
  <objectgroup name="game_objects">
   <object id="4" type="Entity" gid="72" x="449" y="113" width="32" height="32">

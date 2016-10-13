@@ -22,13 +22,18 @@ inline uint64_t endianSwap(uint64_t v) {
 }
 
 template< typename t_ty >
-inline t_ty tmin(t_ty a, t_ty b) {
+inline t_ty tmin(t_ty const& a, t_ty const& b) {
     return a < b ? a : b;
 }
 
 template< typename t_ty >
-inline t_ty tmax(t_ty a, t_ty b) {
+inline t_ty tmax(t_ty const& a, t_ty const& b) {
     return a > b ? a : b;
+}
+
+template< typename t_ty >
+inline void tswap(t_ty& a, t_ty& b) {
+    std::swap(a, b);
 }
 
 }

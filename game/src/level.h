@@ -6,6 +6,7 @@
 
 #include "hart/hart.h"
 #include "sprite_renderer.h"
+#include "poly_utils.h"
 #include "fbs/tileset_generated.h"
 #include "fbs/level_generated.h"
 
@@ -92,6 +93,9 @@ public:
     hstd::vector<EntityData> entities;
     hstd::vector<SpriteHandle> sprites;
     hstd::vector<AnimSpriteBlock> animSpriteBlocks;
+
+    //TEMP
+    hstd::vector<AABB> collisionQuads;
 };
 
 void updateAllLevelAnimations();

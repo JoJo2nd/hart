@@ -4,6 +4,7 @@
 *********************************************************************/
 
 #include "level.h"
+#include "poly_utils.h"
 
 HART_OBJECT_TYPE_DECL(Tileset);
 HART_OBJECT_TYPE_DECL(Level);
@@ -205,6 +206,23 @@ bool Level::deserialiseObject(MarshallType const* in_data, hobjfact::SerialisePa
                     }
                 }
             }
+        }
+    }
+
+    auto const* col_prims = in_data->collisionprims();
+    for (uint32_t i = 0, n=col_prims->size(); i < n; ++i) {
+        if ((*col_prims)[i]->points()) {
+            // TODO: collision polys
+            //hstd::vector<hVec4> points;
+            //for (uint32_t pi =0, pn=(*col_prims)[i]->points()->size(); pi < pn; ++pi) {
+            //    hart::resource::Vec2 const* v = (*(*col_prims)[i]->points())[pi];
+            //    points.push_back(hVec4(v->x(), v->y(), 0.f, 0.f));
+            //}
+        } else if ((*col_prims)[i]->aabb_min() && (*col_prims)[i]->aabb_max()) {
+            AABB col_quad(
+                (*col_prims)[i]->aabb_min()->x(), (*col_prims)[i]->aabb_min()->y(),
+                (*col_prims)[i]->aabb_max()->x(), (*col_prims)[i]->aabb_max()->y());
+            collisionQuads.push_back(col_quad);
         }
     }
 
