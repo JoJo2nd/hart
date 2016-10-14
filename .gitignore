@@ -12,6 +12,7 @@ data/builder/fbs/*
 *.zip
 *.piskel
 *.7z
+*.xcf
 packaged.sha1.local
 local.manifest
 *_generated.h

@@ -1,0 +1,13 @@
+{
+  "friendlyname": "game/sprite/char_1", 
+  "inputs": [
+    "meta.json", 
+    "char_1.zip"
+  ], 
+  "prerequisites": [], 
+  "processoptions": {
+    "input": "char_1.zip"
+  }, 
+  "type": "sprite", 
+  "uuid": "{409f5035-0a70-4d58-8536-ea709fc74556}"
+}

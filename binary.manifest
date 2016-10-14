@@ -1,6 +1,42 @@
 {
+  "data\\assets\\BSD licence\\Skab\\char_1\\char_1.zip": {
+    "sha1": "c384f5c958134bc3715bd67bf76981c5a4c7dac9"
+  }, 
+  "data\\assets\\BSD licence\\Skab\\char_1\\frame_0.png": {
+    "sha1": "78b7b52668f9820a836db396b2c5318a90d03699"
+  }, 
+  "data\\assets\\BSD licence\\Skab\\char_1\\frame_1.png": {
+    "sha1": "e7d3a1065f5f78c0871bb568489813ccf19ecddc"
+  }, 
+  "data\\assets\\BSD licence\\Skab\\char_1\\frame_2.png": {
+    "sha1": "cc1ccbabafcc93cdd321f83547c869856361c049"
+  }, 
+  "data\\assets\\BSD licence\\Skab\\char_1\\frame_3.png": {
+    "sha1": "9d126c5e48197cdbb4e602900b80458b9cd755e4"
+  }, 
+  "data\\assets\\BSD licence\\Skab\\char_1\\frame_4.png": {
+    "sha1": "57ba466b83462b52eed5d8b79b2010638b2b666a"
+  }, 
+  "data\\assets\\BSD licence\\Skab\\char_1\\frame_5.png": {
+    "sha1": "988e41b8d1f20a5261c2a2f41867fd35e2db4b7f"
+  }, 
+  "data\\assets\\BSD licence\\Skab\\char_1\\frame_6.png": {
+    "sha1": "e5300c0fc0ea0266c643bc95bbb6b2df57089acd"
+  }, 
+  "data\\assets\\BSD licence\\Skab\\char_1\\frame_7.png": {
+    "sha1": "94e984a775100305e4d57940316fad3dc01fa280"
+  }, 
+  "data\\assets\\BSD licence\\Skab\\char_1\\frame_8.png": {
+    "sha1": "bf0ded39d408d113e351c0bd4abdb6d807b5313e"
+  }, 
+  "data\\assets\\BSD licence\\Skab\\walkcyclevarious.png": {
+    "sha1": "cdf551fb92ec38a4479e366bf38d6aaa5453b878"
+  }, 
   "data\\assets\\BSD licence\\monster2animcharsprites.7z": {
     "sha1": "310c9651bdf77a4857e5801fa96529fbf7b45be7"
+  }, 
+  "data\\assets\\BSD licence\\scifitiles-sheet.png": {
+    "sha1": "952a4c0f9b05a853a1e832b039384215c7ecf0d7"
   }, 
   "data\\assets\\Hyptosis\\hyptosis_sprites-and-tiles-for-you.png": {
     "sha1": "22337085af9122178e1fad0c9b482c20f004765e"
@@ -25,6 +61,15 @@
   }, 
   "data\\assets\\Public Domain\\crawl-tiles Oct-5-2010.zip": {
     "sha1": "8c8068a0788a3ddb3428798ce3ebc0e355a59919"
+  }, 
+  "data\\assets\\Sharm\\Atlas.zip": {
+    "sha1": "05309c41fceede893a322dcfc0ec9c94a3132067"
+  }, 
+  "data\\assets\\Sharm\\base_out_atlas.png": {
+    "sha1": "83a9d1a06799a25eefa15224d7515f4c0deb7c96"
+  }, 
+  "data\\assets\\Sharm\\terrain_atlas.png": {
+    "sha1": "5cf311a528ba53552b60ff9c9cb4c12d6637c5ac"
   }, 
   "data\\assets\\game\\sprites\\loading_disc.sprite\\loading_disc.piskel": {
     "sha1": "ef1734d27756d792ff442d8da3d08284586b1fd8"

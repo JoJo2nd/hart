@@ -67,6 +67,7 @@ The TODO list...
 >* support hash table for debug builds to speed up iteration (no extra compiles...)
 
 ### Add Player entity
+>* with sprite rendering & animation
 >* with saving
 
 ### Add Shop entity NPC

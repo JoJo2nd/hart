@@ -1,0 +1,108 @@
+{
+    "layout": {
+        "cellsX": 4,
+        "cellsY": 4,
+        "padding": 2
+    },
+    "procframes": [
+        {
+            "sourceid":3,
+            "flipu":true
+        },
+        {
+            "sourceid":4,
+            "flipu":true
+        },
+        {
+            "sourceid":5,
+            "flipu":true
+        }
+    ],
+    "animations": [
+        {
+            "animType":"RunUp",
+            "frames": [
+                {
+                    "frame":0,
+                    "lenght": 0.35
+                },
+                {
+                    "frame":1,
+                    "lenght": 0.35
+                },
+                {
+                    "frame":2,
+                    "lenght": 0.35
+                },
+                {
+                    "frame":1,
+                    "lenght": 0.35
+                }
+            ]
+        },
+        {
+            "animType":"RunRight",
+            "frames": [
+                {
+                    "frame":3,
+                    "lenght": 0.35
+                },
+                {
+                    "frame":4,
+                    "lenght": 0.35
+                },
+                {
+                    "frame":5,
+                    "lenght": 0.35
+                },
+                {
+                    "frame":4,
+                    "lenght": 0.35
+                }
+            ]
+        },
+        {
+            "animType":"RunDown",
+            "frames": [
+                {
+                    "frame":6,
+                    "lenght": 0.35
+                },
+                {
+                    "frame":7,
+                    "lenght": 0.35
+                },
+                {
+                    "frame":8,
+                    "lenght": 0.35
+                },
+                {
+                    "frame":7,
+                    "lenght": 0.35
+                }
+            ]
+        },
+        {
+            "animType":"RunLeft",
+            "frames": [
+                {
+                    "frame":9,
+                    "lenght": 0.35
+                },
+                {
+                    "frame":10,
+                    "lenght": 0.35
+                },
+                {
+                    "frame":11,
+                    "lenght": 0.35
+                },
+                {
+                    "frame":10,
+                    "lenght": 0.35
+                }
+            ]
+        }
+    ]    
+
+}
