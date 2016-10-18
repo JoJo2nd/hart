@@ -17,6 +17,8 @@ static int64_t startTime;
 static int64_t freq;
 static int64_t freqMicro;
 
+GameTick tickInfo;
+
 static uint64_t getTicks() {
     uint64_t v;
     QueryPerformanceCounter( (LARGE_INTEGER*)(&v) );

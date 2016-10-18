@@ -1,0 +1,13 @@
+/********************************************************************
+    Written by James Moran
+    Please see the file LICENSE.txt in the repository root directory.
+*********************************************************************/
+
+enum InputAction : ushort {
+    Select,
+    Cancel,
+    Up,
+    Down,
+    Left,
+    Right,
+}

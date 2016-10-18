@@ -23,6 +23,7 @@
 #include "hart/core/configoptions.h"
 #include "hart/core/engine.h"
 #include "hart/core/entity.h"
+#include "hart/core/input.h"
 #include "hart/core/objectfactory.h"
 #include "hart/core/resourcemanager.h"
 #include "hart/core/taskgraph.h"

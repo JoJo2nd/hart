@@ -7,6 +7,7 @@
 #include "sprite_renderer.h"
 #include "fbs/player_generated.h"
 #include "fbs/test_generated.h"
+#include "fbs/inputactions_generated.h"
 
 class Player : public hety::Component {
     HART_COMPONENT_OBJECT_TYPE(HART_MAKE_FOURCC('p','l','y','r'), resource::Player)
@@ -62,6 +63,38 @@ class Game : public hart::engine::GameInterface {
         hobjfact::objectFactoryRegister(Test::getObjectDefinition(), nullptr);
         registierSpriteObject();
         registierLevelObject();
+
+		//Grab default key bindings from ini
+		hstd::vector<hin::InputBinding> i_binds;
+		const char** k_names = EnumNamesInputAction();
+
+		for (uint32_t i = 0; k_names[i]; ++i) {
+			char const* k_bind = hconfigopt::getStr("binding", k_names[i], "");
+			char const* k_ptr = k_bind;
+			char const* k_start = k_ptr;
+			hin::InputBinding b;
+			uint32_t k_size = 0;
+			while (*(k_ptr) != '\0' && (uint16_t)(k_ptr - k_start) < hin::MaxInputBindingNameLen - 1) {
+				if (*(k_ptr) == ':') {
+					b.actionID = i;
+					hcrt::strncpy(b.platformName, (uint16_t)(k_ptr - k_start), k_start);
+					b.platformName[(uint16_t)(k_ptr - k_start)] = '\0';
+					i_binds.push_back(b);
+					k_start = k_ptr+1;
+					k_size = 0;
+				}
+				++k_ptr;
+			}
+
+			if ((uint16_t)(k_ptr - k_start)) {
+				b.actionID = i;
+				hcrt::strncpy(b.platformName, (uint16_t)(k_ptr - k_start), k_start);
+				b.platformName[(uint16_t)(k_ptr - k_start)] = '\0';
+				i_binds.push_back(b);
+			}
+		}
+
+		hin::setupInputBindings(0, i_binds.data(), (uint32_t)i_binds.size());
     }
     virtual void postSystemAssetLoad() {
         //TODO: Grab any required assets here.
@@ -77,7 +110,22 @@ class Game : public hart::engine::GameInterface {
         // work should be injected into the task graph. This should do nothing (or almost nothing).
     }
     virtual void tick(float delta) {
-        // TODO: do game tick
+        // Do game tick
+        /* Input test
+        hin::ButtonState btn;
+        btn = hin::getButtonState(InputAction_Up, 0);
+        if (btn.flags) hdbprintf("Up (%x, R:%d, P:%d, F:%d)\n", btn.flags, btn.raisingEdge, btn.state, btn.fallingEdge);
+        btn = hin::getButtonState(InputAction_Down, 0);
+        if (btn.flags) hdbprintf("Down (%x)\n", btn.flags);
+        btn = hin::getButtonState(InputAction_Left,0);
+        if(btn.flags) hdbprintf("Left (%x)\n",btn.flags);
+        btn = hin::getButtonState(InputAction_Right,0);
+        if(btn.flags) hdbprintf("Right (%x)\n",btn.flags);
+        btn = hin::getButtonState(InputAction_Select,0);
+        if(btn.flags) hdbprintf("Select (%x)\n",btn.flags);
+        btn = hin::getButtonState(InputAction_Cancel,0);
+        if(btn.flags) hdbprintf("Cancel (%x)\n",btn.flags);
+        //*/
         updateAllLevelAnimations();
     }
     virtual void postTick() {

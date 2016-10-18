@@ -9,6 +9,16 @@
 namespace hart {
 namespace time {
     
+struct GameTick {
+    float deltaMS;
+    uint8_t interval30Hz;
+    uint8_t interval15Hz;
+    uint8_t interval10Hz;
+    uint8_t interval5Hz;
+};
+
+extern GameTick tickInfo;
+
 void initialise();
 void update();
 

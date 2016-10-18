@@ -67,6 +67,11 @@ The TODO list...
 >* support hash table for debug builds to speed up iteration (no extra compiles...)
 
 ### Add Player entity
+>* player entity components/tasks:
+    * player input component (handles input mapping)
+    * animated sprite component (creates sprite, updates anim state, adds to render lists)
+    * physics component (defines solid region, has movement forces applied, reacts to collision, contains world position(!!))
+    * more..?
 >* with sprite rendering & animation
 >* with saving
 
@@ -90,6 +95,8 @@ The TODO list...
 >* including fbs ones. Wrap them in their own fbs/headers and typedef.
 
 ### Add keyboard support to Dear ImGUI
+
+### Add keyboard & gamepad support (via events for game hook up)
 
 ### Add debug menus
 >* ~~Add register function for debug menus~~

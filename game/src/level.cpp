@@ -248,12 +248,7 @@ Tileset::Tile const* Level::getTile(uint32_t tile_id, uint32_t* tw, uint32_t* th
 }
 
 void Level::updateTileAnimations() {
-    //Hack to cope with a delta so quick, converting to int results in zero.
-    //TODO: only tick game at 60Hz?
-    static float fdeltams = 0.f;
-    fdeltams += htime::deltaMS();
-    uint32_t deltams = (uint32_t)fdeltams;
-    fdeltams -= (float)deltams;
+    uint32_t deltams = (uint32_t)(htime::tickInfo.deltaMS+.5f);
     for (auto& i : animSpriteBlocks) {
         bool dirty = false;
         struct Vtx {

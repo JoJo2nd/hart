@@ -19,6 +19,7 @@
 #include "hart/base/matrix.h"
 #include "hart/render/vertexdecl.h"
 #include "hart/render/render.h"
+#include "hart/core/input.h"
 
 // object factory classes
 #include "hart/render/shader.h"
@@ -259,6 +260,7 @@ struct Context {
         hrnd::initialise(m_window);
         htime::initialise();
         hresmgr::initialise();
+        hin::initialise();
         hart::tasks::scheduler::initialise(
             hconfigopt::getInt("taskgraph", "workercount", 4), 
             hconfigopt::getUint("taskgraph", "jobqueuesize", 256));
@@ -370,26 +372,51 @@ struct Context {
 
         bool test_wnd_open = false;
         bool exit = false;
+        float tickRateCounter = 0.f;
         SDL_Event event;
         while (!exit)
         {
-            hprofile_scope(Frame);
             htime::update();
+            tickRateCounter += htime::deltaMS();
 
-            while (SDL_PollEvent(&event) )
-            {
-                switch (event.type)
+            while (tickRateCounter >= tickRate) {
+                tickRateCounter -= tickRate;
+                htime::tickInfo.deltaMS = tickRate;
+                htime::tickInfo.interval30Hz = (htime::tickInfo.interval30Hz+1)% 2;
+                htime::tickInfo.interval15Hz = (htime::tickInfo.interval15Hz+1)% 4;
+                htime::tickInfo.interval10Hz = (htime::tickInfo.interval10Hz+1)% 6;
+                htime::tickInfo.interval5Hz  = (htime::tickInfo.interval5Hz+1) %12;
+                while (SDL_PollEvent(&event) )
                 {
-                case SDL_QUIT:
-                    exit = true;
-                    break;
-                default:
-                    for (const auto& i : eventHandlers[(uint32_t)SDL2SystemEvent[event.type]]) {
-                        i(SDL2SystemEvent[event.type], &event);
+                    switch (event.type)
+                    {
+                    case SDL_QUIT:
+                        exit = true;
+                        break;
+                    default:
+                        for (const auto& i : eventHandlers[(uint32_t)SDL2SystemEvent[event.type]]) {
+                            i(SDL2SystemEvent[event.type], &event);
+                        }
+                        break;
                     }
-                    break;
                 }
+                
+                hprofile_start(game_pretick);
+                game->preTick(&taskGraph);
+                hprofile_end();
+                hprofile_start(game_tick);
+                hresmgr::update();
+                taskGraph.kick();
+                game->tick(htime::tickInfo.deltaMS);
+
+                hin::postUpdate();
+                hprofile_end();
+                hprofile_start(game_posttick);
+                game->postTick();
+                taskGraph.wait();
+                hprofile_end();
             }
+
             ImGuiIO& io = ImGui::GetIO();
             io.DeltaTime = htime::deltaSec();
             io.MousePos = ImVec2(float(mouseX), float(mouseY));
@@ -399,16 +426,9 @@ struct Context {
             io.MouseWheel = float(wheelDelta);
 
             ImGui::NewFrame();
-            
-            hprofile_start(game_pretick);
-            game->preTick(&taskGraph);
-            hprofile_end();
-            hprofile_start(game_tick);
-            hresmgr::update();
-            taskGraph.kick();
-            game->tick(htime::deltaSec());
-            //TODO: renderDebugMenus call & game->renderDebugMenus
+
 #if HART_DEBUG_INFO
+            hprofile_start(DebugMenuUpdate);
             if (ImGui::BeginMainMenuBar())
             {
                 if (ImGui::BeginMenu("Debug Menus"))
@@ -425,13 +445,8 @@ struct Context {
                     i.renderFn();
                 }
             }
+            hprofile_end();
 #endif
-            //ImGui::ShowTestWindow(&test_wnd_open);
-            hprofile_end();
-            hprofile_start(game_posttick);
-            game->postTick();
-            taskGraph.wait();
-            hprofile_end();
 
             hprofile_start(RenderFrame);
             game->render();
@@ -470,8 +485,9 @@ struct Context {
     int32_t mouseY = 0;
     int32_t wheelDelta = 0;
     bool    mouseButtons[5];
-    bool m_mouseLock = false;
-    bool m_fullscreen = false;
+    bool    m_mouseLock = false;
+    bool    m_fullscreen = false;
+    float   tickRate = 1000.f/60.f;
 
     enum class EgEvent {
         MouseMove,
