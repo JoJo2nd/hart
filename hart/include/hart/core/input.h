@@ -11,8 +11,6 @@ namespace hart {
 namespace input {
 
 struct ButtonState {
-    uint16_t actionID;
-    uint8_t  padID;
     union {
         uint8_t flags;
         struct {
@@ -24,9 +22,7 @@ struct ButtonState {
 };
 
 struct AxisState {
-    uint16_t actionID;
     int16_t  axisValue;
-    uint8_t  padID;
 };
 
 static const uint32_t MaxInputBindingNameLen = 64;

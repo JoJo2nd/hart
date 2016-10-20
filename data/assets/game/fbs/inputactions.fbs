@@ -10,4 +10,6 @@ enum InputAction : ushort {
     Down,
     Left,
     Right,
+    UpDownAxis,
+    LeftRightAxis,
 }

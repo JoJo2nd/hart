@@ -111,10 +111,11 @@ class Game : public hart::engine::GameInterface {
     }
     virtual void tick(float delta) {
         // Do game tick
-        /* Input test
+        ///* Input test
         hin::ButtonState btn;
+        hin::AxisState axis;
         btn = hin::getButtonState(InputAction_Up, 0);
-        if (btn.flags) hdbprintf("Up (%x, R:%d, P:%d, F:%d)\n", btn.flags, btn.raisingEdge, btn.state, btn.fallingEdge);
+        if (btn.flags) hdbprintf("Up (%x)\n", btn.flags);
         btn = hin::getButtonState(InputAction_Down, 0);
         if (btn.flags) hdbprintf("Down (%x)\n", btn.flags);
         btn = hin::getButtonState(InputAction_Left,0);
@@ -125,6 +126,10 @@ class Game : public hart::engine::GameInterface {
         if(btn.flags) hdbprintf("Select (%x)\n",btn.flags);
         btn = hin::getButtonState(InputAction_Cancel,0);
         if(btn.flags) hdbprintf("Cancel (%x)\n",btn.flags);
+        axis = hin::getAxisState(InputAction_UpDownAxis, 0);
+        if (axis.axisValue > 1500 || axis.axisValue < -1500) hdbprintf("Up<->Down (%d)\n", axis.axisValue);
+        axis = hin::getAxisState(InputAction_LeftRightAxis,0);
+        if(axis.axisValue > 1500 || axis.axisValue < -1500) hdbprintf("Left<->Right (%d)\n",axis.axisValue);
         //*/
         updateAllLevelAnimations();
     }
