@@ -122,7 +122,7 @@ bool Material::deserialiseObject(MarshallType const* in_data, hobjfact::Serialis
                 if (t->wrapV() == resource::TextureWrap_Clamp) flags |= BGFX_TEXTURE_V_CLAMP;
                 MaterialTextureSlot tslot = {
                     nullptr,
-                    t->resid() ? hresmgr::tweakGetResource<TextureRes>(huuid::fromData(*t->resid()))->getTexture() : invalid_tex,
+                    t->resid() ? hresmgr::tweakGetResource<TextureRes>(huuid::fromData(*t->resid()))->texture : invalid_tex,
                     t->slot(),
                     flags
                 };
@@ -243,7 +243,7 @@ bool MaterialSetup::deserialiseObject(MarshallType const* in_data, hobjfact::Ser
                 if (t->wrapV() == resource::TextureWrap_Clamp) flags |= BGFX_TEXTURE_V_CLAMP;
                 MaterialTextureSlot tslot = {
                     nullptr,
-                    hresmgr::tweakGetResource<TextureRes>(huuid::fromData(*t->resid()))->getTexture(),
+                    hresmgr::tweakGetResource<TextureRes>(huuid::fromData(*t->resid()))->texture,
                     t->slot(),
                     flags
                 };

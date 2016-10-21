@@ -44,8 +44,8 @@ bool Tileset::deserialiseObject(MarshallType const* in_data, hobjfact::Serialise
 
     tiles.resize(tileCount);
     uint32_t cur_col = 0;
-    uint32_t cur_x = 0, tw = textureResource->getWidth(); //in pixels
-    uint32_t cur_y = 0, th = textureResource->getHeight(); //in pixels
+    uint32_t cur_x = 0, tw = textureResource->width; //in pixels
+    uint32_t cur_y = 0, th = textureResource->height; //in pixels
     auto const* in_tiles = in_data->tiles();
     // Initialise tiles that have any properties (only tile with props are stored)
     for (uint32_t i=0, n=in_tiles->size(); i < n; ++i) {
@@ -183,7 +183,7 @@ bool Level::deserialiseObject(MarshallType const* in_data, hobjfact::SerialisePa
                         hrnd::IndexBuffer qib = hrnd::createIndexBuffer(tmp_ib, quads*indexCount*sizeof(uint16_t), 0);
                         hrnd::VertexBuffer qvb = hrnd::createVertexBuffer(tmp_vb, quads*vtxCount*sizeof(Vtx), vDecl, 0);
                         SpriteHandle sh = createSprite(l_layer);
-                        setSpriteRenderData(sh, qib, qvb, cur_ts->textureResource->getTexture());
+                        setSpriteRenderData(sh, qib, qvb, cur_ts->textureResource->texture);
                         sprites.push_back(sh);
                     }
                     //create animated tile block sprite
@@ -193,7 +193,7 @@ bool Level::deserialiseObject(MarshallType const* in_data, hobjfact::SerialisePa
                         uint8_t* anim_data = new uint8_t[animquads*vtxCount*sizeof(Vtx)];
                         hcrt::memcpy(anim_data, tmp_anim_vb, animquads*vtxCount*sizeof(Vtx));
                         SpriteHandle sh = createSprite(l_layer);
-                        setSpriteRenderData(sh, qib, qvb, cur_ts->textureResource->getTexture());
+                        setSpriteRenderData(sh, qib, qvb, cur_ts->textureResource->texture);
                         AnimSpriteBlock asb;
                         asb.sprite = sh;
                         asb.tileset = cur_ts;

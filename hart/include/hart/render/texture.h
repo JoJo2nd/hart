@@ -19,14 +19,7 @@ class TextureRes {
     HART_OBJECT_TYPE(HART_MAKE_FOURCC('t','e','x','r'), resource::Texture)
     public:
         ~TextureRes();
-        
-        Texture getTexture() const { return texture; }
-        uint32_t getWidth() const { return width; }
-        uint32_t getHeight() const { return height; }
-        uint32_t getDepth() const { return depth; }
-        TextureType getType() const { return type; }
 
-    private:
         uint32_t width, height, depth;
         uint32_t mips;
         TextureType type;
