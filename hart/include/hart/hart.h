@@ -13,6 +13,7 @@
 #include "hart/base/filesystem.h"
 #include "hart/base/freelist.h"
 #include "hart/base/matrix.h"
+#include "hart/base/scopestack.h"
 #include "hart/base/std.h"
 #include "hart/base/threadlocalstorage.h"
 #include "hart/base/time.h"

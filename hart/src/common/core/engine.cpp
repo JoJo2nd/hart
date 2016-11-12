@@ -12,6 +12,8 @@
 #include "hart/core/resourcemanager.h"
 #include "hart/core/taskgraph.h"    
 #include "hart/core/configoptions.h"
+#include "hart/base/threadlocalstorage.h"
+#include "hart/base/scopestack.h"
 #include "hart/base/uuid.h"
 #include "hart/base/filesystem.h"
 #include "hart/base/util.h"
@@ -221,6 +223,7 @@ struct Context {
         hprofile_startup();
         hprofile_namethread("Main Thread");
 
+        htls::initTLSAllocaScratchPad();
         hfs::initialise_filesystem();
         hfs::FileHandle fileHdl;
         hfs::FileOpHandle fop = hfs::openFile("/system.ini", hfs::Mode::Read, &fileHdl);
@@ -400,7 +403,7 @@ struct Context {
                         break;
                     }
                 }
-                
+
                 hprofile_start(game_pretick);
                 game->preTick(&taskGraph);
                 hprofile_end();
