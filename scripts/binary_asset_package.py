@@ -21,6 +21,8 @@ asset_types = [
     '.dll',
     '.png',
     '.tga',
+    '.jpg',
+    '.bmp',
     '.bin',
     '.qm',
     '.lpf',

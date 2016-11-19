@@ -5,7 +5,7 @@
 echo "Checking for binary assets that need uploading"
 
 cd ./scripts
-python ./binary_asset_package.py -r ./../ -d ./../data/assets -d ./../data/builder -d ./../external/SDL2 -d ./../tools
+python ./binary_asset_package.py -r ./../ -d ./../data/assets -d ./../data/builder -d ./../data/reference -d ./../external/SDL2 -d ./../tools
 cd ./../
 
 files=`git status`

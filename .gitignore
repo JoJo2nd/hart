@@ -8,6 +8,8 @@ data/builder/fbs/*
 *.png
 *.qm
 *.tga
+*.jpg
+*.bmp
 *.lpf
 *.zip
 *.piskel

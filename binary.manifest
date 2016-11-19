@@ -89,6 +89,33 @@
   "data\\builder\\texturecRelease.exe": {
     "sha1": "b094f640dfd8d41aa58bc3489e75e378dce4a98a"
   }, 
+  "data\\reference\\FB002.bmp": {
+    "sha1": "c66108bfdfe75e0fb827451e48736dbdd9ff4875"
+  }, 
+  "data\\reference\\FB003.bmp": {
+    "sha1": "e01f174ffa172519a4abc313c93443e4f052336e"
+  }, 
+  "data\\reference\\FB004.bmp": {
+    "sha1": "be12e0385b20eac8b7cb78dbacef01ecf92f8ec1"
+  }, 
+  "data\\reference\\Level01.tft1.png": {
+    "sha1": "8f11bb7c8927191fd0900d1ec90ae52b1b52cbf6"
+  }, 
+  "data\\reference\\actions.png": {
+    "sha1": "80ccb806f85997c289c6fde7ad0c60f0e341f309"
+  }, 
+  "data\\reference\\actions_2.jpg": {
+    "sha1": "4acc4e1cceb9bbccc81e1f93ebcb01cb9f5ecd39"
+  }, 
+  "data\\reference\\fb_VRAM.bmp": {
+    "sha1": "4ed2f23b97128116958683464a294feb519136e6"
+  }, 
+  "data\\reference\\first_screen.tga": {
+    "sha1": "d6fbdb10bd5a49c063aa15312808a821fd7397b0"
+  }, 
+  "data\\reference\\walk.jpg": {
+    "sha1": "5c134791cc896c9a6cf57a5379a07c3543b53ad9"
+  }, 
   "external\\SDL2\\lib\\x64\\SDL2.dll": {
     "sha1": "dc6bdf3aaf46e99aeb1c0cb80ab643fb8f1b0353"
   }, 
