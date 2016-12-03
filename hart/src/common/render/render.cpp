@@ -20,6 +20,10 @@ struct VertexDecl {
 };
 
 static struct {
+    int windowWidth;
+    int windowHeight;
+} gfxInfo;
+static struct {
     static const uint32_t MaxPasses = 16;
 
     uint8_t currentView;
@@ -83,6 +87,81 @@ static bgfx::BackbufferRatio::Enum bgfxBBRationReamp[] = {
     bgfx::BackbufferRatio::Double,    //  from Ratio::Double,   
 };
 
+namespace debug {
+#if HART_DEBUG_INFO
+
+enum DebugPrimType : uint8_t {
+    Line, 
+    Quad,
+    TQuad,
+
+    Max
+};
+
+struct DebugPrim {
+    DebugPrimType type;
+};
+
+struct PrimLine : DebugPrim {
+    hVec3 s; 
+    hVec3 e;
+    colour_t c;
+};
+
+struct PrimQuad : DebugPrim  {
+    hVec3 tl; 
+    hVec3 br; 
+    colour_t c;
+};
+
+struct PrimTQuad : PrimQuad {
+    
+    Texture t;
+};
+
+struct DebugPrimDraw {
+    uint32_t startVtx;
+    uint32_t numVtx;
+    debug::DebugPrimType t;
+};
+
+struct DebugPrims {
+    VertexDecl* vtxDecl;
+    VertexDecl* tvtxDecl;
+    VertexBuffer vtxBuffer;
+    VertexBuffer tvtxBuffer;
+    hstd::unique_ptr<uint8_t> workingBuffer;
+    hstd::vector<uint8_t> debugPrims;
+    hstd::vector<DebugPrimDraw> drawCalls;
+    uint32_t v_count;
+    uint32_t tv_count;
+};
+
+static const uint32_t MaxDebugPrimsVtxs = 4096; //
+static const VertexElement debugVtxDecl[] = {
+    {Semantic::Position,  SemanticType::Float, 3, false},
+    {Semantic::Color0,    SemanticType::Uint8, 4,  true},
+};
+struct DebugVtx {
+    float p[3];
+    uint32_t c;
+};
+static const uint32_t debugVtxDeclSize = sizeof(DebugVtx);
+static VertexElement debugTexVtxDecl[] = {
+    {Semantic::Position,  SemanticType::Float, 3, false},
+    {Semantic::TexCoord0, SemanticType::Float, 2, false},
+    {Semantic::Color0,    SemanticType::Uint8, 4,  true},
+};
+struct DebugTexVtx {
+    float p[3];
+    float t[2];
+    uint32_t c;
+};
+static const uint32_t debugTexVtxDeclSize = sizeof(DebugTexVtx);
+
+static DebugPrims currentDebugPrims;
+#endif
+}
 
 VertexDecl* createVertexDecl(VertexElement const* elements, uint16_t element_count) {
     VertexDecl* vd = new (vertexDeclFreelist.allocate()) VertexDecl;
@@ -114,10 +193,19 @@ Program createProgram(Shader* vertex, Shader* pixel) {
 }
 
 void initialise(SDL_Window* window) {
+    SDL_GetWindowSize(window, &gfxInfo.windowWidth, &gfxInfo.windowHeight);
     bgfx::sdlSetWindow(window);
     bgfx::renderFrame(); // calling this before bgfx::init prevents the render thread being created
     bgfx::init(bgfx::RendererType::Direct3D11);
     gfxCaps = *bgfx::getCaps();
+
+#if HART_DEBUG_INFO
+    debug::currentDebugPrims.vtxDecl=createVertexDecl(debug::debugVtxDecl, (uint16_t)HART_ARRAYSIZE(debug::debugVtxDecl));
+    debug::currentDebugPrims.tvtxDecl=createVertexDecl(debug::debugTexVtxDecl, (uint16_t)HART_ARRAYSIZE(debug::debugTexVtxDecl));
+    debug::currentDebugPrims.vtxBuffer=createVertexBuffer(nullptr, debug::MaxDebugPrimsVtxs*debug::debugVtxDeclSize, debug::currentDebugPrims.vtxDecl, Flag_VertexBuffer_Dynamic);
+    debug::currentDebugPrims.tvtxBuffer=createVertexBuffer(nullptr, debug::MaxDebugPrimsVtxs*debug::debugTexVtxDeclSize, debug::currentDebugPrims.tvtxDecl, Flag_VertexBuffer_Dynamic);
+    debug::currentDebugPrims.workingBuffer.reset(new uint8_t[debug::MaxDebugPrimsVtxs*debug::debugVtxDeclSize]);
+#endif
 }
 
 void resetViews(ViewDef* views, size_t count) {
@@ -126,7 +214,7 @@ void resetViews(ViewDef* views, size_t count) {
         bgfx::resetView(i);
     }
     for (uint32_t i=0, n=uint32_t(count); i<n; ++i) {
-        if (viewIDRemap.size() < views[i].id) {
+        if (viewIDRemap.size() < views[i].id+1) {
             viewIDRemap.resize(views[i].id+1, ~0);
         }
         viewIDRemap[views[i].id] = i;
@@ -139,7 +227,6 @@ void resetViews(ViewDef* views, size_t count) {
             bgfx::setViewRect(i, 0, 0, views[i].w, views[i].h);
         else
             bgfx::setViewRect(i, 0, 0, bgfxBBRationReamp[uint32_t(views[i].ratio)]);
-
     }
 }
 
@@ -332,5 +419,165 @@ void destroyVertexBuffer(VertexBuffer in_vb) {
         bgfx::destroyVertexBuffer(in_vb.vb);
 }
 
+void endFrame() {
+    bgfx::frame();
+    bgfx::setScissor(0, 0, gfxInfo.windowWidth, gfxInfo.windowHeight);
+}
+
+namespace debug {
+#if HART_DEBUG_INFO
+void addLine(hVec3 s, hVec3 e, colour_t c) {
+    uint32_t end = (uint32_t)currentDebugPrims.debugPrims.size();
+    currentDebugPrims.debugPrims.resize(end + sizeof(PrimLine));
+    PrimLine* p = (PrimLine*)&currentDebugPrims.debugPrims[end];
+    p->type = DebugPrimType::Line;
+    p->s = s;
+    p->e = e;
+    p->c = c;
+    ++currentDebugPrims.v_count;
+}
+
+void addQuad(hVec3 tl, hVec3 br, colour_t c) {
+    uint32_t end = (uint32_t)currentDebugPrims.debugPrims.size();
+    currentDebugPrims.debugPrims.resize(end + sizeof(PrimQuad));
+    PrimQuad* p = (PrimQuad*)&currentDebugPrims.debugPrims[end];
+    p->type = DebugPrimType::Quad;
+    p->tl = tl;
+    p->br = br;
+    p->c = c;
+    ++currentDebugPrims.v_count;
+}
+
+void addTexQuad(hVec3 tl, hVec3 br, Texture t, colour_t c) {
+    //TODO:
+/*    
+    uint32_t end = currentDebugPrims.debugPrims.size();
+    currentDebugPrims.debugPrims.resize(end + sizeof(PrimTQuad));
+    PrimTQuad* p = (PrimTQuad*)&currentDebugPrims.debugPrims[end];
+    p->tl = tl;
+    p->br = br;
+    p->t = t;
+    p->c = c;   
+*/
+}
+
+void flushAndSumbitDebugPrims(uint16_t view, MaterialSetup* mat, hMat44 const* view_mtx, hMat44 const* proj_mtx) {
+    // update dynamic vertex buffer and build draw calls
+    uint8_t view_id = viewIDRemap[view];
+    uint32_t byte_size = (uint32_t)currentDebugPrims.debugPrims.size();
+    uint8_t* ptr = currentDebugPrims.debugPrims.data(), *end = ptr+byte_size;
+    uint32_t vtx_count = 0;
+    uint32_t tvtx_count = 0;
+    DebugPrimDraw dc;
+    hstd::vector<DebugPrimDraw> drawCalls; //TODO: make this global
+    dc.t = debug::DebugPrimType::Max;
+    dc.startVtx = 0;
+    dc.numVtx = 0;
+
+    DebugVtx* vb_start = (DebugVtx*)currentDebugPrims.workingBuffer.get();
+    DebugVtx* vb = vb_start;
+    DebugTexVtx* tvb = nullptr;
+    while (ptr < end) {
+        DebugPrim* dp = (DebugPrim*)ptr;
+        // TODO: need to break on texture swap...
+        if (dc.t != dp->type) {
+            if (dc.numVtx) {
+                drawCalls.push_back(dc);
+            }
+            dc.t = dp->type;
+            dc.startVtx = dp->type == DebugPrimType::TQuad ? tvtx_count : vtx_count;
+            dc.numVtx = 0;
+        }
+        switch (dp->type) {
+        case DebugPrimType::Line: {
+            PrimLine* l = (PrimLine*)ptr;
+            vb->p[0] = l->s.getX();
+            vb->p[1] = l->s.getY();
+            vb->p[2] = l->s.getZ();
+            vb->c = l->c;
+            vb++;
+            vb->p[0] = l->e.getX();
+            vb->p[1] = l->e.getY();
+            vb->p[2] = l->e.getZ();
+            vb->c = l->c;
+            vb++;
+            dc.numVtx += 2;
+            vtx_count += 2;
+            ptr = (uint8_t*)(l+1);
+        } break;
+        case DebugPrimType::Quad: {
+            PrimQuad* q = (PrimQuad*)ptr;
+            // Tri 1
+            vb->p[0] = q->tl.getX();
+            vb->p[1] = q->tl.getY();
+            vb->p[2] = q->tl.getZ();
+            vb->c = q->c;
+            vb++;
+            vb->p[0] = q->br.getX();
+            vb->p[1] = q->tl.getY();
+            vb->p[2] = q->tl.getZ();
+            vb->c = q->c;
+            vb++;
+            vb->p[0] = q->br.getX();
+            vb->p[1] = q->br.getY();
+            vb->p[2] = q->tl.getZ();
+            vb->c = q->c;
+            vb++;
+            //Tri 2
+            vb->p[0] = q->tl.getX();
+            vb->p[1] = q->tl.getY();
+            vb->p[2] = q->tl.getZ();
+            vb->c = q->c;
+            vb++;
+            vb->p[0] = q->br.getX();
+            vb->p[1] = q->br.getY();
+            vb->p[2] = q->tl.getZ();
+            vb->c = q->c;
+            vb++;
+            vb->p[0] = q->tl.getX();
+            vb->p[1] = q->br.getY();
+            vb->p[2] = q->tl.getZ();
+            vb->c = q->c;
+            vb++;
+            dc.numVtx += 6;
+            vtx_count += 6;
+            ptr = (uint8_t*)(q+1);
+        } break;
+//         case DebugPrimType::TQuad: {
+//             PrimTQuad* q = (PrimTQuad*)ptr;
+//             // TODO:
+//             ptr = (uint8_t*)(q+1);
+//         } break;
+        }
+    }
+    if (dc.numVtx) {
+        drawCalls.push_back(dc);
+    }
+    if (!((uintptr_t)vb-(uintptr_t)vb_start)) 
+        return;
+
+    bgfx::updateDynamicVertexBuffer(currentDebugPrims.vtxBuffer.dyvb, 0, bgfx::copy(vb_start, (uint32_t)((uintptr_t)vb-(uintptr_t)vb_start)));
+
+    // submit
+    bgfx::setViewTransform(view_id, view_mtx, proj_mtx);
+    bgfx::setScissor(0, 0, gfxInfo.windowWidth, gfxInfo.windowHeight);
+    State state = mat->getMaterial()->getTechnqiuePassState(TechniqueType_Main, 0); 
+    Program prog = mat->getMaterial()->getTechnqiuePassProgram(TechniqueType_Main, 0);
+    mat->flushParameters(drawCtx.forceFlushMat);
+    for (auto const& i : drawCalls) {
+        if (i.t == DebugPrimType::Line)
+            bgfx::setState(state.stateMask | BGFX_STATE_PT_LINES);
+        else if (i.t == DebugPrimType::Quad)
+            bgfx::setState(state.stateMask);
+        bgfx::setVertexBuffer(currentDebugPrims.vtxBuffer.dyvb, i.startVtx, i.numVtx);
+        bgfx::submit(view_id, prog);
+    }
+
+    // clear
+    currentDebugPrims.debugPrims.clear();
+    currentDebugPrims.v_count = 0;
+}
+#endif
+}
 }
 }

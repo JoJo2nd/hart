@@ -8,6 +8,7 @@
 #include "hart/config.h"
 #include "hart/base/std.h"
 #include "hart/core/taskgraph.h"
+#include "hart/base/matrix.h"
 #include "imgui/imgui.h"
 #include <SDL2/SDL_events.h>
 
@@ -99,6 +100,7 @@ void removeEventHandler(EventHandle handle);
 #if HART_DEBUG_INFO
 DebugMenuHandle addDebugMenu(char const* name, DebugMenuCallback debug_menu);
 void removeDebugMenu(DebugMenuHandle handle);
+void setDebugMatrices(hMat44 const& view, hMat44 const& proj);
 #endif
 
 }

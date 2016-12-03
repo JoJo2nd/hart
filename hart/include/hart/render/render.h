@@ -7,7 +7,10 @@
 
 #include "hart/config.h"
 #include "hart/base/matrix.h"
+#include "hart/base/vec.h"
+#include "hart/render/texture.h"
 #include "hart/render/technique.h"
+#include "hart/render/program.h"
 #include "bgfx/bgfx.h"
 
 struct SDL_Window;
@@ -19,9 +22,12 @@ class Material;
 class MaterialSetup;
 class Shader;
 
+typedef uint32_t colour_t;
+
 enum View {
-    View_Main = 1,
-    View_Debug = 32,
+    View_Main = 0,
+    View_Debug = 31,
+    View_DebugUI = 32,
 };
 
 enum class Ratio {
@@ -105,6 +111,15 @@ VertexBuffer createVertexBuffer(void* data, uint32_t datalen, VertexDecl const* 
 void updateVertexBuffer(VertexBuffer in_vb, void* data, uint32_t datalen);
 void destroyVertexBuffer(VertexBuffer in_vb);
 
+namespace debug {
+#if HART_DEBUG_INFO
+void addLine(hVec3 start, hVec3 end, colour_t c);
+void addQuad(hVec3 top_left, hVec3 bottom_right, colour_t c);
+void addTexQuad(hVec3 top_left, hVec3 bottom_right, Texture t, colour_t c);
+
+void flushAndSumbitDebugPrims(uint16_t view_index, MaterialSetup* mat, hMat44 const* view_mtx, hMat44 const* proj_mtx);
+#endif
+}
 }
 }
 

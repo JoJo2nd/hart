@@ -1,0 +1,12 @@
+/********************************************************************
+    Written by James Moran
+    Please see the file LICENSE.txt in the repository root directory.
+*********************************************************************/
+
+enum GameStates : ushort {
+    FirstBoot,
+    //TODO: more states.
+}
+
+table GameStateData {
+}

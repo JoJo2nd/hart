@@ -1,0 +1,15 @@
+{
+  "friendlyname": "debug/shaders/ps_colour", 
+  "inputs": [
+    "ps_debug.sc", 
+    "varying.def.sc", 
+    "..\\..\\..\\..\\..\\external\\bgfx\\src\\bgfx_shader.sh"
+  ], 
+  "processoptions": {
+    "input": "ps_debug.sc", 
+    "platformext": "-p ps_5_0 --debug", 
+    "type": "fragment"
+  }, 
+  "type": "shader", 
+  "uuid": "{54d6adc6-ff8c-4161-a66a-1f6b5c817b6d}"
+}

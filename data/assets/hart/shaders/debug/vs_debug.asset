@@ -1,0 +1,15 @@
+{
+  "friendlyname": "debug/shaders/vs_colour", 
+  "inputs": [
+    "vs_debug.sc", 
+    "varying.def.sc", 
+    "..\\..\\..\\..\\..\\external\\bgfx\\src\\bgfx_shader.sh"
+  ], 
+  "processoptions": {
+    "input": "vs_debug.sc", 
+    "platformext": "-p vs_5_0 --debug", 
+    "type": "vertex"
+  }, 
+  "type": "shader", 
+  "uuid": "{0ca92611-7ef0-4f7f-9ce7-c5f151c05a02}"
+}

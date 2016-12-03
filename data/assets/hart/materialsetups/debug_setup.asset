@@ -1,0 +1,20 @@
+{
+  "friendlyname": "system/materialsetup/debug", 
+  "inputs": [
+    "debug_setup.json", 
+    "..\\fbs\\materialsetup.fbs", 
+    "..\\fbs\\material.fbs", 
+    "..\\fbs\\renderstate.fbs", 
+    "..\\fbs\\techniquetype.fbs", 
+    "..\\fbs\\uuid.fbs", 
+    "..\\fbs\\vec_matrix.fbs"
+  ], 
+  "prerequisites": [
+    "{e250e033-a653-4063-86be-56aa5a73aaed}"
+  ], 
+  "processoptions": {
+    "input": "debug_setup.json"
+  }, 
+  "type": "materialsetup", 
+  "uuid": "{a5332a80-b2ee-414a-b92e-9b4c81cca292}"
+}

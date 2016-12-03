@@ -160,13 +160,18 @@ struct Context {
         debugMenus.back().enabled = false;
         return uint32_t(debugMenus.size()-1);
     }
-#endif
+
     void removeDebugMenu(DebugMenuHandle handle) {
         hdbassert(handle >= debugMenus.size(), "Inavalid handle.\n");
         debugMenus[handle].renderFn = DebugMenuCallback();
         debugMenus[handle].enabled = false;
     }
 
+    void setDebugMatrices(hMat44 const& view, hMat44 const& proj) {
+        debugView = view;
+        debugProj = proj;
+    }
+#endif
     static void imguiRenderStatic(ImDrawData* draw_data) {
         ImGuiIO& io = ImGui::GetIO();
         ((Context*)io.UserData)->imguiRender(draw_data);
@@ -179,7 +184,7 @@ struct Context {
 
         hMat44 ortho;
         ortho = hMat44::orthographic(0.0f, width, height, 0.0f, -1.0f, 1.0f);
-        hrnd::begin(hrnd::View_Debug, hrnd::TechniqueType::TechniqueType_Main, nullptr, &ortho);
+        hrnd::begin(hrnd::View_DebugUI, hrnd::TechniqueType::TechniqueType_Main, nullptr, &ortho);
         hrnd::setMaterialSetup(imgui.material);
 
         // Render command lists
@@ -347,20 +352,27 @@ struct Context {
             imgui.materialHdl = hresmgr::loadResource(imgui_material);
             imgui.materialHdl.loaded();
             imgui.material = imgui.materialHdl.getData<hrnd::MaterialSetup>();
-            hdbassert(imgui.material, "ImGui material isn't loaded. It should be loaded during startup.\n");
+            hdbassert(imgui.material, "ImGui material isn't loaded. It should be loaded during startup by the system collection resource.\n");
             imgui.textureInputHandle = imgui.material->getInputParameterHandle("s_tex");
             hdbassert(imgui.textureInputHandle.isValid(), "ImGui material is missing s_tex texture input.\n");
 
-            hrnd::ViewDef views[2];
+            hrnd::ViewDef views[3];
             views[0].id = hrnd::View_Main;
             views[0].clearColour = true;
             views[0].colourValue = 0x303030ff;
             views[1].id = hrnd::View_Debug;
             views[1].clearColour = false;
-            views[1].colourValue = 0x303030ff;
-            hrnd::resetViews(views, 2);
+            views[1].colourValue = 0x0;
+            views[2].id = hrnd::View_DebugUI;
+            views[2].clearColour = false;
+            views[2].colourValue = 0x0;
+            hrnd::resetViews(views, 3);
         }
 
+#if HART_DEBUG_INFO
+        debugPrimsMat = hresmgr::tweakGetResource<hrnd::MaterialSetup>(huuid::fromDwords(0xa5332a80b2ee414a,0xb92e9b4c81cca292));
+        hdbassert(debugPrimsMat, "debug material isn't loaded. It should be loaded during startup by the system collection resource.\n");
+#endif
         // Info the game that main engine assets are loaded.
         game->postSystemAssetLoad();
 
@@ -453,8 +465,11 @@ struct Context {
 
             hprofile_start(RenderFrame);
             game->render();
+#if HART_DEBUG_INFO
+            hrnd::debug::flushAndSumbitDebugPrims(hrnd::View_Debug,debugPrimsMat,&debugView,&debugProj);
+#endif
             ImGui::Render();
-            bgfx::frame();
+            hrnd::endFrame();
             hprofile_end();
 
             wheelDelta = 0;
@@ -503,6 +518,8 @@ struct Context {
 
     hstd::vector<EventHandler> eventHandlers[Event::Max];
 #if HART_DEBUG_INFO
+    hMat44                  debugView, debugProj;
+    hrnd::MaterialSetup*    debugPrimsMat;
     hstd::vector<DebugMenu> debugMenus;
 #endif
 };
@@ -530,6 +547,10 @@ DebugMenuHandle addDebugMenu(char const* name, DebugMenuCallback debug_menu) {
 
 void removeDebugMenu(DebugMenuHandle handle) {
     s_ctx.removeDebugMenu(handle);
+}
+
+void setDebugMatrices(hMat44 const& view, hMat44 const& proj) {
+    s_ctx.setDebugMatrices(view, proj);
 }
 #endif
 }

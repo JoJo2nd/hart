@@ -21,7 +21,7 @@
 
 #if HART_DO_ASSERTS
 
-#define hdbprintf(fmt, ...)         debug::outputdebugstring(fmt, ##__VA_ARGS__ )
+#define hdbprintf(fmt, ...)         ::debug::outputdebugstring(fmt, ##__VA_ARGS__ )
 #define hdbcondprintf(x, y, ...) if (x) { hdbprintf(y, ##__VA_ARGS__ ); }
 
 #define hdbassert( x, y,...)	{ static bool ignore = false; \

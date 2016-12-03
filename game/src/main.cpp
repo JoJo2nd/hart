@@ -5,6 +5,7 @@
 
 #include "hart/hart.h"
 #include "sprite_renderer.h"
+#include "game_state.h"
 #include "fbs/player_generated.h"
 #include "fbs/test_generated.h"
 #include "fbs/inputactions_generated.h"
@@ -138,8 +139,25 @@ class Game : public hart::engine::GameInterface {
     }
     virtual void render() {
         // TODO: correct window size
+        hMat44 proj, view;
+        proj = hMat44::orthographic(0.0f, 1280, 720, 0.0f, -1.0f, 1.0f);
+        view = hMat44::identity();
+#if HART_DEBUG_INFO
+        hEngine::setDebugMatrices(view, proj);
+#endif
         renderSprites(1280, 720);
+
+        // draw an 8x8 grid (Flashbacks tile size)
+        for(uint32_t x=0; x<1280; x+=8) {
+            hrnd::debug::addLine(hVec3((float)x,0.f,0.f),hVec3((float)x,720.f,0.f),0xFFFF0000);
+        }
+        for(uint32_t y=0; y<720; y+=8) {
+            hrnd::debug::addLine(hVec3(0.f,(float)y,0.f),hVec3(1280.f,(float)y,0.f),0xFFFF0000);
+        }
+        hrnd::debug::addQuad(hVec3(8*100, 720-(8*5), 0.f), hVec3(8*102, 720, 0.f), 0xFFFF00FF);
     }
+
+    GameState mainState;
 };
 
 int main(int argc, char* argv[]) {
