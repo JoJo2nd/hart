@@ -7,6 +7,7 @@
 #include "hart/config.h"
 #include "hart/base/uuid.h"
 #include "hart/core/objectfactory.h"
+#include "hart/core/resourcemanager.h"
 #include "hart/fbs/entity_generated.h"
 #include "hart/fbs/entitytemplate_generated.h"
 
@@ -80,7 +81,8 @@ public:
 #endif
 
 private:
-    EntityTemplate* templateEntity;
+    typedef hresmgr::TWeakHandle<EntityTemplate, hresmgr::HandleNonCopyable> EntityTemplWeakHandle;
+    EntityTemplWeakHandle templateEntity;
     huuid::uuid_t entityId;
     hstd::vector<ComponentHandle> components;
 #if HART_DEBUG_INFO

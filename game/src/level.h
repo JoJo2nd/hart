@@ -38,6 +38,7 @@ public:
     ~Tileset();
 
     typedef std::vector<AnimFrame> AnimSequence;
+    typedef hresmgr::TWeakHandle<hrnd::TextureRes, hresmgr::HandleCopyable> TextureResWeakHandle;
 
     uint32_t tileWidth; // in pixels 
     uint32_t tileHeight; // in pixels
@@ -46,7 +47,7 @@ public:
     uint32_t spacing; // in pixels
     uint32_t margin; // in pixels
     uint32_t firstGID; // when referencing a tile from a level, tiles[(tileLevelId - firstGID)]
-    hrnd::TextureRes* textureResource; 
+    TextureResWeakHandle textureResource; 
     std::vector<Tile> tiles;
     std::vector<AnimSequence> animations;
 };
@@ -54,6 +55,8 @@ public:
 class Level {
     HART_OBJECT_TYPE(HART_MAKE_FOURCC('l','v','l','_'), resource::Level)
 public:
+    typedef hresmgr::TWeakHandle<hety::Entity, hresmgr::HandleNonCopyable> EntityResWeakHandle;
+
     Level() = default;
     Level(Level const& rhs) = delete;
     Level& operator = (Level const& rhs) = delete;
@@ -63,7 +66,7 @@ public:
     void updateTileAnimations();
 
     struct EntityData {
-        hety::Entity* entity;
+        EntityResWeakHandle entity;
         uint32_t      id;
     };
 

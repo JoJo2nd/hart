@@ -7,6 +7,7 @@ table ResourceInfo {
     friendlyName:string; // friendly name (for debug, could be stripped in release but isn't ATM)
     filesize:uint; // Saves us having to ftell the file
     filepath:string; // filepath to open and load
+    mtime:ulong; // file timestamp
     prerequisites:[uint]; // indices of assets that must be loaded before this asset
 }
 

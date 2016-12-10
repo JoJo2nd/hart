@@ -318,7 +318,8 @@ struct Context {
 
         // init engine
         huuid::uuid_t sys_collection_resid = huuid::fromDwords(0x06360489280d4059,0x8faabfb0ed97e6fa);
-        hresmgr::Handle sys_collection_hdl = hresmgr::loadResource(sys_collection_resid);
+        hresmgr::ResourceCollection sys_collection_hdl;
+        hresmgr::loadResource(sys_collection_resid, &sys_collection_hdl);
 
         while (!sys_collection_hdl.loaded()) hresmgr::update();
 
@@ -349,9 +350,9 @@ struct Context {
             static huuid::uuid_t imgui_material = huuid::fromDwords(0x013d177963434046,0xbc851eda6667af12);
 
             // get the loaded pointers
-            imgui.materialHdl = hresmgr::loadResource(imgui_material);
+            hresmgr::loadResource(imgui_material, &imgui.materialHdl);
             imgui.materialHdl.loaded();
-            imgui.material = imgui.materialHdl.getData<hrnd::MaterialSetup>();
+            imgui.material = imgui.materialHdl.getData();
             hdbassert(imgui.material, "ImGui material isn't loaded. It should be loaded during startup by the system collection resource.\n");
             imgui.textureInputHandle = imgui.material->getInputParameterHandle("s_tex");
             hdbassert(imgui.textureInputHandle.isValid(), "ImGui material is missing s_tex texture input.\n");
@@ -370,7 +371,7 @@ struct Context {
         }
 
 #if HART_DEBUG_INFO
-        debugPrimsMat = hresmgr::tweakGetResource<hrnd::MaterialSetup>(huuid::fromDwords(0xa5332a80b2ee414a,0xb92e9b4c81cca292));
+        hresmgr::weakGetResource(huuid::fromDwords(0xa5332a80b2ee414a,0xb92e9b4c81cca292), &debugPrimsMat);
         hdbassert(debugPrimsMat, "debug material isn't loaded. It should be loaded during startup by the system collection resource.\n");
 #endif
         // Info the game that main engine assets are loaded.
@@ -391,6 +392,10 @@ struct Context {
         SDL_Event event;
         while (!exit)
         {
+#if HART_DEBUG_INFO
+            hresmgr::updateResourceHotSwap();
+#endif
+
             htime::update();
             tickRateCounter += htime::deltaMS();
 
@@ -466,7 +471,7 @@ struct Context {
             hprofile_start(RenderFrame);
             game->render();
 #if HART_DEBUG_INFO
-            hrnd::debug::flushAndSumbitDebugPrims(hrnd::View_Debug,debugPrimsMat,&debugView,&debugProj);
+            hrnd::debug::flushAndSumbitDebugPrims(hrnd::View_Debug,debugPrimsMat.getData(),&debugView,&debugProj);
 #endif
             ImGui::Render();
             hrnd::endFrame();
@@ -488,7 +493,7 @@ struct Context {
         hrnd::MaterialSetup* material;
         bgfx::TextureHandle texture;
         hrnd::MaterialInputHandle textureInputHandle;
-        hresmgr::Handle     materialHdl;
+        hresmgr::THandle<hrnd::MaterialSetup, hresmgr::HandleNonCopyable> materialHdl;
     } imgui;
 
     //Only support one window currently
@@ -519,7 +524,7 @@ struct Context {
     hstd::vector<EventHandler> eventHandlers[Event::Max];
 #if HART_DEBUG_INFO
     hMat44                  debugView, debugProj;
-    hrnd::MaterialSetup*    debugPrimsMat;
+    hresmgr::TWeakHandle<hrnd::MaterialSetup, hresmgr::HandleNonCopyable> debugPrimsMat;
     hstd::vector<DebugMenu> debugMenus;
 #endif
 };

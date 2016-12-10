@@ -13,6 +13,7 @@
 #include "hart/render/state.h"
 #include "hart/render/program.h"
 #include "hart/render/technique.h"
+#include "hart/render/texture.h"
 #include "hart/base/vec.h"
 #include "hart/base/matrix.h"
 #include "hart/fbs/material_generated.h"
@@ -48,6 +49,9 @@ class Material {
 	static const uint32_t InvalidIndex = uint32_t(~0ul);
     HART_OBJECT_TYPE(HART_MAKE_FOURCC('r','m','a','t'), resource::Material)
     public:
+        typedef hresmgr::THandle<TextureRes, hresmgr::HandleNonCopyable> TextureResHandle;
+        typedef hresmgr::TWeakHandle<TextureRes, hresmgr::HandleNonCopyable> TextureResWeakHandle;
+
         Material() = default;
         ~Material();
 
@@ -87,10 +91,12 @@ class Material {
             return ~0ul;
         }
 
+        typedef hresmgr::TWeakHandle<Shader, hresmgr::HandleNonCopyable> ShaderResHandle;
+
         struct Pass {
             State   state;
-            Shader* vertex;
-            Shader* pixel;
+            ShaderResHandle vertex;
+            ShaderResHandle pixel;
             Program program;
         };
 
@@ -110,8 +116,9 @@ class Material {
             UniformHandle uniform;
         };
 
+
         hstd::vector<Technique> techniques;
-        hstd::vector<hresmgr::Handle> boundTextures;
+        hstd::vector<TextureResHandle> boundTextures;
         hstd::vector<uint8_t> inputData;
         hstd::vector<Input> inputs;
 };
@@ -146,15 +153,18 @@ class MaterialSetup {
             dirty = true;
         }
         void setParameter(MaterialInputHandle p, Texture const* d);
-        Material* getMaterial() { return material; } 
+        Material* getMaterial() { return material.getData(); } 
     private:
         typedef MaterialHandleData Input;
+        typedef hresmgr::TWeakHandle<Material, hresmgr::HandleCopyable> MaterialResHandle;
 
         hstd::vector<Input> inputs;
         hstd::vector<uint8_t> inputData;
-        Material* material = nullptr;
+        MaterialResHandle material;
         bool dirty = true;
 };
 
 }
 }
+
+namespace hrnd = hart::render;

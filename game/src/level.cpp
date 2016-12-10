@@ -29,7 +29,7 @@ bool Tileset::deserialiseObject(MarshallType const* in_data, hobjfact::Serialise
     margin = in_data->margin();
     firstGID = in_data->firstgid();
 
-    textureResource = hresmgr::tweakGetResource<hrnd::TextureRes>(huuid::fromData(*in_data->imageasset()));
+    hresmgr::weakGetResource(huuid::fromData(*in_data->imageasset()), &textureResource);
 
     auto const* in_animations = in_data->animations();
     animations.resize(in_animations->size());
@@ -101,7 +101,7 @@ bool Level::deserialiseObject(MarshallType const* in_data, hobjfact::SerialisePa
     entities.resize(in_entities->size());
     for (uint32_t i=0, n=in_entities->size(); i<n; ++i) {
         entities[i].id = (*in_entities)[i]->levelid();
-        entities[i].entity = hresmgr::tweakGetResource<hety::Entity>(huuid::fromData(*(*in_entities)[i]->assetuuid()));
+        hresmgr::weakGetResource(huuid::fromData(*(*in_entities)[i]->assetuuid()), &entities[i].entity);
     }
 
     // Build our layer tiles. 32x32 each. Two for each layer; one static, one dynamic.

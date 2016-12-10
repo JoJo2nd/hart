@@ -32,3 +32,5 @@ class Shader {
 
 }
 }
+
+namespace hrnd = hart::render;

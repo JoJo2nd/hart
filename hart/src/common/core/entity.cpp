@@ -59,7 +59,7 @@ bool EntityTemplate::deserialiseObject(MarshallType const* in_data, hobjfact::Se
 }
 
 bool Entity::deserialiseObject(MarshallType const* in_data, hobjfact::SerialiseParams const& params) {
-    templateEntity = hresmgr::tweakGetResource<EntityTemplate>(huuid::fromData(*in_data->entityTemplate()));
+    hresmgr::weakGetResource(huuid::fromData(*in_data->entityTemplate()), &templateEntity);
 
     uint8_t const* base_add = in_data->componentData()->data();
     auto* componentOffsets = in_data->componentOffsets();

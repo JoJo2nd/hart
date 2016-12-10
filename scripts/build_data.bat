@@ -1,4 +1,4 @@
 @echo off
 pushd %~dp0\..\data\builder
-python builder.py -d ..\assets -o ..\..\bin
+python builder.py -d ..\assets -o ..\..\bin\data
 popd

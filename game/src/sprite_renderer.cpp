@@ -26,7 +26,7 @@ static struct SpriteRenderer {
 } sr[LayerCount];
 static hrnd::MaterialSetup* material;
 static hrnd::MaterialInputHandle textureInputHandle;
-static hresmgr::Handle     materialHdl;
+static hresmgr::THandle<hrnd::MaterialSetup, hresmgr::HandleNonCopyable> materialHdl;
 uint32_t SpriteRenderer::MaxSprites = 4096;
 
 void initialiseSpriteRenderer() {
@@ -34,9 +34,9 @@ void initialiseSpriteRenderer() {
     static huuid::uuid_t material_id = huuid::fromDwords(0x682625d0ef63442e,0xa4a121a0b24a2d17);
 
     // get the loaded pointers
-    materialHdl = hresmgr::loadResource(material_id);
+    hresmgr::loadResource(material_id, &materialHdl);
     materialHdl.loaded();
-    material = materialHdl.getData<hrnd::MaterialSetup>();
+    material = materialHdl.getData();
     hdbassert(material, "Sprite material isn't loaded. It should be loaded during startup.\n");
     textureInputHandle = material->getInputParameterHandle("s_tex");
     hdbassert(textureInputHandle.isValid(), "Sprite material is missing s_tex texture input.\n");

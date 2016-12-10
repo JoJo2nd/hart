@@ -17,7 +17,8 @@ namespace hart {
 namespace render {
 
 struct MaterialTextureSlot {
-    hresmgr::Handle* resource;
+    Material::TextureResHandle* resource;
+    //hresmgr::WeakHandle<TextureRes> resource;
     Texture texture;
     uint8_t slot;
     uint16_t flags;
@@ -45,9 +46,9 @@ bool Material::deserialiseObject(MarshallType const* in_data, hobjfact::Serialis
         for (uint32_t p = 0, pn = in_pass->size(); p < n; ++p) {
             Pass* pass = &tech->passes[p];
             pass->state.deserialiseObject((*in_pass)[p]->state(), params);
-            pass->vertex = hresmgr::tweakGetResource<Shader>(uuid::fromData(*(*in_pass)[p]->vertex()));
-            pass->pixel = hresmgr::tweakGetResource<Shader>(uuid::fromData(*(*in_pass)[p]->pixel()));
-            pass->program = createProgram(pass->vertex, pass->pixel);
+            hresmgr::weakGetResource(uuid::fromData(*(*in_pass)[p]->vertex()), &pass->vertex);
+            hresmgr::weakGetResource(uuid::fromData(*(*in_pass)[p]->pixel()), &pass->pixel);
+            pass->program = createProgram(pass->vertex.getData(), pass->pixel.getData());
         }
     }
     //Process inputs
@@ -120,9 +121,11 @@ bool Material::deserialiseObject(MarshallType const* in_data, hobjfact::Serialis
                 if (t->wrapV() == resource::TextureWrap_Mirror) flags |= BGFX_TEXTURE_V_MIRROR;
                 if (t->wrapU() == resource::TextureWrap_Clamp) flags |= BGFX_TEXTURE_U_CLAMP;
                 if (t->wrapV() == resource::TextureWrap_Clamp) flags |= BGFX_TEXTURE_V_CLAMP;
+                TextureResWeakHandle thdl;
+                hresmgr::weakGetResource(huuid::fromData(*t->resid()), &thdl);
                 MaterialTextureSlot tslot = {
                     nullptr,
-                    t->resid() ? hresmgr::tweakGetResource<TextureRes>(huuid::fromData(*t->resid()))->texture : invalid_tex,
+                    t->resid() ? thdl->texture : invalid_tex,
                     t->slot(),
                     flags
                 };
@@ -181,7 +184,7 @@ void Material::setParameters(MaterialHandleData const* hrestrict in_data, uint32
 }
 
 bool MaterialSetup::deserialiseObject(MarshallType const* in_data, hobjfact::SerialiseParams const&) {
-    material = hresmgr::tweakGetResource<Material>(uuid::fromData(*in_data->material()));
+    hresmgr::weakGetResource(uuid::fromData(*in_data->material()), &material);
     //Process inputs
     auto const* in_inputs = in_data->inputs();
     if (!in_inputs) return true;
@@ -241,9 +244,11 @@ bool MaterialSetup::deserialiseObject(MarshallType const* in_data, hobjfact::Ser
                 if (t->wrapV() == resource::TextureWrap_Mirror) flags |= BGFX_TEXTURE_V_MIRROR;
                 if (t->wrapU() == resource::TextureWrap_Clamp) flags |= BGFX_TEXTURE_U_CLAMP;
                 if (t->wrapV() == resource::TextureWrap_Clamp) flags |= BGFX_TEXTURE_V_CLAMP;
+                Material::TextureResWeakHandle thdl;
+                hresmgr::weakGetResource(huuid::fromData(*t->resid()), &thdl);
                 MaterialTextureSlot tslot = {
                     nullptr,
-                    hresmgr::tweakGetResource<TextureRes>(huuid::fromData(*t->resid()))->texture,
+                    thdl->texture,
                     t->slot(),
                     flags
                 };

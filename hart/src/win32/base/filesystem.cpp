@@ -154,7 +154,7 @@ Error fileOpWait(FileOpHandle in_op) {
 
 FileOpHandle openFile(const char* filename, Mode mode, FileHandle* outhandle) {
     DWORD access = 0;
-    DWORD share = 0;// < always ZERO, dont let things happen to file in use!
+    DWORD share = FILE_SHARE_READ | FILE_SHARE_WRITE;//< Should this be zero in non-debug builds?
     LPSECURITY_ATTRIBUTES secatt = NULL;// could be a prob if passed across threads>?
     DWORD creation = 0;
     DWORD flags = FILE_ATTRIBUTE_NORMAL | FILE_FLAG_OVERLAPPED;
