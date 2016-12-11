@@ -12,17 +12,11 @@
 #include "hart/base/mutex.h"
 #include "hart/core/engine.h"
 
-#include "hart/render/shader.h"
-
 HART_OBJECT_TYPE_DECL(hart::resourcemanager::Collection);
 
 namespace hart {
 namespace resourcemanager {
 namespace hfb = hart::fb;
-
-enum ResourceFlags {
-    DoingHotSwap = 0x1
-};
 
 struct Resource {
     resid_t uuid;
@@ -32,12 +26,7 @@ struct Resource {
     void* runtimeData = nullptr;     //
     hatomic::aint32_t refCount = 0; // Only valid when runtimeData is !nullptr (or resource system is loading runtime data. Need extra flag?)
 #if HART_DEBUG_INFO
-    HandleBase<HandleCopyable> debugLoadHandle;
-    uint64_t mtime = 0;
-    hstd::unique_ptr<uint8_t> prevLoadtimeData;
-    void* prevRuntimeData = nullptr;     //
-    HandleCopyable copyHead;
-    uint32_t flags = 0;
+    HandleBase debugLoadHandle;
 #endif
 };
 
@@ -104,27 +93,7 @@ bool initialise() {
         Resource& res = ctx.resources[id];
         res.uuid = id;
         res.info = (*asset_infos)[i];
-        res.mtime = res.info->mtime();
-        hdbprintf("Asset mtime %llu\n", res.info->mtime());
     }
-
-    THandle<hrnd::Shader, HandleCopyable> testHandle1;
-    THandle<hrnd::Shader, HandleNonCopyable> testHandle2;
-    THandle<hrnd::Shader, HandleCopyable> testHandle3;
-    THandle<hrnd::Shader, HandleNonCopyable> testHandle4;
-
-    testHandle1 = testHandle3;
-    //testHandle2 = testHandle4;
-
-    TWeakHandle<hrnd::Shader, HandleCopyable> wTestHandle1;
-    TWeakHandle<hrnd::Shader, HandleNonCopyable> wTestHandle2;
-    TWeakHandle<hrnd::Shader, HandleCopyable> wTestHandle3;
-    TWeakHandle<hrnd::Shader, HandleNonCopyable> wTestHandle4;
-
-    wTestHandle1 = wTestHandle3;
-    //wTestHandle1 = wTestHandle4;
-    //wTestHandle2 = wTestHandle4;
-    //wTestHandle2 = wTestHandle1;
 
     hfs::closeFile(res_file);
 #if HART_DEBUG_INFO && 0
@@ -264,21 +233,11 @@ void update() {
 			Resource& res = ctx.resources[r.uuid];
 			if (hatomic::decrement(res.refCount) == 0) {
 				//No more references. So delete this resource
-#if HART_DEBUG_INFO
-                if (!(res.flags & ResourceFlags::DoingHotSwap)) {
-#endif
     				const hobjfact::ObjectDefinition* obj_def = hobjfact::getObjectDefinition(res.typecc);
     				obj_def->destruct(res.runtimeData);
     				obj_def->objFree(res.runtimeData);
                     res.runtimeData = nullptr;
     				res.loadtimeData.reset();
-#if HART_DEBUG_INFO
-                } else {
-                   res.prevRuntimeData = res.runtimeData;
-                   res.prevLoadtimeData = std::move(res.loadtimeData); 
-                   res.runtimeData = nullptr;
-                }
-#endif
 			}
 		}
         ctx.unloadQueue.clear();
@@ -317,7 +276,7 @@ static void loadResourceInternal(resid_t res_id) {
     ctx.loadQueue.emplace_back(res_id, ctx.transactions);
 }
 
-void loadResource(resid_t res_id, HandleBase<HandleCopyable>* hdl) {
+void loadResource(resid_t res_id, HandleBase* hdl) {
     hScopedMutex sentry(&ctx.access);
     ++ctx.transactions;
 
@@ -325,24 +284,7 @@ void loadResource(resid_t res_id, HandleBase<HandleCopyable>* hdl) {
 
     hdl->id = res_id;
     hdl->info = &ctx.resources[res_id];
-#if HART_DEBUG_INFO
-    ctx.resources[res_id].copyHead.link(hdl);
-#endif
 }
-
-void loadResource(resid_t res_id, HandleBase<HandleNonCopyable>* hdl) {
-    hScopedMutex sentry(&ctx.access);
-    ++ctx.transactions;
-
-    loadResourceInternal(res_id);
-
-    hdl->id = res_id;
-    hdl->info = &ctx.resources[res_id];
-#if HART_DEBUG_INFO
-    ctx.resources[res_id].copyHead.link(hdl);
-#endif
-}
-
 
 static void unloadResourceInternal(resid_t res_id) {
     auto const* asset_uuids = ctx.resourceListings->assetUUIDs();
@@ -364,33 +306,14 @@ static void unloadResourceInternal(resid_t res_id) {
         unloadResourceInternal(id); 
     }
 }
-#if 0
-void unloadResource(Handle res_hdl) {
-    hScopedMutex sentry(&ctx.access);
-    ++ctx.transactions;
 
-    unloadResourceInternal(res_hdl.id);
-}
-#endif
-void unloadResource(HandleBase<HandleCopyable>* hdl) {
+void unloadResource(HandleBase* hdl) {
     hScopedMutex sentry(&ctx.access);
     ++ctx.transactions;
 
     unloadResourceInternal(hdl->id);   
-#if HART_DEBUG_INFO
-    hdl->unlink();
-#endif
 }
 
-void unloadResource(HandleBase<HandleNonCopyable>* hdl) {
-    hScopedMutex sentry(&ctx.access);
-    ++ctx.transactions;
-
-    unloadResourceInternal(hdl->id);
-#if HART_DEBUG_INFO
-    hdl->unlink();
-#endif
-}
 
 bool checkResourceLoaded(resid_t res_id) {
     hScopedMutex sentry(&ctx.access);
@@ -411,30 +334,21 @@ static void* getResourceDataPtrInternal(resid_t res_id, uint32_t* o_typecc) {
     return res.runtimeData;
 }
 
-void* HandleCopyable::getResourceDataPtr(resid_t res_id, uint32_t* o_typecc) {
-    return getResourceDataPtrInternal(res_id, o_typecc);
-}
-
-void weakGetResource(resid_t res_id, WeakHandleBase<HandleCopyable>* hdl) {
+void weakGetResource(resid_t res_id, WeakHandleBase* hdl) {
 #if HART_DEBUG_INFO
     hdl->data = getResourceDataPtrInternal(res_id, &hdl->typecc);
-    
-    ctx.resources[res_id].copyHead.link(hdl);
 #else
     uint32_t typecc;
     hdl->data = getResourceDataPtrInternal(res_id, &typecc);
 #endif
 }
 
-void weakGetResource(resid_t res_id, WeakHandleBase<HandleNonCopyable>* hdl) {
-#if HART_DEBUG_INFO
-    hdl->data = getResourceDataPtrInternal(res_id, &hdl->typecc);
-    
-    ctx.resources[res_id].copyHead.link(hdl);
-#else
-    uint32_t typecc;
-    hdl->data = getResourceDataPtrInternal(res_id, &typecc);
-#endif
+bool HandleBase::loaded() {
+    if (data)
+        return true;
+
+    data = getResourceDataPtrInternal(id, &typecc);
+    return !!data;
 }
 
 bool Collection::deserialiseObject(MarshallType const* in_data, hobjfact::SerialiseParams const&) {
@@ -450,108 +364,6 @@ bool Collection::deserialiseObject(MarshallType const* in_data, hobjfact::Serial
     }
     return true;
 }
-
-#if HART_DEBUG_INFO
-void updateResourceHotSwap() {
-    hScopedMutex sentry(&ctx.access);
-
-    hfs::FileHandle res_file;
-    hfs::FileOpHandle op_hdl = hfs::openFile(resourceDBPath, hfs::Mode::Read, &res_file);
-    if (hfs::fileOpWait(op_hdl) != hfs::Error::Ok)
-        return;
-
-    hfs::FileStat stat;
-    op_hdl = hfs::fstatAsync(res_file, &stat);
-    if (hfs::fileOpWait(op_hdl) != hfs::Error::Ok)
-        return;
-    
-    if (ctx.resourcedbMTime >= stat.modifiedDate) {
-        hfs::closeFile(res_file);
-        return;
-    }
-
-    // Ensure the queue is empty before going on
-    flushResourceQueue();
-    /*
-        Reload the resourcedb and compare mtimes. Any new resources need to be unloaded (to remove old prerequisite assets)
-        and reloaded to pull in any new prerequisites. Any time a new asset is loaded, its pointer is swapped in the 
-        resource map and it's listeners are notified. This must be done in prerequisite order to ensure required assets
-        exist where needed.
-        Once complete we hot swap the new resourcedb pointer into mem, fix up any references and delete the old one.
-    */
-    struct ModRes {
-        resid_t id;
-        uint64_t mtime;
-        int32_t initialRC;
-    };
-    hstd::vector<ModRes> to_reload;
-    hstd::unique_ptr<uint8_t> new_resdb;
-
-    new_resdb.reset(new uint8_t[stat.filesize]);
-    op_hdl = hfs::freadAsync(res_file, new_resdb.get(), stat.filesize, 0);
-    if (hfs::fileOpWait(op_hdl) != hfs::Error::Ok)
-        return;
-
-    hfs::closeFile(res_file);
-
-    hfb::ResourceList const* new_res_listings = hfb::GetResourceList(new_resdb.get());
-
-    // For each asset in new resource database compare mtimes()
-    auto const* asset_uuids = new_res_listings->assetUUIDs();
-    auto const* asset_infos = new_res_listings->assetInfos();
-    for (uint32_t i = 0, n = asset_uuids->size(); i < n; ++i) {
-        resid_t id;
-        id.words[3] = (*asset_uuids)[i]->highword3();
-        id.words[2] = (*asset_uuids)[i]->highword2();
-        id.words[1] = (*asset_uuids)[i]->highword1();
-        id.words[0] = (*asset_uuids)[i]->lowword();
-
-        // update the new resource database
-        Resource& res = ctx.resources[id];
-        res.uuid = id;
-        res.info = (*asset_infos)[i];
-        if (res.mtime != (*asset_infos)[i]->mtime() && hatomic::atomicGet(res.refCount) > 0) {
-            res.info = (*asset_infos)[i];
-            ModRes r = { res.uuid, (*asset_infos)[i]->mtime(), hatomic::atomicGet(res.refCount) };
-            to_reload.push_back(r);
-        }
-    }
-
-    // Unload and load the changed resources, without screwing reference counts!!!
-    for (auto const& m : to_reload) {
-        Resource& res = ctx.resources[m.id];
-        // Need to check again because a resource my get reloaded as a prerequisites of another.
-        if (m.mtime != res.mtime) {
-            res.flags |= ResourceFlags::DoingHotSwap;
-            for (int32_t rc=0; rc<m.initialRC; ++rc)
-                unloadResourceInternal(m.id);
-            flushResourceQueue();
-            for (int32_t rc=0; rc<m.initialRC; ++rc)
-                loadResourceInternal(m.id);
-            flushResourceQueue();
-            res.mtime = m.mtime;
-            HandleCopyable* p = res.copyHead.next;
-            HandleCopyable* e = &res.copyHead;
-            for (; p != e; p = p->next) {
-                p->onResourceEvent(m.id, ResourceReloaded, res.runtimeData, res.prevRuntimeData);
-            }
-            res.flags &= ~ResourceFlags::DoingHotSwap;
-            // Now delete the old pointer
-            const hobjfact::ObjectDefinition* obj_def = hobjfact::getObjectDefinition(res.typecc);
-            obj_def->destruct(res.prevRuntimeData);
-            obj_def->objFree(res.prevRuntimeData);
-            res.prevRuntimeData = nullptr;
-            res.prevLoadtimeData.reset();
-        }
-    }
-
-    // swap the resourcedb pointers.
-    std::swap(ctx.resourcedb, new_resdb);
-
-    // Done
-    ctx.resourcedbMTime = stat.modifiedDate;
-}
-#endif
 
 }
 }

@@ -38,7 +38,7 @@ public:
     ~Tileset();
 
     typedef std::vector<AnimFrame> AnimSequence;
-    typedef hresmgr::TWeakHandle<hrnd::TextureRes, hresmgr::HandleCopyable> TextureResWeakHandle;
+    typedef hresmgr::TWeakHandle<hrnd::TextureRes> TextureResWeakHandle;
 
     uint32_t tileWidth; // in pixels 
     uint32_t tileHeight; // in pixels
@@ -55,7 +55,7 @@ public:
 class Level {
     HART_OBJECT_TYPE(HART_MAKE_FOURCC('l','v','l','_'), resource::Level)
 public:
-    typedef hresmgr::TWeakHandle<hety::Entity, hresmgr::HandleNonCopyable> EntityResWeakHandle;
+    typedef hresmgr::TWeakHandle<hety::Entity> EntityResWeakHandle;
 
     Level() = default;
     Level(Level const& rhs) = delete;

@@ -81,7 +81,7 @@ public:
 #endif
 
 private:
-    typedef hresmgr::TWeakHandle<EntityTemplate, hresmgr::HandleNonCopyable> EntityTemplWeakHandle;
+    typedef hresmgr::TWeakHandle<EntityTemplate> EntityTemplWeakHandle;
     EntityTemplWeakHandle templateEntity;
     huuid::uuid_t entityId;
     hstd::vector<ComponentHandle> components;

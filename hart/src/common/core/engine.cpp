@@ -392,10 +392,6 @@ struct Context {
         SDL_Event event;
         while (!exit)
         {
-#if HART_DEBUG_INFO
-            hresmgr::updateResourceHotSwap();
-#endif
-
             htime::update();
             tickRateCounter += htime::deltaMS();
 
@@ -493,7 +489,7 @@ struct Context {
         hrnd::MaterialSetup* material;
         bgfx::TextureHandle texture;
         hrnd::MaterialInputHandle textureInputHandle;
-        hresmgr::THandle<hrnd::MaterialSetup, hresmgr::HandleNonCopyable> materialHdl;
+        hresmgr::THandle<hrnd::MaterialSetup> materialHdl;
     } imgui;
 
     //Only support one window currently
@@ -524,7 +520,7 @@ struct Context {
     hstd::vector<EventHandler> eventHandlers[Event::Max];
 #if HART_DEBUG_INFO
     hMat44                  debugView, debugProj;
-    hresmgr::TWeakHandle<hrnd::MaterialSetup, hresmgr::HandleNonCopyable> debugPrimsMat;
+    hresmgr::TWeakHandle<hrnd::MaterialSetup> debugPrimsMat;
     hstd::vector<DebugMenu> debugMenus;
 #endif
 };
