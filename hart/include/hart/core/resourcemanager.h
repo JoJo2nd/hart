@@ -28,10 +28,9 @@ namespace resourcemanager {
             hdbassert(data, "Asset is not loaded yet. Check with call to loaded() first.");
             return (expected_typecc == typecc) ? data : nullptr;
         }
-        bool isValid() {
+        bool valid() const {
             return !huuid::isNull(id);
         }
-
     protected:
         friend void loadResource(resid_t res_id, HandleBase* hdl);
         friend void unloadResource(HandleBase* hdl);

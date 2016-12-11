@@ -103,12 +103,12 @@ bool initialise() {
             static resid_t to_load;
             auto const* asset_uuids = ctx.resourceListings->assetUUIDs();
             bool loadResource = false;
-            if (!huuid::isNull(to_load) && !ctx.resources[to_load].debugLoadHandle.isValid()) {
+            if (!huuid::isNull(to_load) && !ctx.resources[to_load].debugLoadHandle.valid()) {
                 if (ImGui::Button("Test Load Resource")) {
                     ctx.resources[to_load].debugLoadHandle = hresmgr::loadResource(to_load);
                 }
             }
-            if (!huuid::isNull(to_load) && ctx.resources[to_load].debugLoadHandle.isValid() && ctx.resources[to_load].debugLoadHandle.loaded()) {
+            if (!huuid::isNull(to_load) && ctx.resources[to_load].debugLoadHandle.valid() && ctx.resources[to_load].debugLoadHandle.loaded()) {
                 if (ImGui::Button("Test Unload Resource")) {
                     
                 }
