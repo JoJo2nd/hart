@@ -49,8 +49,8 @@ class Material {
 	static const uint32_t InvalidIndex = uint32_t(~0ul);
     HART_OBJECT_TYPE(HART_MAKE_FOURCC('r','m','a','t'), resource::Material)
     public:
-        typedef hresmgr::THandle<TextureRes> TextureResHandle;
-        typedef hresmgr::TWeakHandle<TextureRes> TextureResWeakHandle;
+        typedef hresmgr::THandle<TextureRes, hresmgr::HandleNonCopyable> TextureResHandle;
+        typedef hresmgr::TWeakHandle<TextureRes, hresmgr::HandleNonCopyable> TextureResWeakHandle;
 
         Material() = default;
         ~Material();
@@ -91,7 +91,7 @@ class Material {
             return ~0ul;
         }
 
-        typedef hresmgr::TWeakHandle<Shader> ShaderResHandle;
+        typedef hresmgr::TWeakHandle<Shader, hresmgr::HandleNonCopyable> ShaderResHandle;
 
         struct Pass {
             State   state;
@@ -156,7 +156,7 @@ class MaterialSetup {
         Material* getMaterial() { return material.getData(); } 
     private:
         typedef MaterialHandleData Input;
-        typedef hresmgr::TWeakHandle<Material> MaterialResHandle;
+        typedef hresmgr::TWeakHandle<Material, hresmgr::HandleCopyable> MaterialResHandle;
 
         hstd::vector<Input> inputs;
         hstd::vector<uint8_t> inputData;

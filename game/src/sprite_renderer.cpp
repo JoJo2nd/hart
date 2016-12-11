@@ -26,7 +26,7 @@ static struct SpriteRenderer {
 } sr[LayerCount];
 static hrnd::MaterialSetup* material;
 static hrnd::MaterialInputHandle textureInputHandle;
-static hresmgr::THandle<hrnd::MaterialSetup> materialHdl;
+static hresmgr::THandle<hrnd::MaterialSetup, hresmgr::HandleNonCopyable> materialHdl;
 uint32_t SpriteRenderer::MaxSprites = 4096;
 
 void initialiseSpriteRenderer() {
