@@ -3,6 +3,6 @@ rem upload current binary data
 
 pushd %~dp0
 
-python binary_asset_package.py --preview -r ./../ -d ./../data/assets -d ./../data/builder -d ./../external/SDL2 -d ./../tools
+call upload_binary_data.bat --preview
 
 popd

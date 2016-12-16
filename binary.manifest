@@ -71,6 +71,9 @@
   "data\\assets\\Sharm\\terrain_atlas.png": {
     "sha1": "5cf311a528ba53552b60ff9c9cb4c12d6637c5ac"
   }, 
+  "data\\assets\\game\\levels\\tilesets\\final_tileset.png": {
+    "sha1": "bb4e6c4e3323829c856eaf4a2b1156ca4bb988c1"
+  }, 
   "data\\assets\\game\\sprites\\loading_disc.sprite\\loading_disc.piskel": {
     "sha1": "ef1734d27756d792ff442d8da3d08284586b1fd8"
   }, 
@@ -100,6 +103,12 @@
   }, 
   "data\\reference\\Level01.tft1.png": {
     "sha1": "8f11bb7c8927191fd0900d1ec90ae52b1b52cbf6"
+  }, 
+  "data\\reference\\NoBorder.png": {
+    "sha1": "42d1dcb6c628a19eeb7356fe14b2e404ed0ec89e"
+  }, 
+  "data\\reference\\NoBorderUpper.png": {
+    "sha1": "cd746e58e7a1d153d3dc6e7c1bc050df4f9d36f0"
   }, 
   "data\\reference\\actions.png": {
     "sha1": "80ccb806f85997c289c6fde7ad0c60f0e341f309"
