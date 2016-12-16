@@ -1,0 +1,14 @@
+{
+  "friendlyname": "levels/tilesets/final_tileset", 
+  "inputs": [
+    "final_tileset.png"
+  ], 
+  "prerequisites": [], 
+  "processoptions": {
+    "format": "BC1", 
+    "generatemips": false, 
+    "input": "final_tileset.png"
+  }, 
+  "type": "texture", 
+  "uuid": "{667a6a9f-0590-4d30-9d6d-da4955357794}"
+}

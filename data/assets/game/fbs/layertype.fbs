@@ -15,4 +15,9 @@ enum LayerType : ushort {
     sprite_02,
     sprite_03,
     sprite_04,
+
+    foreground_01,
+    foreground_02,
+    foreground_03,
+    foreground_04,
 }

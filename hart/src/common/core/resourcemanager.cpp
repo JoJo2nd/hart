@@ -96,7 +96,7 @@ bool initialise() {
     }
 
     hfs::closeFile(res_file);
-#if HART_DEBUG_INFO && 0
+#if HART_DEBUG_INFO
     ctx.dbmenuHdl = engine::addDebugMenu("Resource Manager", []() {
         hScopedMutex sentry(&ctx.access);
         if (ImGui::Begin("Resource Manager", nullptr, ImGuiWindowFlags_NoTitleBar|ImGuiWindowFlags_MenuBar)) {
@@ -105,7 +105,7 @@ bool initialise() {
             bool loadResource = false;
             if (!huuid::isNull(to_load) && !ctx.resources[to_load].debugLoadHandle.valid()) {
                 if (ImGui::Button("Test Load Resource")) {
-                    ctx.resources[to_load].debugLoadHandle = hresmgr::loadResource(to_load);
+                    hresmgr::loadResource(to_load, &ctx.resources[to_load].debugLoadHandle);
                 }
             }
             if (!huuid::isNull(to_load) && ctx.resources[to_load].debugLoadHandle.valid() && ctx.resources[to_load].debugLoadHandle.loaded()) {

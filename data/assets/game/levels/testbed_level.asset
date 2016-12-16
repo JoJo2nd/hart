@@ -1,0 +1,21 @@
+{
+  "friendlyname": "game/test/level", 
+  "inputs": [
+    "tilesets\\final_tileset.png", 
+    "testbed.tmx", 
+    "..\\..\\hart\\fbs\\uuid.fbs", 
+    "..\\fbs\\tileset.fbs", 
+    "..\\fbs\\layertype.fbs", 
+    "..\\..\\hart\\fbs\\opt.fbs", 
+    "..\\fbs\\level.fbs", 
+    "..\\..\\hart\\fbs\\vec_matrix.fbs"
+  ], 
+  "prerequisites": [
+    "{667a6a9f-0590-4d30-9d6d-da4955357794}"
+  ], 
+  "processoptions": {
+    "input": "testbed.tmx"
+  }, 
+  "type": "level", 
+  "uuid": "{3bc618ba-12f2-44c8-bd34-268174366c8c}"
+}

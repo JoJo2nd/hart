@@ -49,6 +49,7 @@ static struct {
 static bgfx::Caps gfxCaps;
 static resource::Profile currentProfile = resource::Profile_Direct3D11;
 static hstd::vector<uint8_t> viewIDRemap;
+static hstd::vector<ViewDef> viewDefs;
 static hart::Freelist<VertexDecl, 256> vertexDeclFreelist;
 static bgfx::Attrib::Enum bgfxAttribRemap[] = {
     bgfx::Attrib::Position,  // from Semantic::Position
@@ -222,12 +223,15 @@ void resetViews(ViewDef* views, size_t count) {
         if (views[i].clearColour) flags |= BGFX_CLEAR_COLOR;
         if (views[i].clearDepth) flags |= BGFX_CLEAR_DEPTH;
         if (views[i].clearStencil) flags |= BGFX_CLEAR_STENCIL;
-        bgfx::setViewClear(0, flags, views[i].colourValue, views[i].depthValue, views[i].stencilValue);
+        bgfx::setViewClear(i, flags, views[i].colourValue, views[i].depthValue, views[i].stencilValue);
         if (!views[i].useRatio)
             bgfx::setViewRect(i, 0, 0, views[i].w, views[i].h);
         else
             bgfx::setViewRect(i, 0, 0, bgfxBBRationReamp[uint32_t(views[i].ratio)]);
     }
+
+    viewDefs.resize(count);
+    hcrt::memcpy(viewDefs.data(), views, count*sizeof(ViewDef));
 }
 
 void begin(uint16_t view_id, TechniqueType tech, hMat44 const* view, hMat44 const* proj) {
@@ -422,6 +426,20 @@ void destroyVertexBuffer(VertexBuffer in_vb) {
 void endFrame() {
     bgfx::frame();
     bgfx::setScissor(0, 0, gfxInfo.windowWidth, gfxInfo.windowHeight);
+    uint32_t i = 0;
+    for(auto const& view : viewDefs) {
+        uint32_t flags = 0;
+        if(view.clearColour) flags |= BGFX_CLEAR_COLOR;
+        if(view.clearDepth) flags |= BGFX_CLEAR_DEPTH;
+        if(view.clearStencil) flags |= BGFX_CLEAR_STENCIL;
+        bgfx::setViewClear(i,flags,view.colourValue,view.depthValue,view.stencilValue);
+        if(!view.useRatio)
+            bgfx::setViewRect(i,0,0,view.w,view.h);
+        else
+            bgfx::setViewRect(i,0,0,bgfxBBRationReamp[uint32_t(view.ratio)]);
+        // Touch the view to ensure a clear is made
+        bgfx::touch(i++);
+    }
 }
 
 namespace debug {

@@ -58,6 +58,11 @@ void registierLevelObject();
 void updateAllLevelAnimations();
 
 class Game : public hart::engine::GameInterface {
+    // 16:9 view for 8x8 tiles (45x30 tiles)
+    // 16:10 is 384x240 (48x30 tiles) <- even number so better divider?
+    static const uint32_t viewWidth = 360;
+    static const uint32_t viewHeight = 240;
+
     virtual void postObjectFactoryRegister() {
         //TODO: Register any game class objects here.
         hobjfact::objectFactoryRegister(Player::getObjectDefinition(), nullptr);
@@ -140,21 +145,21 @@ class Game : public hart::engine::GameInterface {
     virtual void render() {
         // TODO: correct window size
         hMat44 proj, view;
-        proj = hMat44::orthographic(0.0f, 1280, 720, 0.0f, -1.0f, 1.0f);
+        proj = hMat44::orthographic(0.0f, (float)viewWidth, (float)viewHeight, 0.0f, -1.0f, 1.0f);
         view = hMat44::identity();
 #if HART_DEBUG_INFO
         hEngine::setDebugMatrices(view, proj);
 #endif
-        renderSprites(1280, 720);
+        renderSprites((uint32_t)viewWidth, (uint32_t)viewHeight);
 
         // draw an 8x8 grid (Flashbacks tile size)
-        for(uint32_t x=0; x<1280; x+=8) {
-            hrnd::debug::addLine(hVec3((float)x,0.f,0.f),hVec3((float)x,720.f,0.f),0xFFFF0000);
+        for(uint32_t x=0; x<viewWidth; x+=8) {
+            hrnd::debug::addLine(hVec3((float)x,0.f,0.f),hVec3((float)x,(float)viewHeight,0.f),0xFFFF0000);
         }
-        for(uint32_t y=0; y<720; y+=8) {
-            hrnd::debug::addLine(hVec3(0.f,(float)y,0.f),hVec3(1280.f,(float)y,0.f),0xFFFF0000);
+        for(uint32_t y=0; y<viewHeight; y+=8) {
+            hrnd::debug::addLine(hVec3(0.f,(float)y,0.f),hVec3((float)viewWidth,(float)y,0.f),0xFFFF0000);
         }
-        hrnd::debug::addQuad(hVec3(8*100, 720-(8*5), 0.f), hVec3(8*102, 720, 0.f), 0xFFFF00FF);
+        hrnd::debug::addQuad(hVec3(8*100, (float)viewHeight-(8*5), 0.f), hVec3(8*102, (float)viewHeight, 0.f), 0xFFFF00FF);
     }
 
     GameState mainState;
