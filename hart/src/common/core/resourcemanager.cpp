@@ -99,7 +99,7 @@ bool initialise() {
 #if HART_DEBUG_INFO
     ctx.dbmenuHdl = engine::addDebugMenu("Resource Manager", []() {
         hScopedMutex sentry(&ctx.access);
-        if (ImGui::Begin("Resource Manager", nullptr, ImGuiWindowFlags_NoTitleBar|ImGuiWindowFlags_MenuBar)) {
+		if (ImGui::Begin("Resource Manager", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_MenuBar)) {
             static resid_t to_load;
             auto const* asset_uuids = ctx.resourceListings->assetUUIDs();
             bool loadResource = false;

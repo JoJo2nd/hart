@@ -2,7 +2,6 @@
   "friendlyname": "game/material/sprite", 
   "inputs": [
     "sprite.json", 
-    "..\\..\\hart\\fbs\\material.fbs", 
     "..\\..\\hart\\fbs\\renderstate.fbs", 
     "..\\..\\hart\\fbs\\techniquetype.fbs", 
     "..\\..\\hart\\fbs\\uuid.fbs", 

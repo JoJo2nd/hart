@@ -1,13 +1,13 @@
 {
   "friendlyname": "game/test/entity", 
   "inputs": [
-    "..\\fbs\\test.fbs", 
     "..\\..\\hart\\fbs\\entity.fbs", 
     "..\\..\\hart\\fbs\\uuid.fbs", 
+    "..\\fbs\\test.fbs", 
     "..\\..\\hart\\fbs\\opt.fbs", 
-    "..\\fbs\\player.fbs", 
     "..\\..\\hart\\fbs\\opt.fbs", 
-    "..\\..\\hart\\fbs\\uuid.fbs"
+    "..\\..\\hart\\fbs\\uuid.fbs", 
+    "..\\fbs\\player.fbs"
   ], 
   "prerequisites": [
     "{ab851a91-a3dc-43c5-b4ee-aecf4ea33c17}", 

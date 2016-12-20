@@ -7,6 +7,7 @@
 #include "hart/hart.h"
 #include "sprite_renderer.h"
 #include "poly_utils.h"
+#include "collision_world.h"
 #include "fbs/tileset_generated.h"
 #include "fbs/level_generated.h"
 
@@ -98,7 +99,8 @@ public:
     hstd::vector<AnimSpriteBlock> animSpriteBlocks;
 
     //TEMP
-    hstd::vector<AABB> collisionQuads;
+	typedef collisionworld::ColHandle ColHandle;
+    hstd::vector<ColHandle> collisionQuads;
 };
 
 void updateAllLevelAnimations();

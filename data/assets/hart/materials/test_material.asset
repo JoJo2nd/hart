@@ -2,7 +2,6 @@
   "friendlyname": "system/test/material", 
   "inputs": [
     "test_material.json", 
-    "..\\fbs\\material.fbs", 
     "..\\fbs\\renderstate.fbs", 
     "..\\fbs\\techniquetype.fbs", 
     "..\\fbs\\uuid.fbs", 

@@ -1,14 +1,14 @@
 {
   "friendlyname": "game/test/level", 
   "inputs": [
+    "..\\..\\hart\\fbs\\uuid.fbs", 
     "tilesets\\final_tileset.png", 
     "testbed.tmx", 
-    "..\\..\\hart\\fbs\\uuid.fbs", 
-    "..\\fbs\\tileset.fbs", 
-    "..\\fbs\\layertype.fbs", 
-    "..\\..\\hart\\fbs\\opt.fbs", 
     "..\\fbs\\level.fbs", 
-    "..\\..\\hart\\fbs\\vec_matrix.fbs"
+    "..\\..\\hart\\fbs\\opt.fbs", 
+    "..\\fbs\\layertype.fbs", 
+    "..\\..\\hart\\fbs\\vec_matrix.fbs", 
+    "..\\fbs\\tileset.fbs"
   ], 
   "prerequisites": [
     "{667a6a9f-0590-4d30-9d6d-da4955357794}"

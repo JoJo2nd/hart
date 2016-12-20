@@ -2,7 +2,6 @@
   "friendlyname": "system/material/imgui", 
   "inputs": [
     "imgui.json", 
-    "..\\fbs\\material.fbs", 
     "..\\fbs\\renderstate.fbs", 
     "..\\fbs\\techniquetype.fbs", 
     "..\\fbs\\uuid.fbs", 
