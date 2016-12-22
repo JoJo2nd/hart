@@ -5,8 +5,8 @@
 
 #pragma once
 
-#include "hart/base/util.h"
 #include "hart/config.h"
+#include "hart/base/util.h"
 #include "hart/core/objectfactory.h"
 #include "hart/fbs/renderstate_generated.h"
 
@@ -14,11 +14,13 @@ namespace hart {
 namespace render {
 
 class State {
-  HART_OBJECT_TYPE(HART_MAKE_FOURCC('r', 's', 't', 'e'), resource::RenderState)
-public:
-  State() = default;
+    HART_OBJECT_TYPE(HART_MAKE_FOURCC('r','s','t', 'e'), resource::RenderState)
+    public:
+        State() = default;
 
-  uint64_t stateMask = 0;
+        uint64_t stateMask = 0;    
+    
 };
+
 }
 }

@@ -4,34 +4,35 @@
 *********************************************************************/
 #pragma once
 
+#include "hart/hart.h"
 #include "fbs/sprite_generated.h"
 #include "fbs/spriteanimtype_generated.h"
-#include "hart/hart.h"
 
 class Sprite {
-  HART_OBJECT_TYPE(HART_MAKE_FOURCC('s', 'p', 'r', 't'), resource::Sprite)
+    HART_OBJECT_TYPE(HART_MAKE_FOURCC('s','p','r','t'), resource::Sprite)
 public:
-  Sprite() = default;
-  Sprite(Sprite const& rhs) = delete;
-  Sprite& operator=(Sprite const& rhs) = delete;
-  ~Sprite();
+    Sprite() = default;
+    Sprite(Sprite const& rhs) = delete;
+    Sprite& operator = (Sprite const& rhs) = delete;
+    ~Sprite();
 
-  static const uint32_t MaxAnimTypes = SpriteAnimType_MAX + 1;
+    static const uint32_t MaxAnimTypes = SpriteAnimType_MAX+1;
 
-  struct Frame {
-    hVec4    uvs;
-    uint32_t page;
-  };
+    struct Frame {
+        hVec4 uvs;
+        uint32_t page;        
+    };
 
-  struct AnimFrame {
-    uint32_t frame;
-    float    lenght;
-  };
+    struct AnimFrame {
+        uint32_t frame;
+        float    lenght;
+    };
 
-  hstd::vector<hrnd::Texture> texturePages;
-  hstd::vector<Frame>         frames;
-  hstd::vector<AnimFrame>     anims[MaxAnimTypes];
+    hstd::vector<hrnd::Texture> texturePages;
+    hstd::vector<Frame>         frames;
+    hstd::vector<AnimFrame>     anims[MaxAnimTypes];
 #if HART_DEBUG_INFO
-  char const* friendlyName;
+    char const*                 friendlyName;
 #endif
 };
+

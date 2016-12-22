@@ -10,7 +10,7 @@
 #include <SDL2/SDL_syswm.h>
 
 #include "bgfx/bgfx.h"
-#include "bgfx/bgfxplatform.h"
+#include "bgfx/bgfxplatform.h" 
 
 namespace hart {
 namespace render {
@@ -21,12 +21,13 @@ typedef bgfx::ProgramHandle Program;
 
 Program createProgram(Shader* vertex, Shader* pixel);
 inline Program getInvalidProgram() {
-  Program p = BGFX_INVALID_HANDLE;
-  return p;
+    Program p = BGFX_INVALID_HANDLE;
+    return p;
 }
 inline void destroyProgram(Program p) {
-  if (!isValid(p)) return;
-  bgfx::destroyProgram(p);
+    if (!isValid(p)) return;
+    bgfx::destroyProgram(p);
 }
+
 }
 }

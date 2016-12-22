@@ -16,8 +16,7 @@ inline AABB aabbFromPoints(hVec3 p1, hVec3 p2) {
 
 /*
  *
- * Functions defined here are reference. You may need to replace with hand
- * written SIMD one in cases where you wish to
+ * Functions defined here are reference. You may need to replace with hand written SIMD one in cases where you wish to
  * batch together many tests (e.g. collision detection).
  *
  */
@@ -26,8 +25,7 @@ inline AABB aabbFromPoints(hVec3 p1, hVec3 p2) {
 // void buildConcavePolySoup(hVec4 const* points, uint32_t point_count);
 
 // TODO:
-// bool satIntersectMovingPolys(ColPoly const& a, ColPoly const& b, hVec3 va,
-// hVec3 vb, float* first_t, float* last_t);
+// bool satIntersectMovingPolys(ColPoly const& a, ColPoly const& b, hVec3 va, hVec3 vb, float* first_t, float* last_t);
 
 inline void closestPointOnAABB(hVec3 p, AABB a, hVec3* out_p) {
   for (uint32_t i = 0; i < 2; ++i) {
@@ -86,9 +84,9 @@ inline bool intersectMovingAABB(AABB a, AABB b, hVec3 va, hVec3 vb, float* first
       if (b[i] > a[i + 2]) return false;
       if (b[i + 2] < a[i]) tfirst = hutil::tmax((a[i] - b[i + 2]) / v[i], tfirst);
       if (a[i + 2] > b[i]) tlast = hutil::tmin((a[i + 2] - b[i]) / v[i], tlast);
-    } else {
-      if (a[i + 2] < b[i] || a[i] > b[i + 2]) return false;
-    }
+	} else {
+		if (a[i+2] < b[i] || a[i] > b[i+2]) return false;
+	}
 
     // no overlap if time of first contact is after last contact
     if (tfirst > tlast) return false;

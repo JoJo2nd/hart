@@ -8,5 +8,5 @@
 HART_OBJECT_TYPE_DECL(GameState);
 
 bool GameState::deserialiseObject(MarshallType const* in_data, hobjfact::SerialiseParams const&) {
-  return true;
+    return true;
 }

@@ -2,12 +2,9 @@
     Written by James Moran and Luke Trow
     Please see the file LICENSE.txt in the repository root directory.
 *********************************************************************/
-// NOTE: alot of this crap I don't need to worry about yet. First goal is to get
-// a SDL2 window
-// running with bgfx flipping buffers. SDL events should be handled as before
-// (i.e. table to dispatch to listeners)
-// then systems that care (e.g. input & controllers) can handle events as
-// needed.
+// NOTE: alot of this crap I don't need to worry about yet. First goal is to get a SDL2 window
+// running with bgfx flipping buffers. SDL events should be handled as before (i.e. table to dispatch to listeners)
+// then systems that care (e.g. input & controllers) can handle events as needed.
 #pragma once
 
 #include "hart/core/engine.h"
@@ -37,6 +34,7 @@
 
 #include <stdio.h>
 #include <vector>
+
 
 namespace hart {
 namespace engine {
@@ -336,11 +334,9 @@ struct Context {
       hresmgr::update();
 
     {
-      // ImGui init. Done after system collection load as this loads the imgui
-      // shaders
+      // ImGui init. Done after system collection load as this loads the imgui shaders
       ImGuiIO& io = ImGui::GetIO();
-      // Keyboard mapping. ImGui will use those indices to peek into the
-      // io.KeyDown[] array.
+      // Keyboard mapping. ImGui will use those indices to peek into the io.KeyDown[] array.
       io.KeyMap[ImGuiKey_Tab] = SDLK_TAB;
       io.KeyMap[ImGuiKey_LeftArrow] = SDL_SCANCODE_LEFT;
       io.KeyMap[ImGuiKey_RightArrow] = SDL_SCANCODE_RIGHT;
@@ -358,10 +354,8 @@ struct Context {
       io.DisplaySize.x = float(m_width);
       io.DisplaySize.y = float(m_height);
       io.IniFilename = "imgui.ini";
-      io.RenderDrawListsFn = imguiRenderStatic; // Setup a render function, or
-                                                // set to NULL and call
-                                                // GetDrawData() after
-      // Render() to access the render data.
+      io.RenderDrawListsFn = imguiRenderStatic; // Setup a render function, or set to NULL and call GetDrawData() after
+                                                // Render() to access the render data.
       io.UserData = this;
 
       hrnd::VertexElement elements[] = {
@@ -370,6 +364,7 @@ struct Context {
         {hrnd::Semantic::Color0, hrnd::SemanticType::Uint8, 4, true},
       };
       imgui.vDecl = hrnd::createVertexDecl(elements, (uint16_t)HART_ARRAYSIZE(elements));
+
 
       uint8_t* data;
       int32_t  width;
@@ -384,9 +379,8 @@ struct Context {
       hresmgr::loadResource(imgui_material, &imgui.materialHdl);
       imgui.materialHdl.loaded();
       imgui.material = imgui.materialHdl.getData();
-      hdbassert(imgui.material, "ImGui material isn't loaded. It should be "
-                                "loaded during startup by the system "
-                                "collection resource.\n");
+      hdbassert(imgui.material,
+                "ImGui material isn't loaded. It should be loaded during startup by the system collection resource.\n");
       imgui.textureInputHandle = imgui.material->getInputParameterHandle("s_tex");
       hdbassert(imgui.textureInputHandle.isValid(), "ImGui material is missing s_tex texture input.\n");
 
@@ -405,16 +399,14 @@ struct Context {
 
 #if HART_DEBUG_INFO
     hresmgr::weakGetResource(huuid::fromDwords(0xa5332a80b2ee414a, 0xb92e9b4c81cca292), &debugPrimsMat);
-    hdbassert(debugPrimsMat, "debug material isn't loaded. It should be loaded "
-                             "during startup by the system collection "
-                             "resource.\n");
+    hdbassert(debugPrimsMat,
+              "debug material isn't loaded. It should be loaded during startup by the system collection resource.\n");
 #endif
     // Info the game that main engine assets are loaded.
     game->postSystemAssetLoad();
 
     htime::update();
-    /* -- bgfx resources need to be loaded on the main thread, so must call
-    update there.
+    /* -- bgfx resources need to be loaded on the main thread, so must call update there.
     taskGraph.addTask("hresmgr::update", [&](htasks::Info*) {
         hresmgr::update();
     });
@@ -599,8 +591,7 @@ void setDebugMatrices(hMat44 const& view, hMat44 const& proj) {
                             WindowHandle handle = findHandle(mev.windowID);
                             if (isValid(handle) )
                             {
-                                m_eventQueue.postMouseEvent(handle, m_mx, m_my,
-   m_mz);
+                                m_eventQueue.postMouseEvent(handle, m_mx, m_my, m_mz);
                             }
                         }
                         break;
@@ -616,12 +607,9 @@ void setDebugMatrices(hMat44 const& view, hMat44 const& proj) {
                                 switch (mev.button)
                                 {
                                 default:
-                                case SDL_BUTTON_LEFT:   button =
-   MouseButton::Left;   break;
-                                case SDL_BUTTON_MIDDLE: button =
-   MouseButton::Middle; break;
-                                case SDL_BUTTON_RIGHT:  button =
-   MouseButton::Right;  break;
+                                case SDL_BUTTON_LEFT:   button = MouseButton::Left;   break;
+                                case SDL_BUTTON_MIDDLE: button = MouseButton::Middle; break;
+                                case SDL_BUTTON_RIGHT:  button = MouseButton::Right;  break;
                                 }
 
                                 m_eventQueue.postMouseEvent(handle
@@ -643,8 +631,7 @@ void setDebugMatrices(hMat44 const& view, hMat44 const& proj) {
                             WindowHandle handle = findHandle(mev.windowID);
                             if (isValid(handle) )
                             {
-                                m_eventQueue.postMouseEvent(handle, m_mx, m_my,
-   m_mz);
+                                m_eventQueue.postMouseEvent(handle, m_mx, m_my, m_mz);
                             }
                         }
                         break;
@@ -655,8 +642,7 @@ void setDebugMatrices(hMat44 const& view, hMat44 const& proj) {
                             WindowHandle handle = findHandle(tev.windowID);
                             if (isValid(handle) )
                             {
-                                m_eventQueue.postCharEvent(handle, 1, (const
-   uint8_t*)tev.text);
+                                m_eventQueue.postCharEvent(handle, 1, (const uint8_t*)tev.text);
                             }
                         }
                         break;
@@ -667,39 +653,32 @@ void setDebugMatrices(hMat44 const& view, hMat44 const& proj) {
                             WindowHandle handle = findHandle(kev.windowID);
                             if (isValid(handle) )
                             {
-                                uint8_t modifiers =
-   translateKeyModifiers(kev.keysym.mod);
-                                Key::Enum key =
-   translateKey(kev.keysym.scancode);
+                                uint8_t modifiers = translateKeyModifiers(kev.keysym.mod);
+                                Key::Enum key = translateKey(kev.keysym.scancode);
 
-                                // TODO: These keys are not captured by
-   SDL_TEXTINPUT. Should be probably handled by
+                                // TODO: These keys are not captured by SDL_TEXTINPUT. Should be probably handled by
    SDL_TEXTEDITING. This is a workaround for now.
                                 if (key == 1) // Escape
                                 {
                                     uint8_t pressedChar[4];
                                     pressedChar[0] = 0x1b;
-                                    m_eventQueue.postCharEvent(handle, 1,
-   pressedChar);
+                                    m_eventQueue.postCharEvent(handle, 1, pressedChar);
                                 }
                                 else if (key == 2) // Enter
                                 {
                                     uint8_t pressedChar[4];
                                     pressedChar[0] = 0x0d;
-                                    m_eventQueue.postCharEvent(handle, 1,
-   pressedChar);
+                                    m_eventQueue.postCharEvent(handle, 1, pressedChar);
                                 }
                                 else if (key == 5) // Backspace
                                 {
                                     uint8_t pressedChar[4];
                                     pressedChar[0] = 0x08;
-                                    m_eventQueue.postCharEvent(handle, 1,
-   pressedChar);
+                                    m_eventQueue.postCharEvent(handle, 1, pressedChar);
                                 }
                                 else
                                 {
-                                    m_eventQueue.postKeyEvent(handle, key,
-   modifiers, kev.state == SDL_PRESSED);
+                                    m_eventQueue.postKeyEvent(handle, key, modifiers, kev.state == SDL_PRESSED);
                                 }
                             }
                         }
@@ -711,12 +690,9 @@ void setDebugMatrices(hMat44 const& view, hMat44 const& proj) {
                             WindowHandle handle = findHandle(kev.windowID);
                             if (isValid(handle) )
                             {
-                                uint8_t modifiers =
-   translateKeyModifiers(kev.keysym.mod);
-                                Key::Enum key =
-   translateKey(kev.keysym.scancode);
-                                m_eventQueue.postKeyEvent(handle, key,
-   modifiers, kev.state == SDL_PRESSED);
+                                uint8_t modifiers = translateKeyModifiers(kev.keysym.mod);
+                                Key::Enum key = translateKey(kev.keysym.scancode);
+                                m_eventQueue.postKeyEvent(handle, key, modifiers, kev.state == SDL_PRESSED);
                             }
                         }
                         break;
@@ -729,8 +705,7 @@ void setDebugMatrices(hMat44 const& view, hMat44 const& proj) {
                             case SDL_WINDOWEVENT_RESIZED:
                             case SDL_WINDOWEVENT_SIZE_CHANGED:
                                 {
-                                    WindowHandle handle =
-   findHandle(wev.windowID);
+                                    WindowHandle handle = findHandle(wev.windowID);
                                     setWindowSize(handle, wev.data1, wev.data2);
                                 }
                                 break;
@@ -750,8 +725,7 @@ void setDebugMatrices(hMat44 const& view, hMat44 const& proj) {
 
                             case SDL_WINDOWEVENT_CLOSE:
                                 {
-                                    WindowHandle handle =
-   findHandle(wev.windowID);
+                                    WindowHandle handle = findHandle(wev.windowID);
                                     if (0 == handle.idx)
                                     {
                                         m_eventQueue.postExitEvent();
@@ -769,10 +743,8 @@ void setDebugMatrices(hMat44 const& view, hMat44 const& proj) {
                             GamepadHandle handle = findGamepad(jev.which);
                             if (isValid(handle) )
                             {
-                                GamepadAxis::Enum axis =
-   translateGamepadAxis(jev.axis);
-                                m_gamepad[handle.idx].update(m_eventQueue,
-   defaultWindow, handle, axis, jev.value);
+                                GamepadAxis::Enum axis = translateGamepadAxis(jev.axis);
+                                m_gamepad[handle.idx].update(m_eventQueue, defaultWindow, handle, axis, jev.value);
                             }
                         }
                         break;
@@ -783,10 +755,8 @@ void setDebugMatrices(hMat44 const& view, hMat44 const& proj) {
                             GamepadHandle handle = findGamepad(aev.which);
                             if (isValid(handle) )
                             {
-                                GamepadAxis::Enum axis =
-   translateGamepadAxis(aev.axis);
-                                m_gamepad[handle.idx].update(m_eventQueue,
-   defaultWindow, handle, axis, aev.value);
+                                GamepadAxis::Enum axis = translateGamepadAxis(aev.axis);
+                                m_gamepad[handle.idx].update(m_eventQueue, defaultWindow, handle, axis, aev.value);
                             }
                         }
                         break;
@@ -802,8 +772,7 @@ void setDebugMatrices(hMat44 const& view, hMat44 const& proj) {
                                 Key::Enum key = translateGamepad(bev.button);
                                 if (Key::Count != key)
                                 {
-                                    m_eventQueue.postKeyEvent(defaultWindow,
-   key, 0, event.type == SDL_JOYBUTTONDOWN);
+                                    m_eventQueue.postKeyEvent(defaultWindow, key, 0, event.type == SDL_JOYBUTTONDOWN);
                                 }
                             }
                         }
@@ -812,16 +781,14 @@ void setDebugMatrices(hMat44 const& view, hMat44 const& proj) {
                     case SDL_CONTROLLERBUTTONDOWN:
                     case SDL_CONTROLLERBUTTONUP:
                         {
-                            const SDL_ControllerButtonEvent& bev =
-   event.cbutton;
+                            const SDL_ControllerButtonEvent& bev = event.cbutton;
                             GamepadHandle handle = findGamepad(bev.which);
                             if (isValid(handle) )
                             {
                                 Key::Enum key = translateGamepad(bev.button);
                                 if (Key::Count != key)
                                 {
-                                    m_eventQueue.postKeyEvent(defaultWindow,
-   key, 0, event.type ==
+                                    m_eventQueue.postKeyEvent(defaultWindow, key, 0, event.type ==
    SDL_CONTROLLERBUTTONDOWN);
                                 }
                             }
@@ -835,8 +802,7 @@ void setDebugMatrices(hMat44 const& view, hMat44 const& proj) {
                             {
                                 const SDL_JoyDeviceEvent& jev = event.jdevice;
                                 m_gamepad[handle.idx].create(jev);
-                                m_eventQueue.postGamepadEvent(defaultWindow,
-   handle, true);
+                                m_eventQueue.postGamepadEvent(defaultWindow, handle, true);
                             }
                         }
                         break;
@@ -849,8 +815,7 @@ void setDebugMatrices(hMat44 const& view, hMat44 const& proj) {
                             {
                                 m_gamepad[handle.idx].destroy();
                                 m_gamepadAlloc.free(handle.idx);
-                                m_eventQueue.postGamepadEvent(defaultWindow,
-   handle, false);
+                                m_eventQueue.postGamepadEvent(defaultWindow, handle, false);
                             }
                         }
                         break;
@@ -860,11 +825,9 @@ void setDebugMatrices(hMat44 const& view, hMat44 const& proj) {
                             GamepadHandle handle = { m_gamepadAlloc.alloc() };
                             if (isValid(handle) )
                             {
-                                const SDL_ControllerDeviceEvent& cev =
-   event.cdevice;
+                                const SDL_ControllerDeviceEvent& cev = event.cdevice;
                                 m_gamepad[handle.idx].create(cev);
-                                m_eventQueue.postGamepadEvent(defaultWindow,
-   handle, true);
+                                m_eventQueue.postGamepadEvent(defaultWindow, handle, true);
                             }
                         }
                         break;
@@ -877,15 +840,13 @@ void setDebugMatrices(hMat44 const& view, hMat44 const& proj) {
 
                     case SDL_CONTROLLERDEVICEREMOVED:
                         {
-                            const SDL_ControllerDeviceEvent& cev =
-   event.cdevice;
+                            const SDL_ControllerDeviceEvent& cev = event.cdevice;
                             GamepadHandle handle = findGamepad(cev.which);
                             if (isValid(handle) )
                             {
                                 m_gamepad[handle.idx].destroy();
                                 m_gamepadAlloc.free(handle.idx);
-                                m_eventQueue.postGamepadEvent(defaultWindow,
-   handle, false);
+                                m_eventQueue.postGamepadEvent(defaultWindow, handle, false);
                             }
                         }
                         break;
@@ -900,28 +861,22 @@ void setDebugMatrices(hMat44 const& view, hMat44 const& proj) {
                                     WindowHandle handle = getWindowHandle(uev);
                                     Msg* msg = (Msg*)uev.data2;
 
-                                    m_window[handle.idx] =
-   SDL_CreateWindow(msg->m_title.c_str()
+                                    m_window[handle.idx] = SDL_CreateWindow(msg->m_title.c_str()
                                                                 , msg->m_x
                                                                 , msg->m_y
                                                                 , msg->m_width
                                                                 , msg->m_height
-                                                                ,
-   SDL_WINDOW_SHOWN
-                                                                |
-   SDL_WINDOW_RESIZABLE
+                                                                , SDL_WINDOW_SHOWN
+                                                                | SDL_WINDOW_RESIZABLE
                                                                 );
 
                                     m_flags[handle.idx] = msg->m_flags;
 
-                                    void* nwh =
-   sdlNativeWindowHandle(m_window[handle.idx]);
+                                    void* nwh = sdlNativeWindowHandle(m_window[handle.idx]);
                                     if (NULL != nwh)
                                     {
-                                        m_eventQueue.postWindowEvent(handle,
-   nwh);
-                                        m_eventQueue.postSizeEvent(handle,
-   msg->m_width, msg->m_height);
+                                        m_eventQueue.postWindowEvent(handle, nwh);
+                                        m_eventQueue.postSizeEvent(handle, msg->m_width, msg->m_height);
                                     }
 
                                     delete msg;
@@ -946,8 +901,7 @@ void setDebugMatrices(hMat44 const& view, hMat44 const& proj) {
                                     Msg* msg = (Msg*)uev.data2;
                                     if (isValid(handle) )
                                     {
-                                        SDL_SetWindowTitle(m_window[handle.idx],
-   msg->m_title.c_str() );
+                                        SDL_SetWindowTitle(m_window[handle.idx], msg->m_title.c_str() );
                                     }
                                     delete msg;
                                 }
@@ -957,8 +911,7 @@ void setDebugMatrices(hMat44 const& view, hMat44 const& proj) {
                                 {
                                     WindowHandle handle = getWindowHandle(uev);
                                     Msg* msg = (Msg*)uev.data2;
-                                    SDL_SetWindowPosition(m_window[handle.idx],
-   msg->m_x, msg->m_y);
+                                    SDL_SetWindowPosition(m_window[handle.idx], msg->m_x, msg->m_y);
                                     delete msg;
                                 }
                                 break;
@@ -969,8 +922,7 @@ void setDebugMatrices(hMat44 const& view, hMat44 const& proj) {
                                     Msg* msg = (Msg*)uev.data2;
                                     if (isValid(handle) )
                                     {
-                                        setWindowSize(handle, msg->m_width,
-   msg->m_height);
+                                        setWindowSize(handle, msg->m_width, msg->m_height);
                                     }
                                     delete msg;
                                 }
@@ -981,10 +933,8 @@ void setDebugMatrices(hMat44 const& view, hMat44 const& proj) {
                                     WindowHandle handle = getWindowHandle(uev);
                                     if (isValid(handle) )
                                     {
-                                        m_flags[handle.idx] ^=
-   ENTRY_WINDOW_FLAG_FRAME;
-                                        SDL_SetWindowBordered(m_window[handle.idx],
-   (SDL_bool)!!(m_flags[handle.idx] &
+                                        m_flags[handle.idx] ^= ENTRY_WINDOW_FLAG_FRAME;
+                                        SDL_SetWindowBordered(m_window[handle.idx], (SDL_bool)!!(m_flags[handle.idx] &
    ENTRY_WINDOW_FLAG_FRAME) );
                                     }
                                 }
@@ -994,16 +944,14 @@ void setDebugMatrices(hMat44 const& view, hMat44 const& proj) {
                                 {
                                     WindowHandle handle = getWindowHandle(uev);
                                     m_fullscreen = !m_fullscreen;
-                                    SDL_SetWindowFullscreen(m_window[handle.idx],
-   m_fullscreen ?
+                                    SDL_SetWindowFullscreen(m_window[handle.idx], m_fullscreen ?
    SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
                                 }
                                 break;
 
                             case SDL_USER_WINDOW_MOUSE_LOCK:
                                 {
-                                    SDL_SetRelativeMouseMode(!!uev.code ?
-   SDL_TRUE : SDL_FALSE);
+                                    SDL_SetRelativeMouseMode(!!uev.code ? SDL_TRUE : SDL_FALSE);
                                 }
                                 break;
 

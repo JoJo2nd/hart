@@ -5,9 +5,9 @@
 
 #pragma once
 
-#include "fbs/gamestate_generated.h"
 #include "hart/hart.h"
+#include "fbs/gamestate_generated.h"
 
 class GameState {
-  HART_OBJECT_TYPE(HART_MAKE_FOURCC('g', 'a', 'm', 'e'), GameStateData)
+    HART_OBJECT_TYPE(HART_MAKE_FOURCC('g','a','m','e'), GameStateData)
 };

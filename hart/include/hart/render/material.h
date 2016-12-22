@@ -115,6 +115,7 @@ private:
     UniformHandle         uniform;
   };
 
+
   hstd::vector<Technique>        techniques;
   hstd::vector<TextureResHandle> boundTextures;
   hstd::vector<uint8_t>          inputData;

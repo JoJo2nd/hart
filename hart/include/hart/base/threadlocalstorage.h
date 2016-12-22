@@ -8,19 +8,20 @@
 namespace hart {
 namespace tls {
 
-typedef void(HART_API* KeyDestructor)(void* key_value);
+typedef void (HART_API *KeyDestructor)(void* key_value);
 
 size_t createKey(KeyDestructor destructor);
-void deleteKey(size_t key);
-void setKeyValue(size_t key, void* value);
-void* getKeyValue(size_t key);
+void   deleteKey(size_t key);
+void   setKeyValue(size_t key, void* value);
+void*  getKeyValue(size_t key);
 
 #if HART_PLATFORM == HART_PLATFORM_WINDOWS
 
 void threadExit();
 
 #endif
-}
-}
+
+}	
+}    
 
 namespace htls = hart::tls;
