@@ -125,6 +125,9 @@
   "data\\reference\\walk.jpg": {
     "sha1": "5c134791cc896c9a6cf57a5379a07c3543b53ad9"
   }, 
+  "external\\LLVM\\clang-format.exe": {
+    "sha1": "dbbdaf153e25e0b4e4cdb1c9626d221b9d768c23"
+  }, 
   "external\\SDL2\\lib\\x64\\SDL2.dll": {
     "sha1": "dc6bdf3aaf46e99aeb1c0cb80ab643fb8f1b0353"
   }, 
