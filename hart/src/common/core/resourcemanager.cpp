@@ -252,7 +252,9 @@ static void flushResourceQueue() {
 }
 
 void shutdown() {
+#if HART_DEBUG_INFO
     engine::removeDebugMenu(ctx.dbmenuHdl);
+#endif
 }
 
 static void loadResourceInternal(resid_t res_id) {

@@ -168,6 +168,7 @@ class Game : public hart::engine::GameInterface {
 #endif
     renderSprites((uint32_t)viewWidth, (uint32_t)viewHeight);
 
+#if HART_DEBUG_INFO
     if (debugRenderTileGrid) {
       // draw an 8x8 grid (Flashbacks tile size)
       for (uint32_t x = 0; x < viewWidth; x += 8) {
@@ -179,6 +180,7 @@ class Game : public hart::engine::GameInterface {
       hrnd::debug::addQuad(hVec3(8 * 100, (float)viewHeight - (8 * 5), 0.f), hVec3(8 * 102, (float)viewHeight, 0.f),
                            0xFFFF00FF);
     }
+#endif
   }
 
   GameState mainState;

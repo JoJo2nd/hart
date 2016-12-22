@@ -16,6 +16,7 @@
 #define HART_ENABLE_PROFILE     (1) // enable Remotery profiling and logging
 #define HART_DO_ASSERTS         (0) // enable asserts
 #define HART_ENABLE_STDIO       (0) // enable output to stdio
+#define HART_DEBUG_TASK_ORDER   (0)
 #define HART_64BIT              (0) // 1 for a 64bit build
 #define HART_32BIT              (0) // 1 for a 32bit build
 #define HART_API                    // calling convention for callbacks
@@ -46,7 +47,7 @@
 #   define HART_32BIT 32
 #endif //
 
-#if defined (_DEBUG) || defined (DEBUG) || defined (CMAKE_DEBUG_BUILD)
+#if defined (_DEBUG) || defined (DEBUG) || defined (CMAKE_DEBUG_BUILD) || defined (CMAKE_RELWITHDEBINFO_BUILD)
 #   undef HART_DEBUG
 #   define HART_DEBUG (1)
 #else
@@ -54,7 +55,7 @@
 #   define HART_RELEASE (1)
 #endif
 
-#if defined (HART_DEBUG) || defined (CMAKE_RELWITHDEBINFO_BUILD)
+#if (HART_DEBUG)
 #   undef HART_DEBUG_INFO
 #	define HART_DEBUG_INFO (1)
 #endif
@@ -67,6 +68,7 @@
 #endif
 
 #if HART_DEBUG_INFO
+#   undef HART_DEBUG_TASK_ORDER (0)
 #   define HART_DEBUG_TASK_ORDER (0)
 #endif
 

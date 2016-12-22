@@ -48,11 +48,11 @@
 
 #else
 
-#define hdbprintf(fmt, ...)
-#define hdbcondprintf(x, y, ...)
-#define hdbassert( x, y,...)
-#define hdbfatal( y, ... )
-#define hdbbreak 
+#define hdbprintf(fmt, ...) __noop
+#define hdbcondprintf(x, y, ...) __noop
+#define hdbassert( x, y,...) __noop
+#define hdbfatal( y, ... ) __noop
+#define hdbbreak __noop
 
 #endif
 

@@ -77,7 +77,7 @@ void initialiseWorld() {
       hVec3 intersect;
       float t;
       hVec3 s(debugStart[0], debugStart[1], 0.f);
-      hVec3 e(debugEnd[0] - debugStart[1], debugEnd[1] - debugStart[0], 0.f);
+      hVec3 e(debugEnd[0] - debugStart[0], debugEnd[1] - debugStart[1], 0.f);
 
       if (raytestWorld(s, e, &t, &intersect)) {
         hrnd::debug::addLine(s, intersect, 0xFF00FF00);
@@ -97,14 +97,15 @@ void initialiseWorld() {
       hVec3 bl(debugStart[0] - (debugBox[0] / 2), debugStart[1] - (debugBox[1] / 2), 0.f);
       hVec3 br(debugStart[0] + (debugBox[0] / 2), debugStart[1] - (debugBox[1] / 2), 0.f);
       hrnd::debug::addQuad(tl, br, 0x40FFFFFF);
-      if (!intersectMovingAABBWorld(aabb, dir, &first, &last)) {
-        first = last = 1.f;
+      if (intersectMovingAABBWorld(aabb, dir, &first, &last)) {
+		  hVec3 ctl = tl + dir * first;
+		  hVec3 cbr = br + dir * first;
+		  hrnd::debug::addQuad(ctl, cbr, 0x800000FF);
       }
-      tl += dir * first;
-      tr += dir * first;
-      bl += dir * first;
-      br += dir * first;
-      hrnd::debug::addQuad(tl, br, 0x80FF0000);
+	  first = last = 1.f;
+      hVec3 etl = tl + dir * first;
+      hVec3 ebr = br + dir * first;
+      hrnd::debug::addQuad(etl, ebr, 0x80FF0000);
       hrnd::debug::addLine(centre, centre + dir * first, 0x80FF0000);
     }
   });
