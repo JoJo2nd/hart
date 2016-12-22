@@ -4,8 +4,8 @@
 *********************************************************************/
 #pragma once
 
-#include "hart/hart.h"
 #include "fbs/layertype_generated.h"
+#include "hart/hart.h"
 
 typedef uint32_t SpriteHandle;
 

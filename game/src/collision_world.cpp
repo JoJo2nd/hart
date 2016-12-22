@@ -20,7 +20,6 @@ static struct World {
   uint16_t                    primCount;
 } world;
 
-
 #if HART_DEBUG_INFO
 static bool  debugRenderPrims = false;
 static bool  debugRayTest = false;
@@ -98,11 +97,11 @@ void initialiseWorld() {
       hVec3 br(debugStart[0] + (debugBox[0] / 2), debugStart[1] - (debugBox[1] / 2), 0.f);
       hrnd::debug::addQuad(tl, br, 0x40FFFFFF);
       if (intersectMovingAABBWorld(aabb, dir, &first, &last)) {
-		  hVec3 ctl = tl + dir * first;
-		  hVec3 cbr = br + dir * first;
-		  hrnd::debug::addQuad(ctl, cbr, 0x800000FF);
+        hVec3 ctl = tl + dir * first;
+        hVec3 cbr = br + dir * first;
+        hrnd::debug::addQuad(ctl, cbr, 0x800000FF);
       }
-	  first = last = 1.f;
+      first = last = 1.f;
       hVec3 etl = tl + dir * first;
       hVec3 ebr = br + dir * first;
       hrnd::debug::addQuad(etl, ebr, 0x80FF0000);
@@ -133,7 +132,8 @@ void removeStaticPrimitive(ColHandle hdl) {
 
 bool raytestWorld(hVec3 pt, hVec3 d, float* min_t, hVec3* out_p) {
   /*
-   * Note that this method currently brute forces the collision checks. Will likely need improvement but it'll work for
+   * Note that this method currently brute forces the collision checks. Will
+   * likely need improvement but it'll work for
    * now. It at least uses an array for cache friendlyness
    */
   hVec3 pend = pt + d;
@@ -142,8 +142,8 @@ bool raytestWorld(hVec3 pt, hVec3 d, float* min_t, hVec3* out_p) {
   *min_t = FLT_MAX;
 
   for (uint16_t i = 0, in = (uint16_t)world.primitives.size(), p = 0, pn = world.primCount; i < in && p < pn; ++i) {
-    if (world.primitives[i].free)
-      continue; // TODO: sort the list to not contain free elements in the middle of non-free ones.
+    if (world.primitives[i].free) continue; // TODO: sort the list to not contain free elements in the
+                                            // middle of non-free ones.
     if (intersectAABB(world.primitives[i].aabb, ray_bounds)) {
       float mint;
       hVec3 outp;
@@ -159,15 +159,16 @@ bool raytestWorld(hVec3 pt, hVec3 d, float* min_t, hVec3* out_p) {
 
 bool intersectMovingAABBWorld(AABB a, hVec3 va, float* first_t, float* last_t) {
   /*
-   * Note that this method currently brute forces the collision checks. Will likely need improvement but it'll work for
+   * Note that this method currently brute forces the collision checks. Will
+   * likely need improvement but it'll work for
    * now. It at least uses an array for cache friendlyness
    */
   hVec3 zeroV(0.f, 0.f, 0.f);
   *first_t = FLT_MAX;
   *last_t = -FLT_MAX;
   for (uint16_t i = 0, in = (uint16_t)world.primitives.size(), p = 0, pn = world.primCount; i < in && p < pn; ++i) {
-    if (world.primitives[i].free)
-      continue; // TODO: sort the list to not contain free elements in the middle of non-free ones.
+    if (world.primitives[i].free) continue; // TODO: sort the list to not contain free elements in the
+                                            // middle of non-free ones.
     float ft, lt;
     if (intersectMovingAABB(a, world.primitives[i].aabb, va, zeroV, &ft, &lt)) {
       *first_t = hutil::tmin(*first_t, ft);

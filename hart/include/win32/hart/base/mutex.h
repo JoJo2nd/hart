@@ -11,46 +11,30 @@ namespace hart {
 
 class Mutex {
 public:
-    Mutex() {
-        InitializeCriticalSection( &mutex_ );
-    }
-    void lock() {
-        EnterCriticalSection( &mutex_ );
-    }
-    bool tryLock() {
-        BOOL ret = TryEnterCriticalSection( &mutex_ );
-        return !!ret;
-    }
-    void unlock() {
-        LeaveCriticalSection( &mutex_ );
-    }
-    ~Mutex() {
-        DeleteCriticalSection( &mutex_ );
-    }
+  Mutex() { InitializeCriticalSection(&mutex_); }
+  void lock() { EnterCriticalSection(&mutex_); }
+  bool tryLock() {
+    BOOL ret = TryEnterCriticalSection(&mutex_);
+    return !!ret;
+  }
+  void unlock() { LeaveCriticalSection(&mutex_); }
+  ~Mutex() { DeleteCriticalSection(&mutex_); }
 
-    _RTL_CRITICAL_SECTION	mutex_;
+  _RTL_CRITICAL_SECTION mutex_;
 };
 
 class ScopedMutex {
 public:
-    ScopedMutex(Mutex* in_mtx)
-        : mtx(in_mtx)
-    {
-        mtx->lock();
-    }
-    ~ScopedMutex()
-    {
-        mtx->unlock();
-    }
+  ScopedMutex(Mutex* in_mtx) : mtx(in_mtx) { mtx->lock(); }
+  ~ScopedMutex() { mtx->unlock(); }
 
-    ScopedMutex& operator = (ScopedMutex const& rhs) = delete;
-    ScopedMutex(ScopedMutex const& rhs) = delete;
+  ScopedMutex& operator=(ScopedMutex const& rhs) = delete;
+  ScopedMutex(ScopedMutex const& rhs) = delete;
 
 private:
-    Mutex* mtx;
+  Mutex* mtx;
 };
-
 }
 
-typedef hart::Mutex hMutex;
+typedef hart::Mutex       hMutex;
 typedef hart::ScopedMutex hScopedMutex;

@@ -85,7 +85,8 @@ bool Tileset::deserialiseObject(MarshallType const* in_data, hobjfact::Serialise
 }
 
 Level::~Level() {
-  hdbfatal("STUB, this needs writing to release resources created in deserialiseObject\n");
+  hdbfatal("STUB, this needs writing to release resources created in "
+           "deserialiseObject\n");
 }
 
 bool Level::deserialiseObject(MarshallType const* in_data, hobjfact::SerialiseParams const& params) {
@@ -102,7 +103,8 @@ bool Level::deserialiseObject(MarshallType const* in_data, hobjfact::SerialisePa
     hresmgr::weakGetResource(huuid::fromData(*(*in_entities)[i]->assetuuid()), &entities[i].entity);
   }
 
-  // Build our layer tiles. 32x32 each. Two for each layer; one static, one dynamic.
+  // Build our layer tiles. 32x32 each. Two for each layer; one static, one
+  // dynamic.
   AnimSpriteBlock     tmp_anim_block;
   auto const*         in_layers = in_data->layers();
   hrnd::VertexElement elements[] = {

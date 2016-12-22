@@ -32,7 +32,6 @@ static bgfx::UniformType::Enum MaterialInputTypeToUniformType[resource::Material
   bgfx::UniformType::Int1, // MaterialInputData_Texture2DInput = 5,
 };
 
-
 bool Material::deserialiseObject(MarshallType const* in_data, hobjfact::SerialiseParams const& params) {
   auto const* in_tech = in_data->techniques();
   params.resdata->persistFileData = true;
@@ -183,9 +182,12 @@ bool MaterialSetup::deserialiseObject(MarshallType const* in_data, hobjfact::Ser
   for (uint32_t i = 0, n = in_inputs->size(); i < n; ++i) {
     resource::MaterialInput const* in_input = (*in_inputs)[i];
     inputs[i].handle = material->getInputParameterHandle(in_input->name()->c_str());
-    hdbassert(inputs[i].handle.isValid(), "Material Setup parameter is defined but doesn't exist in base material\n");
+    hdbassert(inputs[i].handle.isValid(), "Material Setup parameter is defined "
+                                          "but doesn't exist in base "
+                                          "material\n");
     hdbassert(inputs[i].handle.type == (uint16_t)in_input->data_type(),
-              "Material Setup parameter is defined but doesn't match type in base material\n");
+              "Material Setup parameter is defined but doesn't match type in "
+              "base material\n");
     inputs[i].dataOffset = (uint16_t)inputData.size();
     if (void const* raw_data = in_input->data()) {
       switch (in_input->data_type()) {

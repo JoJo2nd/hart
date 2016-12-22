@@ -4,13 +4,13 @@
 *********************************************************************/
 #pragma once
 
-#include "vectormath_aos.h"
 #include "mat_aos.h"
+#include "vectormath_aos.h"
 
 namespace hart {
 namespace math {
-    typedef Vectormath::Aos::Matrix4 Mat44;
-    typedef Vectormath::Aos::Matrix3 Mat33;
+typedef Vectormath::Aos::Matrix4 Mat44;
+typedef Vectormath::Aos::Matrix3 Mat33;
 }
 }
 

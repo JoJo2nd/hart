@@ -56,7 +56,8 @@ bool Test::deserialiseComponent(MarshallType const* overrides, MarshallType cons
   return true;
 }
 
-// Prototype for functions registering classes. Saves having to include the header files here
+// Prototype for functions registering classes. Saves having to include the
+// header files here
 void registierSpriteObject();
 void registierLevelObject();
 
@@ -127,11 +128,13 @@ class Game : public hart::engine::GameInterface {
 #endif
   }
   virtual void taskGraphSetup(htasks::Graph* frameGraph) {
-    // TODO: Inject game tasks into the frameGraph. Allows use to arrange game logic around engine flow
+    // TODO: Inject game tasks into the frameGraph. Allows use to arrange game
+    // logic around engine flow
     htasks::TaskHandle res_update_task = frameGraph->findTaskByName("hresmgr::update");
   }
   virtual void preTick(htasks::Graph* frameGraph) {
-    // work should be injected into the task graph. This should do nothing (or almost nothing).
+    // work should be injected into the task graph. This should do nothing (or
+    // almost nothing).
   }
   virtual void tick(float delta) {
     // Do game tick
