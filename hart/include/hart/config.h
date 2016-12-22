@@ -67,11 +67,6 @@
 #   define HART_ENABLE_STDIO (1)
 #endif
 
-#if HART_DEBUG_INFO
-#   undef HART_DEBUG_TASK_ORDER (0)
-#   define HART_DEBUG_TASK_ORDER (0)
-#endif
-
 #if !HART_DEBUG_INFO
 #   undef HART_VERIFY_FREELIST
 #   define HART_VERIFY_FREELIST (0)
