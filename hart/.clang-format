@@ -400,5 +400,6 @@
     
     
     
-    "UseTab": "Never"
+    "UseTab": "Never",
+    "SortIncludes": false
 }
