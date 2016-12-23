@@ -16,20 +16,17 @@ namespace hart {
 namespace render {
 
 class Shader {
-    HART_OBJECT_TYPE(HART_MAKE_FOURCC('s','d','r','c'), resource::ShaderCollection)
-    public:
-        ~Shader();
-        
-    private:
-        friend Program createProgram(Shader*, Shader*);
+  HART_OBJECT_TYPE(HART_MAKE_FOURCC('s', 'd', 'r', 'c'), resource::ShaderCollection)
+public:
+  ~Shader();
 
-        bgfx::ShaderHandle getShaderProfileObject(resource::Profile p) {
-            return shaders[p];
-        }
+private:
+  friend Program createProgram(Shader*, Shader*);
 
-        bgfx::ShaderHandle shaders[resource::Profile_MAX+1];
+  bgfx::ShaderHandle getShaderProfileObject(resource::Profile p) { return shaders[p]; }
+
+  bgfx::ShaderHandle shaders[resource::Profile_MAX + 1];
 };
-
 }
 }
 

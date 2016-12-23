@@ -9,8 +9,8 @@
 
 namespace hart {
 namespace math {
-    typedef Vectormath::Aos::Vector3 Vec3;
-    typedef Vectormath::Aos::Vector4 Vec4;
+typedef Vectormath::Aos::Vector3 Vec3;
+typedef Vectormath::Aos::Vector4 Vec4;
 }
 }
 

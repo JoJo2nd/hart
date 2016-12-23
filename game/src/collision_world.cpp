@@ -98,11 +98,11 @@ void initialiseWorld() {
       hVec3 br(debugStart[0] + (debugBox[0] / 2), debugStart[1] - (debugBox[1] / 2), 0.f);
       hrnd::debug::addQuad(tl, br, 0x40FFFFFF);
       if (intersectMovingAABBWorld(aabb, dir, &first, &last)) {
-		  hVec3 ctl = tl + dir * first;
-		  hVec3 cbr = br + dir * first;
-		  hrnd::debug::addQuad(ctl, cbr, 0x800000FF);
+        hVec3 ctl = tl + dir * first;
+        hVec3 cbr = br + dir * first;
+        hrnd::debug::addQuad(ctl, cbr, 0x800000FF);
       }
-	  first = last = 1.f;
+      first = last = 1.f;
       hVec3 etl = tl + dir * first;
       hVec3 ebr = br + dir * first;
       hrnd::debug::addQuad(etl, ebr, 0x80FF0000);

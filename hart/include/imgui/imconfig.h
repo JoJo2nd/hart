@@ -1,7 +1,8 @@
 //-----------------------------------------------------------------------------
 // USER IMPLEMENTATION
 // This file contains compile-time options for ImGui.
-// Other options (memory allocation overrides, callbacks, etc.) can be set at runtime via the ImGuiIO structure - ImGui::GetIO().
+// Other options (memory allocation overrides, callbacks, etc.) can be set at runtime via the ImGuiIO structure -
+// ImGui::GetIO().
 //-----------------------------------------------------------------------------
 
 #pragma once
@@ -20,7 +21,8 @@
 //#define IMGUI_DISABLE_WIN32_DEFAULT_CLIPBOARD_FUNCS
 //#define IMGUI_DISABLE_WIN32_DEFAULT_IME_FUNCS
 
-//---- Don't implement help and test window functionality (ShowUserGuide()/ShowStyleEditor()/ShowTestWindow() methods will be empty)
+//---- Don't implement help and test window functionality (ShowUserGuide()/ShowStyleEditor()/ShowTestWindow() methods
+//will be empty)
 //#define IMGUI_DISABLE_TEST_WINDOWS
 
 //---- Don't define obsolete functions names
@@ -48,4 +50,3 @@ namespace ImGui
     void    Value(const char* prefix, const MyMatrix44& v, const char* float_format = NULL);
 }
 */
-

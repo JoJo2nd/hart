@@ -8,41 +8,40 @@ namespace hart {
 namespace render {
 
 enum class Semantic {
-    Position,  //
-    Normal,    //
-    Tangent,   //
-    Bitangent, //
-    Color0,    //
-    Color1,    //
-    TexCoord0, //
-    TexCoord1, //
-    TexCoord2, //
-    TexCoord3, //
-    TexCoord4, //
-    TexCoord5, //
-    TexCoord6, //
-    TexCoord7, //
+  Position,  //
+  Normal,    //
+  Tangent,   //
+  Bitangent, //
+  Color0,    //
+  Color1,    //
+  TexCoord0, //
+  TexCoord1, //
+  TexCoord2, //
+  TexCoord3, //
+  TexCoord4, //
+  TexCoord5, //
+  TexCoord6, //
+  TexCoord7, //
 };
 
 enum class SemanticType {
-    Uint8,  //
-    Int16,  //
-    Half,   // May not be supported everywhere
-    Float,  //
+  Uint8, //
+  Int16, //
+  Half,  // May not be supported everywhere
+  Float, //
 };
 
 struct VertexElement {
-    Semantic sem;
-    SemanticType semType;
-    uint8_t elementCount;
-    bool normalized;
+  Semantic     sem;
+  SemanticType semType;
+  uint8_t      elementCount;
+  bool         normalized;
 };
 
 struct VertexDecl;
 
 VertexDecl* createVertexDecl(VertexElement const* elements, uint16_t element_count);
 void destroyVertexDecl();
-
 }
 }
 

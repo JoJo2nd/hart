@@ -84,9 +84,9 @@ inline bool intersectMovingAABB(AABB a, AABB b, hVec3 va, hVec3 vb, float* first
       if (b[i] > a[i + 2]) return false;
       if (b[i + 2] < a[i]) tfirst = hutil::tmax((a[i] - b[i + 2]) / v[i], tfirst);
       if (a[i + 2] > b[i]) tlast = hutil::tmin((a[i + 2] - b[i]) / v[i], tlast);
-	} else {
-		if (a[i+2] < b[i] || a[i] > b[i+2]) return false;
-	}
+    } else {
+      if (a[i + 2] < b[i] || a[i] > b[i + 2]) return false;
+    }
 
     // no overlap if time of first contact is after last contact
     if (tfirst > tlast) return false;

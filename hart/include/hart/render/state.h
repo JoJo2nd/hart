@@ -14,13 +14,11 @@ namespace hart {
 namespace render {
 
 class State {
-    HART_OBJECT_TYPE(HART_MAKE_FOURCC('r','s','t', 'e'), resource::RenderState)
-    public:
-        State() = default;
+  HART_OBJECT_TYPE(HART_MAKE_FOURCC('r', 's', 't', 'e'), resource::RenderState)
+public:
+  State() = default;
 
-        uint64_t stateMask = 0;    
-    
+  uint64_t stateMask = 0;
 };
-
 }
 }

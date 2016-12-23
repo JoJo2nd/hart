@@ -8,13 +8,13 @@
 
 namespace hart {
 namespace time {
-    
+
 struct GameTick {
-    float deltaMS;
-    uint8_t interval30Hz;
-    uint8_t interval15Hz;
-    uint8_t interval10Hz;
-    uint8_t interval5Hz;
+  float   deltaMS;
+  uint8_t interval30Hz;
+  uint8_t interval15Hz;
+  uint8_t interval10Hz;
+  uint8_t interval5Hz;
 };
 
 extern GameTick tickInfo;
@@ -35,25 +35,21 @@ uint32_t secs();
 
 class Timer {
 public:
-
-    Timer();
-    void reset();
-    void setPause(bool val);
-    bool getPaused() const {
-        return pauseStack != 0;
-    }
-    float elapsedSec() const;
-    float elapsedMS() const;
+  Timer();
+  void reset();
+  void setPause(bool val);
+  bool  getPaused() const { return pauseStack != 0; }
+  float elapsedSec() const;
+  float elapsedMS() const;
 
 private:
-    uint64_t elaspedPause() const;
+  uint64_t elaspedPause() const;
 
-    uint64_t begin = 0;
-    uint64_t lastPause = 0;
-    uint64_t pauseTotal = 0;
-    uint32_t pauseStack = 0;
+  uint64_t begin = 0;
+  uint64_t lastPause = 0;
+  uint64_t pauseTotal = 0;
+  uint32_t pauseStack = 0;
 };
-
 }
 }
 
